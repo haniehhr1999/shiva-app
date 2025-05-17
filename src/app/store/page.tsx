@@ -3,9 +3,23 @@ import Container from "@/components/Container";
 import ProductItem from "@/components/ProductItem";
 import Link from "next/link";
 
-const AllProducts = () => {
+import { verifyJwt } from '../../../lib/jwt';
+import { cookies } from "next/headers";
 
-    const res = fetch('http://localhost:3000/api/products')
+
+const AllProducts = async({ cookies }: { cookies: any }) => {
+
+  const token = cookies.get('token')?.value || '';
+
+  const user = token ? await verifyJwt(token) : null;
+
+  if (!user) {
+    // Redirect user to login or show a message
+    // Redirect example:
+    // throw redirect('/login');
+  }
+
+  
   const data = [
     {
       id: 1,
