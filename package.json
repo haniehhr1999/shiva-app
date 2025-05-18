@@ -12,8 +12,10 @@
     "cookie": "^1.0.2",
     "jose": "^6.0.11",
     "next": "15.3.1",
+    "next-auth": "^4.24.11",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "swiper": "^11.2.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
