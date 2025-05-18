@@ -10,3 +10,13 @@
 *{
   font-family: 'vazir';
 }
+body{
+  direction: rtl;
+}
+
+
+.bg-log{
+  background-image: url(../../public/images/bg-login.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}

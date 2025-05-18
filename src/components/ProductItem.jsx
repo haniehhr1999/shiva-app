@@ -2,13 +2,21 @@ import React from "react";
 import rice1 from "../../public/images/rice1.jpg";
 import Image from "next/image";
 
-const ProductItem = ({ title, body, price }) => {
+const ProductItem = ({ title, body, price, img }) => {
   return (
-    <div className="shadow-md rounded-md p-3">
+    <div className="shadow-md rounded-md p-6">
       {/* <img src={rice1} alt="cvxcv" /> */}
-      <Image src={rice1} className="rounded-md" alt="Picture of the author" />
-      <h2>{title}</h2>
-      <p>{body}</p>
+      <Image
+        src={img}
+        className="rounded-md"
+        alt="Picture of the author"
+        width={300}
+        height={300}
+      />
+      <div className="py-3">
+        <h2 className="mb-2 text-[#38b000] text-xl font-bold">{title}</h2>
+        <p>{body}</p>
+      </div>
     </div>
   );
 };
