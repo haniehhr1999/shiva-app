@@ -1,32 +1,35 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'your-very-secure-secret');
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-key');
 
-export async function middleware(req: NextRequest) {
-  const token = req.cookies.get('token')?.value;
+export async function middleware(request) {
+  const token = request.cookies.get('token')?.value;
 
   if (!token) {
-    // Redirect to login page if token missing and path is protected
-    if (req.nextUrl.pathname.startsWith('/dashboard') || req.nextUrl.pathname.startsWith('/products')) {
-      return NextResponse.redirect(new URL('/login', req.url));
+    // اگر توکن نیست، اجازه میدیم به صفحه ورود یا صفحه اول که توکن ساخته میشه بره
+    if (request.nextUrl.pathname.startsWith('/login')) {
+      return NextResponse.next();
     }
-    return NextResponse.next();
+    // ریدایرکت به صفحه لاگین یا صفحه ساخت توکن
+    const loginUrl = new URL('/login', request.url);
+    return NextResponse.redirect(loginUrl);
   }
 
   try {
-    await jwtVerify(token, JWT_SECRET);
+    // اعتبارسنجی توکن
+    await jwtVerify(token, SECRET);
+    // اگر درست بود، اجازه ادامه دسترسی
     return NextResponse.next();
-  } catch {
-    // Invalid token
-    if (req.nextUrl.pathname.startsWith('/dashboard') || req.nextUrl.pathname.startsWith('/products')) {
-      return NextResponse.redirect(new URL('/login', req.url));
-    }
-    return NextResponse.next();
+  } catch (error) {
+    // اگر توکن نامعتبر بود، حذف کوکی و ریدایرکت به صفحه ورود
+    const response = NextResponse.redirect(new URL('/login', request.url));
+    response.cookies.delete('token');
+    return response;
   }
 }
 
+// مسیرهایی که middleware باید روی آنها اجرا شود:
 export const config = {
-  matcher: ['/dashboard/:path*', '/products/:path*'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

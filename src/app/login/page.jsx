@@ -1,84 +1,126 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
 // import bg from "../../../public/images/bg-login.jpg"
 
 const LoginPage = () => {
-  const inputRef = useRef({});
-  const [isOtp, setIsOtp] = useState(false);
-  const [mobile, setMobile] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setIsOtp(true);
-    setMobile(inputRef.current.mobile.value);
-    // fetch('localhost:3000/api/login' , {
-    //     method : 'POST'
-    // })
-    // .then()
-  };
-  const handleLogin = (e) => {
-    e.preventDefault()
-    fetch("/api/login", {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const res = await fetch("/api/register", {
       method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        mobilePhone: mobile,
-        code: inputRef.current.otp.value,
-      }),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        // Cookies.set('accessToken', data.data.token)
-        // router.push('/profile')
-      });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username , email , pass }),
+    });
 
-    console.log("hi");
+    
+
+    if (res.ok) {
+      // توکن ساخته شد و در کوکی ذخیره شد
+      router.push("/"); // هدایت به صفحه خانه
+    } else {
+      alert("خطا در ورود");
+    }
   };
 
   return (
     <div className={`bg-log h-screen flex justify-center items-center`}>
       <div className="bg-[#ffffff63] w-1/3 p-8 rounded-2xl">
-        {isOtp ? (
-          <form action="" onSubmit={handleLogin}>
-            <h1 className="text-2xl font-bold">ثبت نام</h1>
-            <div className="my-4">
-              <input
-                ref={(item) => {
-                  inputRef.current.otp = item;
-                }}
-                type="number"
-                placeholder="کد ارسالی را وارد کنید..."
-                className="w-full rounded bg-white py-2 px-3"
-              />
-            </div>
-            <button className="rounded cursor-pointer py-2 px-3 bg-sky-950 text-white w-full">
-              اوکی
-            </button>
-          </form>
-        ) : (
-          <form action="" onSubmit={handleSubmit}>
-            <h1 className="text-2xl font-bold">ورود با شماره </h1>
+        {/* <form role="form" method="post">
+          {isCodeSent ? (
+            <>
+              <div className="inputBox">
+                <input
+                  type="text"
+                  autoComplete="off"
+                  required
+                  value={code}
+                  onChange={(event) => setCode(event.target.value)}
+                />
+                <label>Code</label>
+              </div>
 
-            <div className="my-4">
               <input
-                ref={(item) => {
-                  inputRef.current.mobile = item;
-                }}
-                type="number"
-                placeholder="شماره تلفن را وارد کنید..."
-                className="w-full rounded bg-white py-2 px-3"
+                type="submit"
+                className="register-btn"
+                onClick={verifyCode}
+                value="Verify Code"
               />
-            </div>
-            <button className="rounded cursor-pointer py-2 px-3 bg-sky-950 text-white w-full">
-              ارسال کد{" "}
-            </button>
-          </form>
-        )}
+            </>
+          ) : (
+            <>
+              <div className="inputBox my-4">
+                <input
+                  type="text"
+                  autoComplete="off"
+                  required
+                  value={phone}
+                  placeholder="موبایل خود را وارد کنید"
+                  className="w-full rounded py-2 px-4 bg-[#ffffff96]"
+                  onChange={(event) => setPhone(event.target.value)}
+                />
+              </div>
+              <input
+                type="submit"
+                className="register-btn bg-[#ff7b00] text-white font-bold w-full rounded py-2"
+                value="ارسال کد"
+                onClick={sendCode}
+              />
+            </>
+          )}
+        </form> */}
+
+        <form role="form" onSubmit={handleSubmit}>
+          <h1 className="font-bold text-xl text-[#3a5a40]">ثبت نام کاربری</h1>
+          
+          <div className="inputBox my-4">
+            <input
+              type="text"
+              autoComplete="off"
+              required
+              value={username}
+              placeholder="نام کاربری   "
+              className="w-full rounded py-2 px-4 bg-[#ffffff96]"
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+
+          <div className="inputBox my-4">
+            <input
+              type="text"
+              autoComplete="off"
+              required
+              value={email}
+              placeholder="ایمیل خود را وارد کنید"
+              className="w-full rounded py-2 px-4 bg-[#ffffff96]"
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </div>
+
+          <div className="inputBox my-4">
+            <input
+              type="text"
+              autoComplete="off"
+              required
+              value={pass}
+              placeholder="رمز عبور خود را وارد کنید"
+              className="w-full rounded py-2 px-4 bg-[#ffffff96]"
+              onChange={(event) => setPass(event.target.value)}
+            />
+          </div>
+          <input
+            type="submit"
+            className="register-btn bg-[#ff7b00] cursor-pointer text-white font-bold w-full rounded py-2"
+            value="ثبت نام"
+          />
+        </form>
       </div>
     </div>
   );

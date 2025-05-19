@@ -5,10 +5,14 @@ import { verifyJwt } from "@/../lib/auth";
 
 export default async function Home() {
 
+  
+
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("token");
     const isVerify = await verifyJwt(token);
+
+    console.log('token =>' , token)
 
     if (!isVerify) {
       redirect("login");
