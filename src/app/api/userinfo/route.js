@@ -12,8 +12,12 @@ export async function GET(request) {
     const payload = decodeJwt(token);
     const username = payload.username || payload.email || null;
 
-    return NextResponse.json({ username });
-  } catch (e) {
-    return NextResponse.json({ username: null }, { status: 401 });
+    return NextResponse.json({
+      username: username || null,
+      role: payload.role || "user",
+    });
+  } 
+  catch (e) {
+    return NextResponse.json({ username: null , role: null }, { status: 401 });
   }
 }

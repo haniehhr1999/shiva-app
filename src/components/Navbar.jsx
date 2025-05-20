@@ -91,21 +91,14 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center">
-            <FaBasketShopping className="cursor-pointer" />
+            <FaBasketShopping onClick={() => show("top-right")} className="cursor-pointer" />
             <FaUser className="mx-2" />
             {username ? `سلام ${username}` : "لطفا وارد شوید"}{" "}
-            <Button
-              label="TopLeft"
-              icon="pi pi-arrow-down-right"
-              onClick={() => show("top-left")}
-              className="p-button-warning"
-              style={{ minWidth: "10rem" }}
-            />
           </div>
         </div>
       </Container>
       <Dialog
-        header="Header"
+        header="سبد خرید شما "
         visible={visible}
         position={position}
         style={{ width: "50vw" }}
@@ -116,16 +109,13 @@ const Navbar = () => {
         footer={footerContent}
         draggable={false}
         resizable={false}
+        className="bg-slate-200 rounded-xl p-8"
       >
-        <p className="m-0">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </p>
+        <ul>
+          <li className="rounded px-5 py-2 bg-white my-2">dfklkdfjg;sldf</li>
+          <li className="rounded px-5 py-2 bg-white my-2">dfklkdfjg;sldf</li>
+          <li className="rounded px-5 py-2 bg-white my-2">dfklkdfjg;sldf</li>
+        </ul>
       </Dialog>
     </div>
   );
