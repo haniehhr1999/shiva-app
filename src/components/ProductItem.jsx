@@ -17,6 +17,7 @@ const ProductItem = ({ title, body, price, img }) => {
         <h2 className="mb-2 text-[#38b000] text-xl font-bold">{title}</h2>
         <p>{body}</p>
       </div>
+      <button className="w-full bg-green-200 rounded py-2">افزودن به سبد خرید</button>
     </div>
   );
 };
