@@ -1,0 +1,116 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "haniye",
+      "email": "haniye@example.com",
+      "role": "user",
+      "password": "847392",
+      "purchases": [
+        {
+          "productId": 101,
+          "title": "برنج ایرانی",
+          "price": 100000,
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "username": "admin",
+      "email": "admin@example.com",
+      "role": "admin",
+      "password": "123456",
+      "purchases": []
+    },
+    {
+      "id": 3,
+      "username": "ali",
+      "email": "ali@example.com",
+      "role": "user",
+      "password": "987654",
+      "purchases": []
+    },
+    {
+      "id": 4,
+      "username": "sara",
+      "email": "sara@example.com",
+      "role": "user",
+      "password": "456789",
+      "purchases": []
+    },
+    {
+      "id": 5,
+      "username": "mohammad",
+      "email": "mohammad@example.com",
+      "role": "user",
+      "password": "234567",
+      "purchases": []
+    },
+    {
+      "id": 6,
+      "username": "fati2",
+      "email": "fatemeh@example.com",
+      "role": "user",
+      "password": "345678",
+      "purchases": []
+    },
+    {
+      "id": 7,
+      "username": "reza",
+      "email": "reza@example.com",
+      "role": "user",
+      "password": "567890",
+      "purchases": []
+    },
+    {
+      "id": 8,
+      "username": "maryam",
+      "email": "maryam@example.com",
+      "role": "user",
+      "password": "678901",
+      "purchases": []
+    },
+    {
+      "id": 9,
+      "username": "ahmad",
+      "email": "ahmad@example.com",
+      "role": "user",
+      "password": "789012",
+      "purchases": []
+    },
+    {
+      "id": 10,
+      "username": "zahra",
+      "email": "zahra@example.com",
+      "role": "user",
+      "password": "890123",
+      "purchases": []
+    },
+    {
+      "id": 11,
+      "username": "hossein",
+      "email": "hossein@example.com",
+      "role": "user",
+      "password": "901234",
+      "purchases": []
+    },
+    {
+      "id": 12,
+      "username": "superadmin",
+      "email": "superadmin@example.com",
+      "role": "admin",
+      "password": "654321",
+      "purchases": []
+    }
+  ],
+  "products": [
+    {
+      "id": 101,
+      "title": "برنج ایرانی",
+      "body": "برنج مرغوب شمال",
+      "price": 100000,
+      "img": "/images/rice1.jpg"
+    }
+  ]
+}
