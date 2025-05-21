@@ -1,23 +1,35 @@
 import { NextResponse } from "next/server";
-import { decodeJwt } from "jose";
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
 
-export async function GET(request) {
-  const token = request.cookies.get("token")?.value;
-  if (!token) {
-    console.log('******* token nist')
-    return NextResponse.json({ username: null }, { status: 401 });
-  }
-
+export async function GET() {
   try {
-    const payload = decodeJwt(token);
-    const username = payload.username || payload.email || null;
+    const cookieStore = cookies();
+    const token = cookieStore.get("token");
+
+    if (!token) {
+      return NextResponse.json(
+        { error: "توکن یافت نشد" },
+        { status: 401 }
+      );
+    }
+
+    const decoded = jwt.verify(
+      token.value,
+      process.env.JWT_SECRET || "your-secret-key"
+    );
 
     return NextResponse.json({
-      username: username || null,
-      role: payload.role || "user",
+      id: decoded.id,
+      email: decoded.email,
+      username: decoded.username,
+      role: decoded.role,
     });
-  } 
-  catch (e) {
-    return NextResponse.json({ username: null , role: null }, { status: 401 });
+  } catch (error) {
+    console.error("Error verifying token:", error);
+    return NextResponse.json(
+      { error: "توکن نامعتبر است" },
+      { status: 401 }
+    );
   }
 }

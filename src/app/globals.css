@@ -21,6 +21,12 @@ body{
   background-size: cover;
 }
 
+.bg-reg{
+  background-image: url(../../public/images/reg.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 
 
 .swiper {

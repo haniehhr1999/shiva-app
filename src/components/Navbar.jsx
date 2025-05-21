@@ -12,30 +12,44 @@ import React, { useEffect, useState } from "react";
 
 const Navbar = () => {
   const path = usePathname();
+  const router = useRouter();
 
   console.log(path);
 
-  const [username, setUsername] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    async function fetchUser() {
+    async function checkUser() {
       try {
-        const res = await fetch("/api/userinfo", {
-          credentials: "include", // حتما اضافه کن تا کوکی‌ها ارسال شود
-        });
+        const res = await fetch("/api/userinfo", { credentials: "include" });
         if (res.ok) {
           const data = await res.json();
-          setUsername(data.username);
-        } else {
-          setUsername(null);
+          setUser(data);
         }
       } catch (error) {
-        setUsername(null);
+        console.error("Error checking user:", error);
       }
     }
 
-    fetchUser();
+    checkUser();
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        setUser(null);
+        router.push("/login");
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   const navLinks = [
     {
@@ -93,7 +107,43 @@ const Navbar = () => {
           <div className="flex items-center">
             <FaBasketShopping onClick={() => show("top-right")} className="cursor-pointer" />
             <FaUser className="mx-2" />
-            {username ? `سلام ${username}` : "لطفا وارد شوید"}{" "}
+            {user ? (
+              <div className="flex items-center space-x-4 space-x-reverse">
+                <span className="text-gray-700">
+                  سلام
+                  {user.username}
+                </span>
+                {user.role === "admin" && (
+                  <Link
+                    href="/dashboard"
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    داشبورد
+                  </Link>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  خروج
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-4 space-x-reverse">
+                <Link
+                  href="/login"
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  ورود
+                </Link>
+                <Link
+                  href="/register"
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  ثبت نام
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </Container>

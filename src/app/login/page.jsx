@@ -1,85 +1,112 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import React, { useRef, useState } from "react";
-const LoginPage = () => {
+import Link from "next/link";
 
-  const [username, setUsername] = useState("");
+export default function LoginPage() {
   const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username , email , pass }),
-    });
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    
+      const data = await res.json();
 
-    if (res.ok) {
-      // توکن ساخته شد و در کوکی ذخیره شد
-      router.push("/"); // هدایت به صفحه خانه
-    } else {
-      alert("خطا در ورود");
+      if (!res.ok) {
+        throw new Error(data.error || "خطا در ورود به سیستم");
+      }
+
+      // Successful login
+      router.push("/"); // Redirect to home page
+      router.refresh(); // Refresh the page to update the navbar
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className={`bg-log h-screen flex justify-center items-center`}>
-      <div className="bg-[#ffffff63] w-1/3 p-8 rounded-2xl">
-        
-
-        <form role="form" onSubmit={handleSubmit}>
-          <h1 className="font-bold text-xl text-[#3a5a40]">ثبت نام کاربری</h1>
-          
-          <div className="inputBox my-4">
-            <input
-              type="text"
-              autoComplete="off"
-              required
-              value={username}
-              placeholder="نام کاربری   "
-              className="w-full rounded py-2 px-4 bg-[#ffffff96]"
-              onChange={(e) => setUsername(e.target.value)}
-            />
+    <div className="min-h-screen bg-log flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-white p-8 rounded-lg space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-2xl font-extrabold text-gray-900">
+            ورود به حساب کاربری
+          </h2>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="email" className="sr-only">
+                ایمیل
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="ایمیل"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                رمز عبور
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="رمز عبور"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
           </div>
 
-          <div className="inputBox my-4">
-            <input
-              type="text"
-              autoComplete="off"
-              required
-              value={email}
-              placeholder="ایمیل خود را وارد کنید"
-              className="w-full rounded py-2 px-4 bg-[#ffffff96]"
-              onChange={(event) => setEmail(event.target.value)}
-            />
+          {error && (
+            <div className="text-red-500 text-sm text-center">{error}</div>
+          )}
+
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              {loading ? "در حال ورود..." : "ورود"}
+            </button>
           </div>
 
-          <div className="inputBox my-4">
-            <input
-              type="text"
-              autoComplete="off"
-              required
-              value={pass}
-              placeholder="رمز عبور خود را وارد کنید"
-              className="w-full rounded py-2 px-4 bg-[#ffffff96]"
-              onChange={(event) => setPass(event.target.value)}
-            />
+          <div className="text-sm text-center">
+            <Link
+              href="/register"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              حساب کاربری ندارید؟ ثبت نام کنید
+            </Link>
           </div>
-          <input
-            type="submit"
-            className="register-btn bg-[#ff7b00] cursor-pointer text-white font-bold w-full rounded py-2"
-            value="ثبت نام"
-          />
         </form>
       </div>
     </div>
   );
-};
-
-export default LoginPage;
+}
