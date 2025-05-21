@@ -24,6 +24,7 @@ export default function DashboardPage() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [viewDialogVisible, setViewDialogVisible] = useState(false);
+  const [roleChangeDialogVisible, setRoleChangeDialogVisible] = useState(false);
 
   useEffect(() => {
     async function checkUser() {
@@ -116,10 +117,15 @@ export default function DashboardPage() {
     );
   };
 
-  const handleRoleChange = async (user) => {
+  const handleRoleChange = (user) => {
+    setSelectedUser(user);
+    setRoleChangeDialogVisible(true);
+  };
+
+  const confirmRoleChange = async () => {
     try {
-      const newRole = user.role === "admin" ? "user" : "admin";
-      const response = await fetch(`/api/users/${user.id}`, {
+      const newRole = selectedUser.role === "admin" ? "user" : "admin";
+      const response = await fetch(`/api/users/${selectedUser.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -128,6 +134,7 @@ export default function DashboardPage() {
       });
 
       if (response.ok) {
+        setRoleChangeDialogVisible(false);
         fetchUsers(); // Refresh the users list
       }
     } catch (error) {
@@ -227,6 +234,25 @@ export default function DashboardPage() {
         className="p-button-text"
       />
       <Button label="ذخیره" icon="pi pi-check" onClick={handleViewEdit} autoFocus />
+    </div>
+  );
+
+  const roleChangeDialogFooter = (
+    <div>
+      <Button
+        label="انصراف"
+        icon="pi pi-times"
+        onClick={() => setRoleChangeDialogVisible(false)}
+        className="p-button-text bg-red-700 text-white rounded px-3 py-1"
+      />
+      <Button
+        label="تایید"
+        icon="pi pi-check"
+        onClick={confirmRoleChange}
+        severity="warning"
+        autoFocus
+        className="bg-green-700 mx-3  text-white rounded px-3 py-1"
+      />
     </div>
   );
 
@@ -407,6 +433,29 @@ export default function DashboardPage() {
             style={{ fontSize: "2rem" }}
           />
           <span>آیا از حذف این کاربر اطمینان دارید؟</span>
+        </div>
+      </Dialog>
+
+      {/* Role Change Dialog */}
+      <Dialog
+        visible={roleChangeDialogVisible}
+        style={{ width: "450px" }}
+        header="تغییر نقش کاربر"
+        modal
+        footer={roleChangeDialogFooter}
+        onHide={() => setRoleChangeDialogVisible(false)}
+        dir="rtl"
+        className="bg-red-200 p-5 rounded-lg"
+      >
+        <div className="confirmation-content bg-red-200">
+          <i
+            className="pi pi-exclamation-triangle mr-3"
+            style={{ fontSize: "2rem" }}
+          />
+          <span>
+            آیا از تغییر نقش کاربر {selectedUser?.username} از {selectedUser?.role} به{" "}
+            {selectedUser?.role === "admin" ? "کاربر عادی" : "مدیر"} اطمینان دارید؟
+          </span>
         </div>
       </Dialog>
     </div>
