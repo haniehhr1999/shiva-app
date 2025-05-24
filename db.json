@@ -110,7 +110,42 @@
       "title": "برنج ایرانی",
       "body": "برنج مرغوب شمال",
       "price": 100000,
-      "img": "/images/rice1.jpg"
+      "img": "/images/rice1.jpg",
+      "comments": [
+        {
+          "id": 1,
+          "userId": 2,
+          "username": "user",
+          "text": "کیفیت عالی و طعم فوق العاده",
+          "rating": 5,
+          "createdAt": "2024-03-15T10:30:00Z"
+        },
+        {
+          "id": 2,
+          "userId": 1,
+          "username": "admin",
+          "text": "برنج خیلی خوبی بود، پیشنهاد می‌کنم",
+          "rating": 4,
+          "createdAt": "2024-03-14T15:45:00Z"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "برنج صدری",
+      "body": "برنج صدری درجه یک با عطر و طعم فوق العاده",
+      "price": 280000,
+      "img": "/images/rice2.jpg",
+      "comments": [
+        {
+          "id": 3,
+          "userId": 2,
+          "username": "user",
+          "text": "عطر و طعم عالی",
+          "rating": 5,
+          "createdAt": "2024-03-13T09:20:00Z"
+        }
+      ]
     }
   ]
 }
