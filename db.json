@@ -6,14 +6,7 @@
       "email": "haniye@example.com",
       "role": "user",
       "password": "847392",
-      "purchases": [
-        {
-          "productId": 101,
-          "title": "برنج ایرانی",
-          "price": 100000,
-          "quantity": 2
-        }
-      ]
+      "purchases": []
     },
     {
       "id": 2,
@@ -106,29 +99,12 @@
   ],
   "products": [
     {
-      "id": 101,
-      "title": "برنج ایرانی",
-      "body": "برنج مرغوب شمال",
-      "price": 100000,
+      "id": 1,
+      "title": "برنج هاشمی",
+      "body": "برنج هاشمی مرغوب شمال با کیفیت عالی و طعم بی نظیر",
+      "price": 320000,
       "img": "/images/rice1.jpg",
-      "comments": [
-        {
-          "id": 1,
-          "userId": 2,
-          "username": "user",
-          "text": "کیفیت عالی و طعم فوق العاده",
-          "rating": 5,
-          "createdAt": "2024-03-15T10:30:00Z"
-        },
-        {
-          "id": 2,
-          "userId": 1,
-          "username": "admin",
-          "text": "برنج خیلی خوبی بود، پیشنهاد می‌کنم",
-          "rating": 4,
-          "createdAt": "2024-03-14T15:45:00Z"
-        }
-      ]
+      "comments": []
     },
     {
       "id": 2,
@@ -136,16 +112,63 @@
       "body": "برنج صدری درجه یک با عطر و طعم فوق العاده",
       "price": 280000,
       "img": "/images/rice2.jpg",
-      "comments": [
-        {
-          "id": 3,
-          "userId": 2,
-          "username": "user",
-          "text": "عطر و طعم عالی",
-          "rating": 5,
-          "createdAt": "2024-03-13T09:20:00Z"
-        }
-      ]
+      "comments": []
+    },
+    {
+      "id": 3,
+      "title": "برنج دودی",
+      "body": "برنج دودی با طعم دودی طبیعی و کیفیت عالی",
+      "price": 350000,
+      "img": "/images/rice3.jpg",
+      "comments": []
+    },
+    {
+      "id": 4,
+      "title": "برنج دم سیاه",
+      "body": "برنج دم سیاه با کیفیت عالی و طعم بی نظیر",
+      "price": 369000,
+      "img": "/images/rice1.jpg",
+      "comments": []
+    },
+    {
+      "id": 5,
+      "title": "زیتون ماری",
+      "body": "زیتون ماری تازه و خوش طعم",
+      "price": 85000,
+      "img": "/images/olive1.jpg",
+      "comments": []
+    },
+    {
+      "id": 6,
+      "title": "زیتون شکسته",
+      "body": "زیتون شکسته با کیفیت عالی",
+      "price": 75000,
+      "img": "/images/olive2.jpg",
+      "comments": []
+    },
+    {
+      "id": 7,
+      "title": "زیتون کنسروی",
+      "body": "زیتون کنسروی با کیفیت عالی و طعم بی نظیر",
+      "price": 65000,
+      "img": "/images/olive3.jpg",
+      "comments": []
+    },
+    {
+      "id": 8,
+      "title": "رشته خشکار",
+      "body": "رشته خشکار با کیفیت عالی و طعم بی نظیر",
+      "price": 45000,
+      "img": "/images/reshte.jpg",
+      "comments": []
+    },
+    {
+      "id": 9,
+      "title": "چای کرک",
+      "body": "چای کرک با کیفیت عالی و طعم بی نظیر",
+      "price": 55000,
+      "img": "/images/kerak.jpg",
+      "comments": []
     }
   ]
 }

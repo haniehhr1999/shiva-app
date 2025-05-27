@@ -3,99 +3,66 @@ import Container from "@/components/Container";
 import ProductItem from "@/components/ProductItem";
 import Link from "next/link";
 
-import rice1 from "../../../public/images/rice1.jpg";
-import rice2 from "../../../public/images/rice2.jpg";
-import rice3 from "../../../public/images/rice3.jpg";
-import olive1 from "../../../public/images/olive1.jpg";
-import olive2 from "../../../public/images/olive2.jpg";
-import olive3 from "../../../public/images/olive3.jpg";
-import reshte from "../../../public/images/reshte.jpg";
-import kerak from "../../../public/images/kerak.jpg";
+interface Product {
+  id: number;
+  title: string;
+  body: string;
+  price: number;
+  img: string;
+  comments: Array<{
+    id: number;
+    userId: number;
+    username: string;
+    text: string;
+    rating: number;
+    createdAt: string;
+  }>;
+}
 
-const AllProducts = () => {
-  const res = fetch("http://localhost:3000/api/products");
-  const data = [
-    {
-      id: 1,
-      title: "برنج هاشمی",
-      body: "snc dsbcsnbn scbk jnsdmb cdsnb knsb ncsd sscjshjfsnjdnjsn skfbks sdbsb cscsnd l nlvnsmcnl kv ,fcnsjnfm v",
-      price: 3200,
-      img: rice1,
-    },
-    {
-      id: 2,
-      title: "برنج صدری",
-      body: "snc dsbcsnbn scbk jnsdmb cdsnb knsb ncsd sscjshjfsnjdnjsn skfbks sdbsb cscsnd l nlvnsmcnl kv ,fcnsjnfm v",
-      price: 3200,
-      img: rice2,
-    },
-    {
-      id: 3,
-      title: "برنج دودی",
-      body: "snc dsbcsnbn scbk jnsdmb cdsnb knsb ncsd sscjshjfsnjdnjsn skfbks sdbsb cscsnd l nlvnsmcnl kv ,fcnsjnfm v",
-      price: 3200,
-      img: rice3,
-    },
-    {
-      id: 4,
-      title: "برنج دم سیاه",
-      body: "snc dsbcsnbn scbk jnsdmb cdsnb knsb ncsd sscjshjfsnjdnjsn skfbks sdbsb cscsnd l nlvnsmcnl kv ,fcnsjnfm v",
-      price: 36900,
-      img: rice1,
-    },
-    {
-      id: 5,
-      title: "زیتون ماری",
-      body: "snc dsbcsnbn scbk jnsdmb cdsnb knsb ncsd sscjshjfsnjdnjsn skfbks sdbsb cscsnd l nlvnsmcnl kv ,fcnsjnfm v",
-      price: 3200,
-      img: olive1,
-    },
-    {
-      id: 6,
-      title: "زیتون شکسته",
-      body: "snc dsbcsnbn scbk jnsdmb cdsnb knsb ncsd sscjshjfsnjdnjsn skfbks sdbsb cscsnd l nlvnsmcnl kv ,fcnsjnfm v",
-      price: 3200,
-      img: olive2,
-    },
-    {
-      id: 7,
-      title: "زیتون کنسروی",
-      body: "snc dsbcsnbn scbk jnsdmb cdsnb knsb ncsd sscjshjfsnjdnjsn skfbks sdbsb cscsnd l nlvnsmcnl kv ,fcnsjnfm v",
-      price: 3200,
-      img: olive3,
-    },
-    {
-      id: 8,
-      title: "رشته خشکار",
-      body: "snc dsbcsnbn scbk jnsdmb cdsnb knsb ncsd sscjshjfsnjdnjsn skfbks sdbsb cscsnd l nlvnsmcnl kv ,fcnsjnfm v",
-      price: 3200,
-      img: reshte,
-    },
-    {
-        id: 9,
-        title: "چای کرک",
-        body: "snc dsbcsnbn scbk jnsdmb cdsnb knsb ncsd sscjshjfsnjdnjsn skfbks sdbsb cscsnd l nlvnsmcnl kv ,fcnsjnfm v",
-        price: 3200,
-        img: kerak,
-      },
-  ];
+async function getProducts(): Promise<Product[]> {
+  const res = await fetch('http://localhost:3001/api/products', {
+    cache: 'no-store'
+  });
+  
+  if (!res.ok) {
+    return [];
+  }
+  
+  return res.json();
+}
+
+export default async function StorePage() {
+  const products = await getProducts();
+
   return (
     <Container>
-      <h1 className=" text-3xl text-[#38b000] text-center font-bold">تمامی محصولات</h1>
-      <div className="grid grid-cols-4 gap-6">
-        {data.map((item) => (
-          <Link key={item.id} href={`store/${item.id}`}>
-            <ProductItem
-              img={item.img}
-              title={item.title}
-              body={item.body}
-              price={item.price}
-            />
-          </Link>
-        ))}
+      <div className="py-8">
+        <h1 className="text-3xl text-[#38b000] text-center font-bold mb-8">
+          فروشگاه
+        </h1>
+        
+        {products.length === 0 ? (
+          <div className="text-center text-gray-500">
+            محصولی یافت نشد
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <div key={product.id} className="transform transition-transform hover:scale-105">
+                <Link href={`/store/${product.id}`} className="block">
+                  <ProductItem
+                    id={product.id}
+                    img={product.img}
+                    title={product.title}
+                    body={product.body}
+                    price={product.price}
+                  />
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </Container>
   );
-};
-
-export default AllProducts;
+}

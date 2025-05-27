@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
+import fs from 'fs';
+import path from 'path';
 
 export async function GET() {
   try {
@@ -19,11 +21,26 @@ export async function GET() {
       process.env.JWT_SECRET || "your-secret-key"
     );
 
+    // Read the database to get user's purchases
+    const dbPath = path.join(process.cwd(), 'db.json');
+    const dbData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+    
+    // Find the user in the database
+    const user = dbData.users.find(u => u.id === decoded.id);
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "کاربر یافت نشد" },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json({
-      id: decoded.id,
-      email: decoded.email,
-      username: decoded.username,
-      role: decoded.role,
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      role: user.role,
+      purchases: user.purchases || []
     });
   } catch (error) {
     console.error("Error verifying token:", error);
