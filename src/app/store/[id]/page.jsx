@@ -30,8 +30,8 @@ export default async function ProductDetail({ params }) {
 
   return (
     <Container>
-      <div className="grid grid-cols-2 gap-8 py-8">
-        <div className="relative h-[500px]">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8 py-8">
+        <div className="relative ">
           <Image
             src={product.img}
             alt={product.title}
@@ -39,7 +39,7 @@ export default async function ProductDetail({ params }) {
             className="object-cover rounded-lg"
           />
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 col-span-3">
           <h1 className="text-3xl font-bold text-[#38b000]">{product.title}</h1>
           <p className="text-gray-600 text-lg">{product.body}</p>
           <div className="text-2xl font-bold mt-4">

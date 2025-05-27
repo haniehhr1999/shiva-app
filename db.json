@@ -112,7 +112,16 @@
       "body": "برنج صدری درجه یک با عطر و طعم فوق العاده",
       "price": 280000,
       "img": "/images/rice2.jpg",
-      "comments": []
+      "comments": [
+        {
+          "id": 1748352204253,
+          "userId": 1,
+          "username": "haniye",
+          "text": "برنج خوبی بود خوشم اومد",
+          "rating": 5,
+          "createdAt": "2025-05-27T13:23:24.254Z"
+        }
+      ]
     },
     {
       "id": 3,
@@ -120,7 +129,16 @@
       "body": "برنج دودی با طعم دودی طبیعی و کیفیت عالی",
       "price": 350000,
       "img": "/images/rice3.jpg",
-      "comments": []
+      "comments": [
+        {
+          "id": 1748351655932,
+          "userId": 1,
+          "username": "haniye",
+          "text": "سلام خوبی",
+          "rating": 4,
+          "createdAt": "2025-05-27T13:14:15.933Z"
+        }
+      ]
     },
     {
       "id": 4,
