@@ -7,12 +7,15 @@ import { FaUser } from "react-icons/fa";
 import { FaBasketShopping } from "react-icons/fa6";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
+import { useTheme } from "@/context/ThemeContext";
+import { FaMoon, FaSun } from "react-icons/fa";
 
 import React, { useEffect, useState } from "react";
 
 const Navbar = () => {
   const path = usePathname();
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
 
   console.log(path);
 
@@ -110,7 +113,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="bg-[#d9ed92] p-4">
+    <div className="bg-[#d9ed92] dark:bg-gray-800 p-4 transition-colors duration-300">
       <Container>
         <div className="flex justify-between">
           <div>
@@ -128,7 +131,17 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center">
-            <FaBasketShopping onClick={() => show("top-right")} className="cursor-pointer" />
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300"
+            >
+              {theme === "light" ? (
+                <FaMoon className="text-gray-700" />
+              ) : (
+                <FaSun className="text-yellow-400" />
+              )}
+            </button>
+            <FaBasketShopping onClick={() => show("top-right")} className="cursor-pointer mx-4" />
             <FaUser className="mx-2" />
             {user ? (
               <div className="flex items-center space-x-4 space-x-reverse">

@@ -14,8 +14,7 @@ import { FaTrash } from "react-icons/fa";
 import { FaUser } from "react-icons/fa";
 import { MdModeEdit } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
-import SimpleLineChart from "../../components/SimpleLineChart"
-
+import SimpleLineChart from "../../components/SimpleLineChart";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -27,6 +26,15 @@ export default function DashboardPage() {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [viewDialogVisible, setViewDialogVisible] = useState(false);
   const [roleChangeDialogVisible, setRoleChangeDialogVisible] = useState(false);
+
+  const [selectedDuration, setSelectedDuration] = useState(null);
+  const durations = [
+    { name: "روزانه", code: "day" },
+    { name: "هفتگی", code: "weekly" },
+    { name: "ماهانه", code: "monthly" },
+    { name: "سالانه", code: "LDN" },
+  ];
+
 
   useEffect(() => {
     async function checkUser() {
@@ -205,7 +213,13 @@ export default function DashboardPage() {
         onClick={() => setEditDialogVisible(false)}
         className="p-button-text"
       />
-      <Button className="bg-green-700" label="ذخیره" icon="pi pi-check" onClick={handleEdit} autoFocus />
+      <Button
+        className="bg-green-700"
+        label="ذخیره"
+        icon="pi pi-check"
+        onClick={handleEdit}
+        autoFocus
+      />
     </div>
   );
 
@@ -235,7 +249,12 @@ export default function DashboardPage() {
         onClick={() => setViewDialogVisible(false)}
         className="p-button-text"
       />
-      <Button label="ذخیره" icon="pi pi-check" onClick={handleViewEdit} autoFocus />
+      <Button
+        label="ذخیره"
+        icon="pi pi-check"
+        onClick={handleViewEdit}
+        autoFocus
+      />
     </div>
   );
 
@@ -263,7 +282,7 @@ export default function DashboardPage() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-center">داشبورد مدیر</h1>
-      
+
       {/* Add SimpleLineChart */}
       <div className="mb-8 h-[400px] bg-white p-4 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4 text-center">نمودار فروش</h2>
@@ -332,6 +351,14 @@ export default function DashboardPage() {
         </DataTable>
       </div>
 
+      <Dropdown
+        value={selectedDuration}
+        onChange={(e) => setSelectedDuration(e.value)}
+        options={durations}
+        optionLabel="name"
+        placeholder="Select a duration"
+        className="w-full md:w-14rem"
+      />
 
       {/* Edit Dialog */}
       <Dialog
@@ -342,7 +369,6 @@ export default function DashboardPage() {
         className="p-fluid"
         footer={editDialogFooter}
         onHide={() => setEditDialogVisible(false)}
-        
         dir="rtl"
       >
         {selectedUser && (
@@ -394,7 +420,7 @@ export default function DashboardPage() {
           <div className="field my-6">
             <label htmlFor="view-username">نام کاربری</label>
             <InputText
-            className="bg-white rounded py-2 px-3 my-4"
+              className="bg-white rounded py-2 px-3 my-4"
               id="view-username"
               value={selectedUser.username}
               onChange={(e) =>
@@ -405,7 +431,7 @@ export default function DashboardPage() {
             />
             <label htmlFor="view-email">ایمیل</label>
             <InputText
-            className="bg-white rounded py-2 px-3 mb-4"
+              className="bg-white rounded py-2 px-3 mb-4"
               id="view-email"
               value={selectedUser.email}
               onChange={(e) =>
@@ -415,7 +441,7 @@ export default function DashboardPage() {
             />
             <label htmlFor="view-password">رمز عبور</label>
             <InputText
-            className="bg-white rounded py-2 px-3 mb-4"
+              className="bg-white rounded py-2 px-3 mb-4"
               id="view-password"
               value={selectedUser.password}
               onChange={(e) =>
@@ -463,8 +489,10 @@ export default function DashboardPage() {
             style={{ fontSize: "2rem" }}
           />
           <span>
-            آیا از تغییر نقش کاربر {selectedUser?.username} از {selectedUser?.role} به{" "}
-            {selectedUser?.role === "admin" ? "کاربر عادی" : "مدیر"} اطمینان دارید؟
+            آیا از تغییر نقش کاربر {selectedUser?.username} از{" "}
+            {selectedUser?.role} به{" "}
+            {selectedUser?.role === "admin" ? "کاربر عادی" : "مدیر"} اطمینان
+            دارید؟
           </span>
         </div>
       </Dialog>
