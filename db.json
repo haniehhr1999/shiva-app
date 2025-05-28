@@ -6,7 +6,29 @@
       "email": "haniye@example.com",
       "role": "user",
       "password": "847392",
-      "purchases": []
+      "purchases": [
+        {
+          "productId": 1,
+          "title": "برنج هاشمی",
+          "price": 320000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-15"
+        },
+        {
+          "productId": 5,
+          "title": "زیتون ماری",
+          "price": 85000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-20"
+        },
+        {
+          "productId": 8,
+          "title": "رشته خشکار",
+          "price": 45000,
+          "quantity": 3,
+          "purchaseDate": "2024-03-25"
+        }
+      ]
     },
     {
       "id": 2,
@@ -14,7 +36,36 @@
       "email": "admin@example.com",
       "role": "admin",
       "password": "123456",
-      "purchases": []
+      "purchases": [
+        {
+          "productId": 2,
+          "title": "برنج صدری",
+          "price": 280000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-10"
+        },
+        {
+          "productId": 6,
+          "title": "زیتون شکسته",
+          "price": 75000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-18"
+        },
+        {
+          "productId": 9,
+          "title": "چای کرک",
+          "price": 55000,
+          "quantity": 4,
+          "purchaseDate": "2024-03-22"
+        },
+        {
+          "productId": 3,
+          "title": "برنج دودی",
+          "price": 350000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-28"
+        }
+      ]
     },
     {
       "id": 3,
@@ -22,7 +73,29 @@
       "email": "ali@example.com",
       "role": "user",
       "password": "987654",
-      "purchases": []
+      "purchases": [
+        {
+          "productId": 4,
+          "title": "برنج دم سیاه",
+          "price": 369000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-12"
+        },
+        {
+          "productId": 7,
+          "title": "زیتون کنسروی",
+          "price": 65000,
+          "quantity": 3,
+          "purchaseDate": "2024-03-19"
+        },
+        {
+          "productId": 1,
+          "title": "برنج هاشمی",
+          "price": 320000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-26"
+        }
+      ]
     },
     {
       "id": 4,
@@ -30,7 +103,36 @@
       "email": "sara@example.com",
       "role": "user",
       "password": "456789",
-      "purchases": []
+      "purchases": [
+        {
+          "productId": 3,
+          "title": "برنج دودی",
+          "price": 350000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-14"
+        },
+        {
+          "productId": 5,
+          "title": "زیتون ماری",
+          "price": 85000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-21"
+        },
+        {
+          "productId": 8,
+          "title": "رشته خشکار",
+          "price": 45000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-27"
+        },
+        {
+          "productId": 9,
+          "title": "چای کرک",
+          "price": 55000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-29"
+        }
+      ]
     },
     {
       "id": 5,
@@ -38,7 +140,29 @@
       "email": "mohammad@example.com",
       "role": "user",
       "password": "234567",
-      "purchases": []
+      "purchases": [
+        {
+          "productId": 2,
+          "title": "برنج صدری",
+          "price": 280000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-11"
+        },
+        {
+          "productId": 6,
+          "title": "زیتون شکسته",
+          "price": 75000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-17"
+        },
+        {
+          "productId": 4,
+          "title": "برنج دم سیاه",
+          "price": 369000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-24"
+        }
+      ]
     },
     {
       "id": 6,
@@ -46,7 +170,36 @@
       "email": "fatemeh@example.com",
       "role": "user",
       "password": "345678",
-      "purchases": []
+      "purchases": [
+        {
+          "productId": 1,
+          "title": "برنج هاشمی",
+          "price": 320000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-13"
+        },
+        {
+          "productId": 7,
+          "title": "زیتون کنسروی",
+          "price": 65000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-20"
+        },
+        {
+          "productId": 9,
+          "title": "چای کرک",
+          "price": 55000,
+          "quantity": 3,
+          "purchaseDate": "2024-03-25"
+        },
+        {
+          "productId": 3,
+          "title": "برنج دودی",
+          "price": 350000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-28"
+        }
+      ]
     },
     {
       "id": 7,
@@ -54,7 +207,29 @@
       "email": "reza@example.com",
       "role": "user",
       "password": "567890",
-      "purchases": []
+      "purchases": [
+        {
+          "productId": 4,
+          "title": "برنج دم سیاه",
+          "price": 369000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-15"
+        },
+        {
+          "productId": 5,
+          "title": "زیتون ماری",
+          "price": 85000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-22"
+        },
+        {
+          "productId": 8,
+          "title": "رشته خشکار",
+          "price": 45000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-26"
+        }
+      ]
     },
     {
       "id": 8,
@@ -62,7 +237,36 @@
       "email": "maryam@example.com",
       "role": "user",
       "password": "678901",
-      "purchases": []
+      "purchases": [
+        {
+          "productId": 2,
+          "title": "برنج صدری",
+          "price": 280000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-16"
+        },
+        {
+          "productId": 6,
+          "title": "زیتون شکسته",
+          "price": 75000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-23"
+        },
+        {
+          "productId": 9,
+          "title": "چای کرک",
+          "price": 55000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-27"
+        },
+        {
+          "productId": 1,
+          "title": "برنج هاشمی",
+          "price": 320000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-29"
+        }
+      ]
     },
     {
       "id": 9,
@@ -70,7 +274,29 @@
       "email": "ahmad@example.com",
       "role": "user",
       "password": "789012",
-      "purchases": []
+      "purchases": [
+        {
+          "productId": 3,
+          "title": "برنج دودی",
+          "price": 350000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-17"
+        },
+        {
+          "productId": 7,
+          "title": "زیتون کنسروی",
+          "price": 65000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-24"
+        },
+        {
+          "productId": 4,
+          "title": "برنج دم سیاه",
+          "price": 369000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-28"
+        }
+      ]
     },
     {
       "id": 10,
@@ -78,7 +304,36 @@
       "email": "zahra@example.com",
       "role": "user",
       "password": "890123",
-      "purchases": []
+      "purchases": [
+        {
+          "productId": 1,
+          "title": "برنج هاشمی",
+          "price": 320000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-18"
+        },
+        {
+          "productId": 5,
+          "title": "زیتون ماری",
+          "price": 85000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-25"
+        },
+        {
+          "productId": 8,
+          "title": "رشته خشکار",
+          "price": 45000,
+          "quantity": 3,
+          "purchaseDate": "2024-03-29"
+        },
+        {
+          "productId": 2,
+          "title": "برنج صدری",
+          "price": 280000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-30"
+        }
+      ]
     },
     {
       "id": 11,
@@ -86,7 +341,29 @@
       "email": "hossein@example.com",
       "role": "user",
       "password": "901234",
-      "purchases": []
+      "purchases": [
+        {
+          "productId": 4,
+          "title": "برنج دم سیاه",
+          "price": 369000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-19"
+        },
+        {
+          "productId": 6,
+          "title": "زیتون شکسته",
+          "price": 75000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-26"
+        },
+        {
+          "productId": 9,
+          "title": "چای کرک",
+          "price": 55000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-30"
+        }
+      ]
     },
     {
       "id": 12,
@@ -94,7 +371,36 @@
       "email": "superadmin@example.com",
       "role": "admin",
       "password": "654321",
-      "purchases": []
+      "purchases": [
+        {
+          "productId": 2,
+          "title": "برنج صدری",
+          "price": 280000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-20"
+        },
+        {
+          "productId": 7,
+          "title": "زیتون کنسروی",
+          "price": 65000,
+          "quantity": 1,
+          "purchaseDate": "2024-03-27"
+        },
+        {
+          "productId": 3,
+          "title": "برنج دودی",
+          "price": 350000,
+          "quantity": 2,
+          "purchaseDate": "2024-03-31"
+        },
+        {
+          "productId": 5,
+          "title": "زیتون ماری",
+          "price": 85000,
+          "quantity": 1,
+          "purchaseDate": "2024-04-01"
+        }
+      ]
     }
   ],
   "products": [

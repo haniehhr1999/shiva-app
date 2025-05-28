@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useEffect, useRef, useState } from "react";
 // Import Swiper React components
@@ -15,7 +15,6 @@ import "swiper/css/pagination";
 // import required modules
 
 export default function Home() {
-
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -44,7 +43,14 @@ export default function Home() {
     <div className="bg-slate-100">
       <h3 className="text-xl text-center">پرفروش ترین ها</h3>
 
-      <Swiper spaceBetween={50} slidesPerView={1}>
+      <Swiper
+        spaceBetween={50}
+        slidesPerView={1}
+        pagination={{
+          dynamicBullets: true,
+        }}
+        modules={[Pagination]}
+      >
         <SwiperSlide>
           <div
             style={{

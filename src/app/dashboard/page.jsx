@@ -14,6 +14,8 @@ import { FaTrash } from "react-icons/fa";
 import { FaUser } from "react-icons/fa";
 import { MdModeEdit } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
+import SimpleLineChart from "../../components/SimpleLineChart"
+
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -261,6 +263,13 @@ export default function DashboardPage() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-center">داشبورد مدیر</h1>
+      
+      {/* Add SimpleLineChart */}
+      <div className="mb-8 h-[400px] bg-white p-4 rounded-lg shadow">
+        <h2 className="text-xl font-semibold mb-4 text-center">نمودار فروش</h2>
+        <SimpleLineChart />
+      </div>
+
       <div className="card">
         <DataTable
           value={users}
@@ -322,6 +331,7 @@ export default function DashboardPage() {
           ></Column>
         </DataTable>
       </div>
+
 
       {/* Edit Dialog */}
       <Dialog
