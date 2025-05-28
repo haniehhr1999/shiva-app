@@ -1,9 +1,6 @@
-import { cookies } from "next/headers";
-import Image from "next/image";
-import { redirect } from "next/navigation";
-import { verifyJwt } from "@/../lib/auth";
+"use client"
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -11,8 +8,24 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
-export default async function Home() {
+// import required modules
+
+export default function Home() {
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    // اگر SSR است، چیزی رندر نکن
+    return null;
+  }
   // try {
   //   const cookieStore = await cookies();
   //   const token = cookieStore.get("token");
@@ -30,6 +43,49 @@ export default async function Home() {
   return (
     <div className="bg-slate-100">
       <h3 className="text-xl text-center">پرفروش ترین ها</h3>
+
+      <Swiper spaceBetween={50} slidesPerView={1}>
+        <SwiperSlide>
+          <div
+            style={{
+              backgroundColor: "lightcoral",
+              height: "200px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            Slide 1
+          </div>
+        </SwiperSlide>
+        <SwiperSlide>
+          <div
+            style={{
+              backgroundColor: "lightblue",
+              height: "200px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            Slide 2
+          </div>
+        </SwiperSlide>
+        <SwiperSlide>
+          <div
+            style={{
+              backgroundColor: "lightgreen",
+              height: "200px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            Slide 3
+          </div>
+        </SwiperSlide>
+      </Swiper>
+
       <div className="grid grid-cols-4 gap-4">
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident rem
@@ -55,7 +111,6 @@ export default async function Home() {
           molestiae voluptatum numquam.
         </p>
       </div>
-
 
       <h3 className="text-xl text-center">نظرات ترین </h3>
       <div className="grid grid-cols-4 gap-4">
