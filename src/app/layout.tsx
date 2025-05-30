@@ -4,6 +4,12 @@ import "./globals.css";
 import Layout from "@/components/Layout";
 import Providers from "@/components/Providers";
 
+
+import 'primereact/resources/themes/lara-light-blue/theme.css'; // تم دلخواهت
+import 'primereact/resources/primereact.min.css';
+// import 'primeicons/primeicons.css';
+// import 'primeflex/primeflex.css'; 
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
