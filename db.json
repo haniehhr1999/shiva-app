@@ -12,21 +12,24 @@
           "title": "برنج هاشمی",
           "price": 320000,
           "quantity": 2,
-          "purchaseDate": "2024-03-15"
+          "purchaseDate": "2024-03-15",
+          "purchaseDateJalali": "1402/12/25"
         },
         {
           "productId": 5,
           "title": "زیتون ماری",
           "price": 85000,
           "quantity": 1,
-          "purchaseDate": "2024-03-20"
+          "purchaseDate": "2024-03-20",
+          "purchaseDateJalali": "1403/01/01"
         },
         {
           "productId": 8,
           "title": "رشته خشکار",
           "price": 45000,
           "quantity": 3,
-          "purchaseDate": "2024-03-25"
+          "purchaseDate": "2024-03-25",
+          "purchaseDateJalali": "1403/01/06"
         }
       ]
     },
@@ -42,28 +45,32 @@
           "title": "برنج صدری",
           "price": 280000,
           "quantity": 1,
-          "purchaseDate": "2024-03-10"
+          "purchaseDate": "2024-03-10",
+          "purchaseDateJalali": "1402/12/20"
         },
         {
           "productId": 6,
           "title": "زیتون شکسته",
           "price": 75000,
           "quantity": 2,
-          "purchaseDate": "2024-03-18"
+          "purchaseDate": "2024-03-18",
+          "purchaseDateJalali": "1402/12/28"
         },
         {
           "productId": 9,
           "title": "چای کرک",
           "price": 55000,
           "quantity": 4,
-          "purchaseDate": "2024-03-22"
+          "purchaseDate": "2024-03-22",
+          "purchaseDateJalali": "1403/01/03"
         },
         {
           "productId": 3,
           "title": "برنج دودی",
           "price": 350000,
           "quantity": 1,
-          "purchaseDate": "2024-03-28"
+          "purchaseDate": "2024-03-28",
+          "purchaseDateJalali": "1403/01/09"
         }
       ]
     },
@@ -79,21 +86,24 @@
           "title": "برنج دم سیاه",
           "price": 369000,
           "quantity": 1,
-          "purchaseDate": "2024-03-12"
+          "purchaseDate": "2024-03-12",
+          "purchaseDateJalali": "1402/12/22"
         },
         {
           "productId": 7,
           "title": "زیتون کنسروی",
           "price": 65000,
           "quantity": 3,
-          "purchaseDate": "2024-03-19"
+          "purchaseDate": "2024-03-19",
+          "purchaseDateJalali": "1402/12/29"
         },
         {
           "productId": 1,
           "title": "برنج هاشمی",
           "price": 320000,
           "quantity": 2,
-          "purchaseDate": "2024-03-26"
+          "purchaseDate": "2024-03-26",
+          "purchaseDateJalali": "1403/01/07"
         }
       ]
     },
@@ -101,7 +111,7 @@
       "id": 4,
       "username": "sara",
       "email": "sara@example.com",
-      "role": "user",
+      "role": "admin",
       "password": "456789",
       "purchases": [
         {
@@ -109,28 +119,32 @@
           "title": "برنج دودی",
           "price": 350000,
           "quantity": 1,
-          "purchaseDate": "2024-03-14"
+          "purchaseDate": "2024-03-14",
+          "purchaseDateJalali": "1402/12/24"
         },
         {
           "productId": 5,
           "title": "زیتون ماری",
           "price": 85000,
           "quantity": 2,
-          "purchaseDate": "2024-03-21"
+          "purchaseDate": "2024-03-21",
+          "purchaseDateJalali": "1403/01/02"
         },
         {
           "productId": 8,
           "title": "رشته خشکار",
           "price": 45000,
-          "quantity": 1,
-          "purchaseDate": "2024-03-27"
+          "quantity": 5,
+          "purchaseDate": "2024-03-27",
+          "purchaseDateJalali": "1403/01/08"
         },
         {
           "productId": 9,
           "title": "چای کرک",
           "price": 55000,
           "quantity": 2,
-          "purchaseDate": "2024-03-29"
+          "purchaseDate": "2024-03-29",
+          "purchaseDateJalali": "1403/01/10"
         }
       ]
     },
@@ -146,21 +160,24 @@
           "title": "برنج صدری",
           "price": 280000,
           "quantity": 2,
-          "purchaseDate": "2024-03-11"
+          "purchaseDate": "2024-03-11",
+          "purchaseDateJalali": "1402/12/21"
         },
         {
           "productId": 6,
           "title": "زیتون شکسته",
           "price": 75000,
           "quantity": 1,
-          "purchaseDate": "2024-03-17"
+          "purchaseDate": "2024-03-17",
+          "purchaseDateJalali": "1402/12/27"
         },
         {
           "productId": 4,
           "title": "برنج دم سیاه",
           "price": 369000,
           "quantity": 1,
-          "purchaseDate": "2024-03-24"
+          "purchaseDate": "2024-03-24",
+          "purchaseDateJalali": "1403/01/05"
         }
       ]
     },
@@ -176,28 +193,32 @@
           "title": "برنج هاشمی",
           "price": 320000,
           "quantity": 1,
-          "purchaseDate": "2024-03-13"
+          "purchaseDate": "2024-03-13",
+          "purchaseDateJalali": "1402/12/23"
         },
         {
           "productId": 7,
           "title": "زیتون کنسروی",
           "price": 65000,
           "quantity": 2,
-          "purchaseDate": "2024-03-20"
+          "purchaseDate": "2024-03-20",
+          "purchaseDateJalali": "1403/01/01"
         },
         {
           "productId": 9,
           "title": "چای کرک",
           "price": 55000,
           "quantity": 3,
-          "purchaseDate": "2024-03-25"
+          "purchaseDate": "2024-03-25",
+          "purchaseDateJalali": "1403/01/06"
         },
         {
           "productId": 3,
           "title": "برنج دودی",
           "price": 350000,
           "quantity": 1,
-          "purchaseDate": "2024-03-28"
+          "purchaseDate": "2024-03-28",
+          "purchaseDateJalali": "1403/01/09"
         }
       ]
     },
@@ -213,21 +234,24 @@
           "title": "برنج دم سیاه",
           "price": 369000,
           "quantity": 1,
-          "purchaseDate": "2024-03-15"
+          "purchaseDate": "2024-03-15",
+          "purchaseDateJalali": "1402/12/25"
         },
         {
           "productId": 5,
           "title": "زیتون ماری",
           "price": 85000,
           "quantity": 1,
-          "purchaseDate": "2024-03-22"
+          "purchaseDate": "2024-03-22",
+          "purchaseDateJalali": "1403/01/03"
         },
         {
           "productId": 8,
           "title": "رشته خشکار",
           "price": 45000,
           "quantity": 2,
-          "purchaseDate": "2024-03-26"
+          "purchaseDate": "2024-03-26",
+          "purchaseDateJalali": "1403/01/07"
         }
       ]
     },
@@ -243,28 +267,40 @@
           "title": "برنج صدری",
           "price": 280000,
           "quantity": 2,
-          "purchaseDate": "2024-03-16"
+          "purchaseDate": "2024-03-16",
+          "purchaseDateJalali": "1402/12/26"
         },
         {
           "productId": 6,
           "title": "زیتون شکسته",
           "price": 75000,
           "quantity": 1,
-          "purchaseDate": "2024-03-23"
+          "purchaseDate": "2024-03-23",
+          "purchaseDateJalali": "1403/01/04"
+        },
+        {
+          "productId": 6,
+          "title": "زیتون شکسته",
+          "price": 75000,
+          "quantity": 3,
+          "purchaseDate": "2024-03-16",
+          "purchaseDateJalali": "1402/12/26"
         },
         {
           "productId": 9,
           "title": "چای کرک",
           "price": 55000,
           "quantity": 2,
-          "purchaseDate": "2024-03-27"
+          "purchaseDate": "2024-03-27",
+          "purchaseDateJalali": "1403/01/08"
         },
         {
           "productId": 1,
           "title": "برنج هاشمی",
           "price": 320000,
           "quantity": 1,
-          "purchaseDate": "2024-03-29"
+          "purchaseDate": "2024-03-29",
+          "purchaseDateJalali": "1403/01/10"
         }
       ]
     },
@@ -280,21 +316,24 @@
           "title": "برنج دودی",
           "price": 350000,
           "quantity": 1,
-          "purchaseDate": "2024-03-17"
+          "purchaseDate": "2024-03-17",
+          "purchaseDateJalali": "1402/12/27"
         },
         {
           "productId": 7,
           "title": "زیتون کنسروی",
           "price": 65000,
           "quantity": 2,
-          "purchaseDate": "2024-03-24"
+          "purchaseDate": "2024-03-24",
+          "purchaseDateJalali": "1403/01/05"
         },
         {
           "productId": 4,
           "title": "برنج دم سیاه",
           "price": 369000,
           "quantity": 1,
-          "purchaseDate": "2024-03-28"
+          "purchaseDate": "2024-03-28",
+          "purchaseDateJalali": "1403/01/09"
         }
       ]
     },
@@ -310,28 +349,32 @@
           "title": "برنج هاشمی",
           "price": 320000,
           "quantity": 2,
-          "purchaseDate": "2024-03-18"
+          "purchaseDate": "2024-03-18",
+          "purchaseDateJalali": "1402/12/28"
         },
         {
           "productId": 5,
           "title": "زیتون ماری",
           "price": 85000,
           "quantity": 1,
-          "purchaseDate": "2024-03-25"
+          "purchaseDate": "2024-03-25",
+          "purchaseDateJalali": "1403/01/06"
         },
         {
           "productId": 8,
           "title": "رشته خشکار",
           "price": 45000,
           "quantity": 3,
-          "purchaseDate": "2024-03-29"
+          "purchaseDate": "2024-03-29",
+          "purchaseDateJalali": "1403/01/10"
         },
         {
           "productId": 2,
           "title": "برنج صدری",
           "price": 280000,
           "quantity": 1,
-          "purchaseDate": "2024-03-30"
+          "purchaseDate": "2024-03-30",
+          "purchaseDateJalali": "1403/01/11"
         }
       ]
     },
@@ -347,21 +390,24 @@
           "title": "برنج دم سیاه",
           "price": 369000,
           "quantity": 1,
-          "purchaseDate": "2024-03-19"
+          "purchaseDate": "2024-03-19",
+          "purchaseDateJalali": "1402/12/29"
         },
         {
           "productId": 6,
           "title": "زیتون شکسته",
           "price": 75000,
           "quantity": 2,
-          "purchaseDate": "2024-03-26"
+          "purchaseDate": "2024-03-26",
+          "purchaseDateJalali": "1403/01/07"
         },
         {
           "productId": 9,
           "title": "چای کرک",
           "price": 55000,
           "quantity": 1,
-          "purchaseDate": "2024-03-30"
+          "purchaseDate": "2024-03-30",
+          "purchaseDateJalali": "1403/01/11"
         }
       ]
     },
@@ -377,28 +423,32 @@
           "title": "برنج صدری",
           "price": 280000,
           "quantity": 1,
-          "purchaseDate": "2024-03-20"
+          "purchaseDate": "2024-03-20",
+          "purchaseDateJalali": "1403/01/01"
         },
         {
           "productId": 7,
           "title": "زیتون کنسروی",
           "price": 65000,
           "quantity": 1,
-          "purchaseDate": "2024-03-27"
+          "purchaseDate": "2024-03-27",
+          "purchaseDateJalali": "1403/01/08"
         },
         {
           "productId": 3,
           "title": "برنج دودی",
           "price": 350000,
           "quantity": 2,
-          "purchaseDate": "2024-03-31"
+          "purchaseDate": "2024-03-31",
+          "purchaseDateJalali": "1403/01/12"
         },
         {
           "productId": 5,
           "title": "زیتون ماری",
           "price": 85000,
           "quantity": 1,
-          "purchaseDate": "2024-04-01"
+          "purchaseDate": "2024-04-01",
+          "purchaseDateJalali": "1403/01/13"
         }
       ]
     }
@@ -425,7 +475,8 @@
           "username": "haniye",
           "text": "برنج خوبی بود خوشم اومد",
           "rating": 5,
-          "createdAt": "2025-05-27T13:23:24.254Z"
+          "createdAt": "2025-05-27T13:23:24.254Z",
+          "createdAtJalali": "1404/03/06"
         }
       ]
     },
@@ -442,7 +493,8 @@
           "username": "haniye",
           "text": "سلام خوبی",
           "rating": 4,
-          "createdAt": "2025-05-27T13:14:15.933Z"
+          "createdAt": "2025-05-27T13:14:15.933Z",
+          "createdAtJalali": "1404/03/06"
         }
       ]
     },

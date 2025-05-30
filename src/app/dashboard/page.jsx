@@ -15,6 +15,7 @@ import { FaUser } from "react-icons/fa";
 import { MdModeEdit } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import SimpleLineChart from "../../components/SimpleLineChart";
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer } from 'recharts';
 
 
 
@@ -24,16 +25,13 @@ export default function DashboardPage() {
   const router = useRouter();
   const [userRole, setUserRole] = useState(null);
   const [editDialogVisible, setEditDialogVisible] = useState(false);
-  const [addDialogVisible, setAddDialogVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [viewDialogVisible, setViewDialogVisible] = useState(false);
   const [roleChangeDialogVisible, setRoleChangeDialogVisible] = useState(false);
-
   const [newUsername, setNewUsername] = useState('')
   const [newUseremail, setNewUseremail] = useState('')
   const [newUserpass, setNewUserpass] = useState('')
-
   const [selectedDuration, setSelectedDuration] = useState(null);
   const durations = [
     { name: "روزانه", code: "day" },
@@ -73,6 +71,7 @@ export default function DashboardPage() {
       const res = await fetch("/api/users");
       if (res.ok) {
         const data = await res.json();
+        console.log('data------', data)
         setUsers(data);
       }
     } catch (error) {
@@ -178,25 +177,6 @@ export default function DashboardPage() {
     }
   };
 
-  const handleAdd = async () => {
-    try {
-      const response = await fetch(`/api/users/${selectedUser.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(selectedUser),
-      });
-
-      if (response.ok) {
-        setAddDialogVisible(false);
-        fetchUsers(); // Refresh the users list
-      }
-    } catch (error) {
-      console.error("Error updating user:", error);
-    }
-  };
-
   const handleDelete = async () => {
     try {
       const response = await fetch(`/api/users/${selectedUser.id}`, {
@@ -248,24 +228,6 @@ export default function DashboardPage() {
       />
     </div>
   );
-
-  const addDialogFooter = (
-    <div>
-      <Button
-        label="انصراف"
-        icon="pi pi-times"
-        onClick={() => setAddDialogVisible(false)}
-        className="p-button-text"
-      />
-      <Button
-        className="bg-green-700"
-        label="ذخیره"
-        icon="pi pi-check"
-        onClick={handleAdd}
-        autoFocus
-      />
-    </div>
-  )
 
   const deleteDialogFooter = (
     <div>
@@ -335,6 +297,32 @@ export default function DashboardPage() {
     setVisible(true);
   };
 
+
+  // 1️⃣ تمام خریدها رو به یک آرایه‌ی واحد جمع می‌کنیم
+  const allPurchases = users.flatMap(user => user.purchases);
+
+  // 2️⃣ گروه‌بندی بر اساس purchaseDate
+  const groupedByDate = {};
+
+  allPurchases.forEach(purchase => {
+    const date = purchase.purchaseDate;
+    const productKey = `product${purchase.productId}`;
+
+    // اگر برای تاریخ فعلی آبجکت وجود نداشت، بساز
+    if (!groupedByDate[date]) {
+      groupedByDate[date] = { date };
+    }
+
+    // مقدار قبلی یا ۰
+    groupedByDate[date][productKey] = (groupedByDate[date][productKey] || 0) + purchase.quantity;
+  });
+
+  // 3️⃣ تبدیل به آرایه
+  const result = Object.values(groupedByDate);
+
+  // نمایش نتیجه
+  console.log(result);
+
   if (loading) return <p>در حال بارگذاری...</p>;
 
   return (
@@ -344,8 +332,34 @@ export default function DashboardPage() {
       {/* Add SimpleLineChart */}
       <div className="mb-8 h-[400px] bg-white p-4 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4 text-center">نمودار فروش</h2>
-        <SimpleLineChart />
+        {/* <SimpleLineChart /> */}
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+          data={result}
+        >
+          <CartesianGrid stroke="#ccc" />
+          <XAxis dataKey="date" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="product1" stroke="#8884d8" />
+          <Line type="monotone" dataKey="product2" stroke="#82ca9d" />
+          <Line type="monotone" dataKey="product3" stroke="#fb8500" />
+          <Line type="monotone" dataKey="product4" stroke="#8ecae6" />
+          <Line type="monotone" dataKey="product5" stroke="#ff8fab" />
+          <Line type="monotone" dataKey="product6" stroke="#ffd60a" />
+          <Line type="monotone" dataKey="product7" stroke="#adc178" />
+          <Line type="monotone" dataKey="product8" stroke="#f00" />
+        </LineChart>
+      </ResponsiveContainer>
       </div>
+
 
       {/* <Button label="افزودن کاربر" icon="pi pi-check" iconPos="right" /> */}
       <Button label="افزودن کاربر" icon="pi pi-arrow-down" onClick={() => show('top')} className="p-button-warning" style={{ minWidth: '10rem' }} />
