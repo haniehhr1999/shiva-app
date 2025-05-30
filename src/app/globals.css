@@ -802,4 +802,118 @@ img.flag {
   background-position: 0 100%;
 }
 
+
+
+
+/* در فایل CSS پروژه اضافه کن */
+.p-datatable .p-datatable-tbody > tr > td,
+.p-datatable .p-datatable-thead > tr > th {
+  text-align: right;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  direction: rtl;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  direction: rtl;
+}
+
+/* برای راست‌چین کردن paginator (فوتر) */
+.p-paginator {
+  direction: rtl;
+  justify-content: flex-start; /* شماره صفحه و دکمه‌ها سمت راست بیان */
+}
+
+/* برای راست‌چین کردن محتوای هدر و بدنه دیتاتیبل */
+.p-datatable .p-datatable-tbody > tr > td,
+.p-datatable .p-datatable-thead > tr > th {
+  text-align: right;
+  direction: rtl;
+}
+
+/* برای مرتب‌سازی position دکمه‌ها در فوتر */
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-last,
+.p-paginator .p-paginator-pages {
+  float: right;
+}
+
+
+
+
+
+
+/* راست‌چین‌کردن جدول و هدر */
+.p-datatable .p-datatable-thead > tr > th,
+.p-datatable .p-datatable-tbody > tr > td {
+  text-align: right;
+  direction: rtl;
+}
+
+/* راست‌چین‌کردن paginator */
+.p-paginator {
+  direction: rtl;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; /* محتوا رو از سمت راست بچین */
+  align-items: center;
+}
+
+/* چینش صحیح دکمه‌های paginator */
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-last,
+.p-paginator .p-paginator-pages {
+  float: right;
+}
+
+/* استایل به دراپ‌داون paginator */
+.p-paginator .p-dropdown {
+  direction: rtl;
+  text-align: right;
+}
+
+/* استایل کلی به دراپ‌داون برای جذابیت بیشتر */
+.p-dropdown-label {
+  text-align: right !important;
+  direction: rtl;
+}
+
+/* اگه دوست داری اندازه یا فونت دراپ‌داون رو هم تغییر بدی */
+.p-paginator .p-dropdown .p-dropdown-label {
+  font-size: 0.9rem;
+}
+
+/* دراپ‌داون منو راست‌چین */
+.p-dropdown-panel {
+  direction: rtl;
+}
+
+
+/* با این کار ترتیب نمایش عناصر رو معکوس می‌کنیم */
+.p-paginator > * {
+  order: -1; /* همه دکمه‌ها بیان سمت راست */
+}
+
+.p-paginator .p-paginator-pages {
+  order: 0; /* شماره صفحات بمونه سر جای خودش */
+}
+
+.p-paginator .p-dropdown {
+  order: 1; /* دراپ‌داون بیاد آخر (سمت چپ) */
+}
+
+
+.p-paginator .p-paginator-first { order: -4; }
+.p-paginator .p-paginator-prev { order: -3; }
+.p-paginator .p-paginator-pages { order: -2; }
+.p-paginator .p-paginator-next { order: -1; }
+.p-paginator .p-paginator-last { order: 0; }
+.p-paginator .p-dropdown { order: 1; }
+
+
 /* end prime react ----------------------------------------------- */

@@ -16,6 +16,12 @@ import { MdModeEdit } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import SimpleLineChart from "../../components/SimpleLineChart";
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { CiUser } from "react-icons/ci";
+import { CiTrash } from "react-icons/ci";
+import { CiEdit } from "react-icons/ci";
+import { CiRead } from "react-icons/ci";
+
+
 
 
 
@@ -82,9 +88,10 @@ export default function DashboardPage() {
   const roleBodyTemplate = (rowData) => {
     return (
       <Tag
+      rounded
         value={rowData.role}
-        severity={rowData.role === "admin" ? "danger" : "success"}
-        className="text-center"
+        // severity={rowData.role === "admin" ? "#8ecae6" : "#e0e1dd"}
+        className={`text-center ${rowData.role === "admin" ? "bg-[#8ecae6]" : "bg-[#e0e1dd]" }`}
       />
     );
   };
@@ -102,27 +109,29 @@ export default function DashboardPage() {
   };
 
   const actionsBodyTemplate = (rowData) => {
+    console.log(rowData)
     return (
       <div className="flex gap-2 justify-content-center">
-        <FaEye
+        <CiRead
           className="cursor-pointer text-blue-600 text-xl"
           onClick={() => {
             setSelectedUser(rowData);
             setViewDialogVisible(true);
+            router.push(`/purchases/${rowData.id}`)
           }}
         />
-        <FaTrash
+        <CiTrash 
           className="cursor-pointer text-red-600 text-xl"
           onClick={() => {
             setSelectedUser(rowData);
             setDeleteDialogVisible(true);
           }}
         />
-        <FaUser
+        <CiUser
           className="cursor-pointer text-blue-600 text-xl"
           onClick={() => handleRoleChange(rowData)}
         />
-        <MdModeEdit
+        <CiEdit
           className="cursor-pointer text-green-600 text-xl"
           onClick={() => {
             setSelectedUser(rowData);
@@ -305,7 +314,7 @@ export default function DashboardPage() {
   const groupedByDate = {};
 
   allPurchases.forEach(purchase => {
-    const date = purchase.purchaseDate;
+    const date = purchase.purchaseDateJalali;
     const productKey = `product${purchase.productId}`;
 
     // اگر برای تاریخ فعلی آبجکت وجود نداشت، بساز
