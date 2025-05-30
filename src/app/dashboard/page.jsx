@@ -16,16 +16,23 @@ import { MdModeEdit } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import SimpleLineChart from "../../components/SimpleLineChart";
 
+
+
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const router = useRouter();
   const [userRole, setUserRole] = useState(null);
   const [editDialogVisible, setEditDialogVisible] = useState(false);
+  const [addDialogVisible, setAddDialogVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [viewDialogVisible, setViewDialogVisible] = useState(false);
   const [roleChangeDialogVisible, setRoleChangeDialogVisible] = useState(false);
+
+  const [newUsername, setNewUsername] = useState('')
+  const [newUseremail, setNewUseremail] = useState('')
+  const [newUserpass, setNewUserpass] = useState('')
 
   const [selectedDuration, setSelectedDuration] = useState(null);
   const durations = [
@@ -171,6 +178,25 @@ export default function DashboardPage() {
     }
   };
 
+  const handleAdd = async () => {
+    try {
+      const response = await fetch(`/api/users/${selectedUser.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selectedUser),
+      });
+
+      if (response.ok) {
+        setAddDialogVisible(false);
+        fetchUsers(); // Refresh the users list
+      }
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  };
+
   const handleDelete = async () => {
     try {
       const response = await fetch(`/api/users/${selectedUser.id}`, {
@@ -222,6 +248,24 @@ export default function DashboardPage() {
       />
     </div>
   );
+
+  const addDialogFooter = (
+    <div>
+      <Button
+        label="انصراف"
+        icon="pi pi-times"
+        onClick={() => setAddDialogVisible(false)}
+        className="p-button-text"
+      />
+      <Button
+        className="bg-green-700"
+        label="ذخیره"
+        icon="pi pi-check"
+        onClick={handleAdd}
+        autoFocus
+      />
+    </div>
+  )
 
   const deleteDialogFooter = (
     <div>
@@ -277,6 +321,20 @@ export default function DashboardPage() {
     </div>
   );
 
+  const [visible, setVisible] = useState(false);
+  const [position, setPosition] = useState('center');
+  const footerContent = (
+    <div>
+      <Button label="No" icon="pi pi-times" onClick={() => setVisible(false)} className="p-button-text" />
+      <Button label="Yes" icon="pi pi-check" onClick={() => setVisible(false)} autoFocus />
+    </div>
+  );
+
+  const show = (position) => {
+    setPosition(position);
+    setVisible(true);
+  };
+
   if (loading) return <p>در حال بارگذاری...</p>;
 
   return (
@@ -288,6 +346,10 @@ export default function DashboardPage() {
         <h2 className="text-xl font-semibold mb-4 text-center">نمودار فروش</h2>
         <SimpleLineChart />
       </div>
+
+      {/* <Button label="افزودن کاربر" icon="pi pi-check" iconPos="right" /> */}
+      <Button label="افزودن کاربر" icon="pi pi-arrow-down" onClick={() => show('top')} className="p-button-warning" style={{ minWidth: '10rem' }} />
+
 
       <div className="card">
         <DataTable
@@ -359,6 +421,52 @@ export default function DashboardPage() {
         placeholder="Select a duration"
         className="w-full md:w-14rem"
       />
+
+      {/* add user Dialog */}
+      <Dialog header="افزودن کاربر" visible={visible} position={position} style={{ width: '50vw' }} onHide={() => { if (!visible) return; setVisible(false); }} footer={footerContent} draggable={false} resizable={false}>
+        <div className="field bg-red-200">
+          <div>
+
+            <label htmlFor="username">نام کاربری</label>
+            <InputText
+              id="username"
+              className="w-full"
+              value={newUsername}
+              onChange={(e) =>
+                setNewUsername(e.target.value)
+              }
+              required
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email">ایمیل</label>
+            <InputText
+              id="email"
+              className="w-full"
+              value={newUseremail}
+              onChange={(e) =>
+                setNewUseremail(e.target.value)
+              }
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password">رمز عبور</label>
+            <InputText
+              id="password"
+              className="w-full"
+              value={newUserpass}
+              onChange={(e) =>
+                setNewUserpass(e.target.value)
+              }
+              required
+            />
+          </div>
+        </div>
+      </Dialog>
 
       {/* Edit Dialog */}
       <Dialog
