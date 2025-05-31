@@ -465,6 +465,13 @@
           "title": "برنج دودی",
           "price": 350000,
           "img": "/images/rice3.jpg"
+        },
+        {
+          "productId": 4,
+          "quantity": 1,
+          "title": "برنج دم سیاه",
+          "price": 369000,
+          "img": "/images/rice1.jpg"
         }
       ]
     }

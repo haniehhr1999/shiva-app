@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Toast } from "primereact/toast";
 import { useRef } from "react";
+import Link from "next/link";
 
 const ProductItem = ({ id, title, body, price, img }) => {
   const [loading, setLoading] = useState(false);
@@ -60,22 +61,27 @@ const ProductItem = ({ id, title, body, price, img }) => {
 
   return (
     <div className="shadow-md rounded-md p-6">
-      {/* <img src={rice1} alt="cvxcv" /> */}
       <Toast ref={toast} />
-      <Image
-        src={img}
-        className="rounded-md"
-        alt={title}
-        width={300}
-        height={300}
-      />
-      <div className="py-3">
-        <h2 className="mb-2 text-[#38b000] text-xl font-bold">{title}</h2>
-        <p>{body}</p>
-        <p className="text-lg font-bold mt-2">{price.toLocaleString()} تومان</p>
-      </div>
+      <Link href={`/store/${id}`} className="block">
+        <Image
+          src={img}
+          className="rounded-md"
+          alt={title}
+          width={300}
+          height={300}
+        />
+        <div className="py-3">
+          <h2 className="mb-2 text-[#38b000] text-xl font-bold">{title}</h2>
+          <p>{body}</p>
+          <p className="text-lg font-bold mt-2">{price.toLocaleString()} تومان</p>
+        </div>
+      </Link>
       <button
-        onClick={handleAddToCart}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleAddToCart();
+        }}
         disabled={loading}
         className="w-full bg-green-600 text-white rounded py-2 hover:bg-green-700 transition-colors disabled:bg-green-400"
       >
