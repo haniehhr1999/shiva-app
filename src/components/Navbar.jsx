@@ -42,21 +42,25 @@ const Navbar = () => {
     }
   };
 
-  useEffect(() => {
-    async function checkUser() {
-      try {
-        const res = await fetch("/api/userinfo", { credentials: "include" });
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data);
-          setPurchases(data.purchases || []);
-        }
-      } catch (error) {
-        console.error("Error checking user:", error);
+  const updateCart = async () => {
+    try {
+      const res = await fetch("/api/userinfo", { credentials: "include" });
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data);
+        setPurchases(data.purchases || []);
       }
+    } catch (error) {
+      console.error("Error updating cart:", error);
     }
+  };
 
-    checkUser();
+  useEffect(() => {
+    updateCart();
+    window.addEventListener('cartUpdated', updateCart);
+    return () => {
+      window.removeEventListener('cartUpdated', updateCart);
+    };
   }, []);
 
   const handleLogout = async () => {

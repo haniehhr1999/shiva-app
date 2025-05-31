@@ -451,6 +451,22 @@
           "purchaseDateJalali": "1403/01/13"
         }
       ]
+    },
+    {
+      "id": 13,
+      "username": "amir",
+      "email": "rahimi@gmail.com",
+      "role": "user",
+      "password": "654321",
+      "purchases": [
+        {
+          "productId": 3,
+          "quantity": 2,
+          "title": "برنج دودی",
+          "price": 350000,
+          "img": "/images/rice3.jpg"
+        }
+      ]
     }
   ],
   "products": [

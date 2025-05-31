@@ -32,6 +32,7 @@ const ProductItem = ({ id, title, body, price, img }) => {
           detail: data.message,
           life: 3000,
         });
+        window.dispatchEvent(new Event('cartUpdated'));
       } else {
         if (res.status === 401) {
           router.push("/login");
