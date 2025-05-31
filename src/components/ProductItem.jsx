@@ -63,13 +63,15 @@ const ProductItem = ({ id, title, body, price, img }) => {
     <div className="shadow-md rounded-md p-6">
       <Toast ref={toast} />
       <Link href={`/store/${id}`} className="block">
-        <Image
-          src={img}
-          className="rounded-md"
-          alt={title}
-          width={300}
-          height={300}
-        />
+        <div className="relative w-full aspect-square">
+          <Image
+            src={img}
+            className="rounded-md object-cover"
+            alt={title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </div>
         <div className="py-3">
           <h2 className="mb-2 text-[#38b000] text-xl font-bold">{title}</h2>
           <p>{body}</p>

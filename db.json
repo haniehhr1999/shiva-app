@@ -461,7 +461,7 @@
       "purchases": [
         {
           "productId": 3,
-          "quantity": 2,
+          "quantity": 4,
           "title": "برنج دودی",
           "price": 350000,
           "img": "/images/rice3.jpg"
