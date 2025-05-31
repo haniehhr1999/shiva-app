@@ -125,7 +125,7 @@ const Navbar = () => {
               <Link
                 key={item.href}
                 className={`mx-3 ${
-                  path === item.href ? "text-lime-500 font-bold" : ""
+                  path === item.href ? "text-lime-500 font-bold" : "text-gray-700 dark:text-gray-300"
                 }`}
                 href={item.href}
               >
@@ -145,25 +145,24 @@ const Navbar = () => {
                 <FaSun className="text-yellow-400" />
               )}
             </button>
-            <FaBasketShopping onClick={() => show("top-right")} className="cursor-pointer mx-4" />
-            <FaUser className="mx-2" />
+            <FaBasketShopping onClick={() => show("top-right")} className="cursor-pointer mx-4 text-gray-700 dark:text-gray-300" />
+            <FaUser className="mx-2 text-gray-700 dark:text-gray-300" />
             {user ? (
               <div className="flex items-center space-x-4 space-x-reverse">
-                <span className="text-gray-700">
-                  سلام
-                  {user.username}
+                <span className="text-gray-700 dark:text-gray-300">
+                  سلام {user.username}
                 </span>
                 {user.role === "admin" && (
                   <Link
                     href="/dashboard"
-                    className="text-gray-500 hover:text-gray-700"
+                    className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                   >
                     داشبورد
                   </Link>
                 )}
                 <button
                   onClick={handleLogout}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 >
                   خروج
                 </button>
@@ -172,13 +171,13 @@ const Navbar = () => {
               <div className="flex items-center space-x-4 space-x-reverse">
                 <Link
                   href="/login"
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 >
                   ورود
                 </Link>
                 <Link
                   href="/register"
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 >
                   ثبت نام
                 </Link>
@@ -199,48 +198,48 @@ const Navbar = () => {
         footer={footerContent}
         draggable={false}
         resizable={false}
-        className="bg-slate-200 rounded-xl p-8"
+        className="bg-white dark:bg-gray-800 rounded-xl p-8"
       >
         {purchases.length > 0 ? (
           <ul className="space-y-4">
             {purchases.map((purchase, index) => (
-              <li key={index} className="rounded px-5 py-3 bg-white shadow-sm">
+              <li key={index} className="rounded px-5 py-3 bg-gray-100 dark:bg-gray-700 shadow-sm">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h3 className="font-bold text-lg">{purchase.title}</h3>
+                    <h3 className="font-bold text-lg text-gray-800 dark:text-gray-200">{purchase.title}</h3>
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => updateQuantity(purchase.productId, purchase.quantity - 1)}
-                        className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300"
+                        className="w-8 h-8 flex items-center justify-center bg-gray-200 dark:bg-gray-600 rounded-full hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300"
                       >
                         -
                       </button>
-                      <span className="text-gray-600 w-8 text-center">{purchase.quantity}</span>
+                      <span className="text-gray-600 dark:text-gray-400 w-8 text-center">{purchase.quantity}</span>
                       <button
                         onClick={() => updateQuantity(purchase.productId, purchase.quantity + 1)}
-                        className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full hover:bg-gray-300"
+                        className="w-8 h-8 flex items-center justify-center bg-gray-200 dark:bg-gray-600 rounded-full hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300"
                       >
                         +
                       </button>
                     </div>
                   </div>
-                  <div className="text-lg font-bold text-green-600">
+                  <div className="text-lg font-bold text-green-600 dark:text-green-400">
                     {(purchase.price * purchase.quantity).toLocaleString()} تومان
                   </div>
                 </div>
               </li>
             ))}
-            <div className="mt-4 pt-4 border-t border-gray-300">
+            <div className="mt-4 pt-4 border-t border-gray-300 dark:border-gray-600">
               <div className="flex justify-between items-center text-xl font-bold">
-                <span>جمع کل:</span>
-                <span className="text-green-600">
+                <span className="text-gray-800 dark:text-gray-200">جمع کل:</span>
+                <span className="text-green-600 dark:text-green-400">
                   {purchases.reduce((total, purchase) => total + (purchase.price * purchase.quantity), 0).toLocaleString()} تومان
                 </span>
               </div>
             </div>
           </ul>
         ) : (
-          <div className="text-center py-8 text-gray-600">
+          <div className="text-center py-8 text-gray-600 dark:text-gray-400">
             سبد خرید شما خالی است
           </div>
         )}

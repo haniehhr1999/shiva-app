@@ -9,15 +9,16 @@ export function ThemeProvider({ children }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
+    setMounted(true);
   }, []);
 
   useEffect(() => {
     if (mounted) {
-      document.documentElement.classList.remove("light", "dark");
-      document.documentElement.classList.add(theme);
+      const root = window.document.documentElement;
+      root.classList.remove("light", "dark");
+      root.classList.add(theme);
       localStorage.setItem("theme", theme);
     }
   }, [theme, mounted]);

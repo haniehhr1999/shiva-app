@@ -7,13 +7,25 @@
   font-weight: normal;
 }
 
-*{
+* {
   font-family: 'vazir';
 }
-body{
+
+body {
   direction: rtl;
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
+:root {
+  --background: #ffffff;
+  --foreground: #000000;
+}
+
+.dark {
+  --background: #1a1a1a;
+  --foreground: #ffffff;
+}
 
 .bg-log{
   background-image: url(../../public/images/bg-login.jpg);
@@ -26,8 +38,6 @@ body{
   background-repeat: no-repeat;
   background-size: cover;
 }
-
-
 
 .swiper {
   width: 100%;
@@ -802,9 +812,6 @@ img.flag {
   background-position: 0 100%;
 }
 
-
-
-
 /* در فایل CSS پروژه اضافه کن */
 .p-datatable .p-datatable-tbody > tr > td,
 .p-datatable .p-datatable-thead > tr > th {
@@ -840,11 +847,6 @@ img.flag {
 .p-paginator .p-paginator-pages {
   float: right;
 }
-
-
-
-
-
 
 /* راست‌چین‌کردن جدول و هدر */
 .p-datatable .p-datatable-thead > tr > th,
@@ -893,7 +895,6 @@ img.flag {
   direction: rtl;
 }
 
-
 /* با این کار ترتیب نمایش عناصر رو معکوس می‌کنیم */
 .p-paginator > * {
   order: -1; /* همه دکمه‌ها بیان سمت راست */
@@ -907,13 +908,11 @@ img.flag {
   order: 1; /* دراپ‌داون بیاد آخر (سمت چپ) */
 }
 
-
 .p-paginator .p-paginator-first { order: -4; }
 .p-paginator .p-paginator-prev { order: -3; }
 .p-paginator .p-paginator-pages { order: -2; }
 .p-paginator .p-paginator-next { order: -1; }
 .p-paginator .p-paginator-last { order: 0; }
 .p-paginator .p-dropdown { order: 1; }
-
 
 /* end prime react ----------------------------------------------- */
