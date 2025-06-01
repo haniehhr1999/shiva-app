@@ -15,15 +15,22 @@ import { FaUser } from "react-icons/fa";
 import { MdModeEdit } from "react-icons/md";
 import { FaEye } from "react-icons/fa";
 import SimpleLineChart from "../../components/SimpleLineChart";
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
 import { CiUser } from "react-icons/ci";
 import { CiTrash } from "react-icons/ci";
 import { CiEdit } from "react-icons/ci";
 import { CiRead } from "react-icons/ci";
-
-
-
-
+import { Rating } from "primereact/rating";
+import { Card } from "primereact/card";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -35,17 +42,20 @@ export default function DashboardPage() {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [viewDialogVisible, setViewDialogVisible] = useState(false);
   const [roleChangeDialogVisible, setRoleChangeDialogVisible] = useState(false);
-  const [newUsername, setNewUsername] = useState('')
-  const [newUseremail, setNewUseremail] = useState('')
-  const [newUserpass, setNewUserpass] = useState('')
+  const [newUsername, setNewUsername] = useState("");
+  const [newUseremail, setNewUseremail] = useState("");
+  const [newUserpass, setNewUserpass] = useState("");
   const [selectedDuration, setSelectedDuration] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const [deleteCommentDialogVisible, setDeleteCommentDialogVisible] = useState(false);
+  const [selectedComment, setSelectedComment] = useState(null);
   const durations = [
     { name: "روزانه", code: "day" },
     { name: "هفتگی", code: "weekly" },
     { name: "ماهانه", code: "monthly" },
     { name: "سالانه", code: "LDN" },
   ];
-
 
   useEffect(() => {
     async function checkUser() {
@@ -71,13 +81,38 @@ export default function DashboardPage() {
     checkUser();
   }, [router]);
 
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch("/api/products");
+        const products = await response.json();
+        
+        // جمع‌آوری تمام نظرات از محصولات
+        const allComments = products.reduce((acc, product) => {
+          const productComments = product.comments.map(comment => ({
+            ...comment,
+            productTitle: product.title,
+            productId: product.id
+          }));
+          return [...acc, ...productComments];
+        }, []);
+        
+        setComments(allComments);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    fetchComments();
+  }, []);
+
   // دریافت لیست کاربران
   async function fetchUsers() {
     try {
       const res = await fetch("/api/users");
       if (res.ok) {
         const data = await res.json();
-        console.log('data------', data)
+        console.log("data------", data);
         setUsers(data);
       }
     } catch (error) {
@@ -88,10 +123,12 @@ export default function DashboardPage() {
   const roleBodyTemplate = (rowData) => {
     return (
       <Tag
-      rounded
+        rounded
         value={rowData.role}
         // severity={rowData.role === "admin" ? "#8ecae6" : "#e0e1dd"}
-        className={`text-center ${rowData.role === "admin" ? "bg-[#8ecae6]" : "bg-[#e0e1dd]" }`}
+        className={`text-center ${
+          rowData.role === "admin" ? "bg-[#8ecae6]" : "bg-[#e0e1dd]"
+        }`}
       />
     );
   };
@@ -109,7 +146,7 @@ export default function DashboardPage() {
   };
 
   const actionsBodyTemplate = (rowData) => {
-    console.log(rowData)
+    console.log(rowData);
     return (
       <div className="flex gap-2 justify-content-center">
         <CiRead
@@ -117,10 +154,10 @@ export default function DashboardPage() {
           onClick={() => {
             setSelectedUser(rowData);
             setViewDialogVisible(true);
-            router.push(`/purchases/${rowData.id}`)
+            router.push(`/purchases/${rowData.id}`);
           }}
         />
-        <CiTrash 
+        <CiTrash
           className="cursor-pointer text-red-600 text-xl"
           onClick={() => {
             setSelectedUser(rowData);
@@ -293,11 +330,21 @@ export default function DashboardPage() {
   );
 
   const [visible, setVisible] = useState(false);
-  const [position, setPosition] = useState('center');
+  const [position, setPosition] = useState("center");
   const footerContent = (
     <div>
-      <Button label="No" icon="pi pi-times" onClick={() => setVisible(false)} className="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" onClick={() => setVisible(false)} autoFocus />
+      <Button
+        label="No"
+        icon="pi pi-times"
+        onClick={() => setVisible(false)}
+        className="p-button-text"
+      />
+      <Button
+        label="Yes"
+        icon="pi pi-check"
+        onClick={() => setVisible(false)}
+        autoFocus
+      />
     </div>
   );
 
@@ -306,14 +353,16 @@ export default function DashboardPage() {
     setVisible(true);
   };
 
-
   // 1️⃣ تمام خریدها رو به یک آرایه‌ی واحد جمع می‌کنیم
-  const allPurchases = users.flatMap(user => user.purchases);
+  const allPurchases = users.flatMap((user) => user.purchases);
 
   // 2️⃣ گروه‌بندی بر اساس purchaseDate
   const groupedByDate = {};
 
-  allPurchases.forEach(purchase => {
+  allPurchases.forEach((purchase) => {
+    // اطمینان از وجود تاریخ
+    if (!purchase.purchaseDateJalali) return;
+
     const date = purchase.purchaseDateJalali;
     const productKey = `product${purchase.productId}`;
 
@@ -323,14 +372,117 @@ export default function DashboardPage() {
     }
 
     // مقدار قبلی یا ۰
-    groupedByDate[date][productKey] = (groupedByDate[date][productKey] || 0) + purchase.quantity;
+    groupedByDate[date][productKey] =
+      (groupedByDate[date][productKey] || 0) + purchase.quantity;
   });
 
-  // 3️⃣ تبدیل به آرایه
-  const result = Object.values(groupedByDate);
+  // 3️⃣ تبدیل به آرایه و مرتب‌سازی بر اساس تاریخ
+  const result = Object.values(groupedByDate)
+    .filter(item => item.date) // حذف مواردی که تاریخ ندارند
+    .sort((a, b) => {
+      try {
+        // تبدیل تاریخ شمسی به آرایه برای مقایسه
+        const [aYear, aMonth, aDay] = a.date.split('/').map(Number);
+        const [bYear, bMonth, bDay] = b.date.split('/').map(Number);
+        
+        // مقایسه سال
+        if (aYear !== bYear) return aYear - bYear;
+        // مقایسه ماه
+        if (aMonth !== bMonth) return aMonth - bMonth;
+        // مقایسه روز
+        return aDay - bDay;
+      } catch (error) {
+        console.error('Error sorting dates:', error);
+        return 0;
+      }
+    });
 
   // نمایش نتیجه
-  console.log(result);
+  console.log('Sorted data:', result);
+
+  const filters = {
+    global: { value: globalFilterValue, matchMode: "contains" },
+    username: { value: null, matchMode: "contains" },
+    productTitle: { value: null, matchMode: "contains" },
+    text: { value: null, matchMode: "contains" }
+  };
+
+  const ratingBodyTemplate = (rowData) => {
+    return <Rating value={rowData.rating} readOnly stars={5} cancel={false} />;
+  };
+
+  const dateBodyTemplate = (rowData) => {
+    return rowData.createdAtJalali;
+  };
+
+  const header = (
+    <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
+      <h4 className="m-0">نظرات کاربران</h4>
+      <span className="p-input-icon-left">
+        <i className="pi pi-search" />
+        <InputText
+          value={globalFilterValue}
+          onChange={(e) => setGlobalFilterValue(e.target.value)}
+          placeholder="جستجو..."
+          className="p-inputtext-sm"
+        />
+      </span>
+    </div>
+  );
+
+  const handleDeleteComment = async () => {
+    try {
+      // حذف نظر از محصول مربوطه
+      const response = await fetch(`/api/products/${selectedComment.productId}/comments/${selectedComment.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // به‌روزرسانی لیست نظرات
+        const updatedComments = comments.filter(comment => comment.id !== selectedComment.id);
+        setComments(updatedComments);
+        setDeleteCommentDialogVisible(false);
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+
+  const deleteCommentDialogFooter = (
+    <div>
+      <Button
+        label="خیر"
+        icon="pi pi-times"
+        onClick={() => setDeleteCommentDialogVisible(false)}
+        className="p-button-text"
+      />
+      <Button
+        label="بله"
+        icon="pi pi-check"
+        onClick={handleDeleteComment}
+        severity="danger"
+        autoFocus
+      />
+    </div>
+  );
+
+  const commentActionsBodyTemplate = (rowData) => {
+    return (
+      <div className="flex gap-2 justify-content-center">
+        <Button
+          icon="pi pi-trash"
+          rounded
+          text
+          severity="secondary"
+          style={{ color: 'black' }}
+          onClick={() => {
+            setSelectedComment(rowData);
+            setDeleteCommentDialogVisible(true);
+          }}
+        />
+      </div>
+    );
+  };
 
   if (loading) return <p>در حال بارگذاری...</p>;
 
@@ -341,38 +493,134 @@ export default function DashboardPage() {
       {/* Add SimpleLineChart */}
       <div className="mb-8 h-[400px] bg-white p-4 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4 text-center">نمودار فروش</h2>
-        {/* <SimpleLineChart /> */}
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-          data={result}
-        >
-          <CartesianGrid stroke="#ccc" />
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="product1" stroke="#8884d8" />
-          <Line type="monotone" dataKey="product2" stroke="#82ca9d" />
-          <Line type="monotone" dataKey="product3" stroke="#fb8500" />
-          <Line type="monotone" dataKey="product4" stroke="#8ecae6" />
-          <Line type="monotone" dataKey="product5" stroke="#ff8fab" />
-          <Line type="monotone" dataKey="product6" stroke="#ffd60a" />
-          <Line type="monotone" dataKey="product7" stroke="#adc178" />
-          <Line type="monotone" dataKey="product8" stroke="#f00" />
-        </LineChart>
-      </ResponsiveContainer>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+            data={result}
+          >
+            <CartesianGrid stroke="#ccc" />
+            <XAxis 
+              dataKey="date" 
+              tick={{ fontSize: 12 }}
+              angle={-45}
+              textAnchor="end"
+              height={60}
+            />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="product1" stroke="#8884d8" name="برنج هاشمی" />
+            <Line type="monotone" dataKey="product2" stroke="#82ca9d" name="برنج صدری" />
+            <Line type="monotone" dataKey="product3" stroke="#fb8500" name="برنج دودی" />
+            <Line type="monotone" dataKey="product4" stroke="#8ecae6" name="برنج دم سیاه" />
+            <Line type="monotone" dataKey="product5" stroke="#ff8fab" name="زیتون ماری" />
+            <Line type="monotone" dataKey="product6" stroke="#ffd60a" name="زیتون شکسته" />
+            <Line type="monotone" dataKey="product7" stroke="#adc178" name="زیتون کنسروی" />
+            <Line type="monotone" dataKey="product8" stroke="#f00" name="رشته خشکار" />
+            <Line type="monotone" dataKey="product9" stroke="#4CAF50" name="چای کرک" />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
 
+      {/* آمار مالی و پرداخت‌ها */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-4 text-center">آمار مالی و پرداخت‌ها</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* کارت درآمد کل */}
+          <Card className="bg-white shadow-lg rounded-lg">
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-gray-500 text-sm">درآمد کل</h3>
+                  <p className="text-2xl font-bold text-green-600">۲۵,۰۰۰,۰۰۰ تومان</p>
+                </div>
+                <div className="bg-green-100 p-3 rounded-full">
+                  <i className="pi pi-dollar text-green-600 text-xl"></i>
+                </div>
+              </div>
+              <div className="mt-4">
+                <span className="text-green-600 text-sm">
+                  <i className="pi pi-arrow-up"></i> ۱۲٪ نسبت به ماه گذشته
+                </span>
+              </div>
+            </div>
+          </Card>
+
+          {/* کارت تعداد سفارشات */}
+          <Card className="bg-white shadow-lg rounded-lg">
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-gray-500 text-sm">تعداد سفارشات</h3>
+                  <p className="text-2xl font-bold text-blue-600">۱۵۶ سفارش</p>
+                </div>
+                <div className="bg-blue-100 p-3 rounded-full">
+                  <i className="pi pi-shopping-cart text-blue-600 text-xl"></i>
+                </div>
+              </div>
+              <div className="mt-4">
+                <span className="text-blue-600 text-sm">
+                  <i className="pi pi-arrow-up"></i> ۸٪ نسبت به ماه گذشته
+                </span>
+              </div>
+            </div>
+          </Card>
+
+          {/* کارت میانگین سبد خرید */}
+          <Card className="bg-white shadow-lg rounded-lg">
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-gray-500 text-sm">میانگین سبد خرید</h3>
+                  <p className="text-2xl font-bold text-purple-600">۱۶۰,۰۰۰ تومان</p>
+                </div>
+                <div className="bg-purple-100 p-3 rounded-full">
+                  <i className="pi pi-chart-line text-purple-600 text-xl"></i>
+                </div>
+              </div>
+              <div className="mt-4">
+                <span className="text-purple-600 text-sm">
+                  <i className="pi pi-arrow-up"></i> ۵٪ نسبت به ماه گذشته
+                </span>
+              </div>
+            </div>
+          </Card>
+
+          {/* کارت تعداد مشتریان جدید */}
+          <Card className="bg-white shadow-lg rounded-lg">
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-gray-500 text-sm">مشتریان جدید</h3>
+                  <p className="text-2xl font-bold text-orange-600">۲۴ مشتری</p>
+                </div>
+                <div className="bg-orange-100 p-3 rounded-full">
+                  <i className="pi pi-users text-orange-600 text-xl"></i>
+                </div>
+              </div>
+              <div className="mt-4">
+                <span className="text-orange-600 text-sm">
+                  <i className="pi pi-arrow-up"></i> ۱۵٪ نسبت به ماه گذشته
+                </span>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
 
       {/* <Button label="افزودن کاربر" icon="pi pi-check" iconPos="right" /> */}
-      <Button label="افزودن کاربر" icon="pi pi-arrow-down" onClick={() => show('top')} className="p-button-warning" style={{ minWidth: '10rem' }} />
-
+      <Button
+        label="افزودن کاربر"
+        icon="pi pi-arrow-down"
+        onClick={() => show("top")}
+        className="p-button-warning"
+        style={{ minWidth: "10rem" }}
+      />
 
       <div className="card">
         <DataTable
@@ -445,19 +693,93 @@ export default function DashboardPage() {
         className="w-full md:w-14rem"
       />
 
+      <h3 className="text-center">بازخوردها و نظرات مشتریان</h3>
+
+      <div className="card">
+        <Card>
+          <DataTable
+            value={comments}
+            paginator
+            rows={10}
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            tableStyle={{ minWidth: "50rem" }}
+            loading={loading}
+            filters={filters}
+            globalFilterFields={["username", "productTitle", "text"]}
+            header={header}
+            emptyMessage="هیچ نظری یافت نشد."
+            className="p-datatable-sm"
+          >
+            <Column
+              field="username"
+              header="نام کاربر"
+              sortable
+              filter
+              filterPlaceholder="جستجو بر اساس نام کاربر"
+              style={{ minWidth: "12rem" }}
+            />
+            <Column
+              field="productTitle"
+              header="نام محصول"
+              sortable
+              filter
+              filterPlaceholder="جستجو بر اساس نام محصول"
+              style={{ minWidth: "14rem" }}
+            />
+            <Column
+              field="text"
+              header="متن نظر"
+              sortable
+              filter
+              filterPlaceholder="جستجو در متن نظر"
+              style={{ minWidth: "20rem" }}
+            />
+            <Column
+              field="rating"
+              header="امتیاز"
+              sortable
+              body={ratingBodyTemplate}
+              style={{ minWidth: "10rem" }}
+            />
+            <Column
+              field="createdAtJalali"
+              header="تاریخ ثبت"
+              sortable
+              body={dateBodyTemplate}
+              style={{ minWidth: "10rem" }}
+            />
+            <Column
+              body={commentActionsBodyTemplate}
+              header="عملیات"
+              style={{ minWidth: "8rem" }}
+              className="text-center"
+            />
+          </DataTable>
+        </Card>
+      </div>
+
       {/* add user Dialog */}
-      <Dialog header="افزودن کاربر" visible={visible} position={position} style={{ width: '50vw' }} onHide={() => { if (!visible) return; setVisible(false); }} footer={footerContent} draggable={false} resizable={false}>
+      <Dialog
+        header="افزودن کاربر"
+        visible={visible}
+        position={position}
+        style={{ width: "50vw" }}
+        onHide={() => {
+          if (!visible) return;
+          setVisible(false);
+        }}
+        footer={footerContent}
+        draggable={false}
+        resizable={false}
+      >
         <div className="field bg-red-200">
           <div>
-
             <label htmlFor="username">نام کاربری</label>
             <InputText
               id="username"
               className="w-full"
               value={newUsername}
-              onChange={(e) =>
-                setNewUsername(e.target.value)
-              }
+              onChange={(e) => setNewUsername(e.target.value)}
               required
               autoFocus
             />
@@ -469,9 +791,7 @@ export default function DashboardPage() {
               id="email"
               className="w-full"
               value={newUseremail}
-              onChange={(e) =>
-                setNewUseremail(e.target.value)
-              }
+              onChange={(e) => setNewUseremail(e.target.value)}
               required
             />
           </div>
@@ -482,9 +802,7 @@ export default function DashboardPage() {
               id="password"
               className="w-full"
               value={newUserpass}
-              onChange={(e) =>
-                setNewUserpass(e.target.value)
-              }
+              onChange={(e) => setNewUserpass(e.target.value)}
               required
             />
           </div>
@@ -625,6 +943,25 @@ export default function DashboardPage() {
             {selectedUser?.role === "admin" ? "کاربر عادی" : "مدیر"} اطمینان
             دارید؟
           </span>
+        </div>
+      </Dialog>
+
+      {/* Delete Comment Dialog */}
+      <Dialog
+        visible={deleteCommentDialogVisible}
+        style={{ width: "450px" }}
+        header="تایید حذف"
+        modal
+        footer={deleteCommentDialogFooter}
+        onHide={() => setDeleteCommentDialogVisible(false)}
+        dir="rtl"
+      >
+        <div className="confirmation-content">
+          <i
+            className="pi pi-exclamation-triangle mr-3"
+            style={{ fontSize: "2rem" }}
+          />
+          <span>آیا از حذف این نظر اطمینان دارید؟</span>
         </div>
       </Dialog>
     </div>
