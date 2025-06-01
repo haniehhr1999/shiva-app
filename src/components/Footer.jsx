@@ -5,7 +5,8 @@ import { FaInstagram, FaTwitter, FaFacebook, FaPhone, FaEnvelope, FaMapMarkerAlt
 const Footer = () => {
   return (
     <footer className="grid grid-cols-4 gap-6 bg-red-100 dark:bg-gray-800 px-15 py-10 transition-colors duration-300">
-      <div className="bg-amber-100 dark:bg-gray-700 p-4 rounded-lg">
+      
+      <div className=" dark:bg-gray-700 p-4 rounded-lg">
         <h4 className="text-gray-800 dark:text-gray-200 font-bold mb-4">درباره ما</h4>
         <p className="text-gray-600 dark:text-gray-400 mb-4">
           ما با بیش از ۱۰ سال تجربه در زمینه فروش محصولات دیجیتال، همواره در تلاشیم تا بهترین خدمات را به مشتریان خود ارائه دهیم.
@@ -23,7 +24,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="bg-amber-100 dark:bg-gray-700 p-4 rounded-lg">
+      <div className=" dark:bg-gray-700 p-4 rounded-lg">
         <h4 className="text-gray-800 dark:text-gray-200 font-bold mb-4">دسترسی سریع</h4>
         <ul className="space-y-2">
           <li>
@@ -49,7 +50,7 @@ const Footer = () => {
         </ul>
       </div>
 
-      <div className="bg-amber-100 dark:bg-gray-700 p-4 rounded-lg">
+      <div className=" dark:bg-gray-700 p-4 rounded-lg">
         <h4 className="text-gray-800 dark:text-gray-200 font-bold mb-4">تماس با ما</h4>
         <ul className="space-y-3">
           <li className="flex items-center text-gray-600 dark:text-gray-400">
@@ -67,7 +68,7 @@ const Footer = () => {
         </ul>
       </div>
 
-      <div className="bg-amber-100 dark:bg-gray-700 p-4 rounded-lg">
+      <div className=" dark:bg-gray-700 p-4 rounded-lg">
         <h4 className="text-gray-800 dark:text-gray-200 font-bold mb-4">خبرنامه</h4>
         <p className="text-gray-600 dark:text-gray-400 mb-4">
           برای اطلاع از آخرین محصولات و تخفیف‌ها، در خبرنامه ما عضو شوید.

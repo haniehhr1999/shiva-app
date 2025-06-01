@@ -20,11 +20,17 @@ body {
 :root {
   --background: #ffffff;
   --foreground: #000000;
+  --table-bg: #f2f2f2;
+  --table-bg-even: #f2f2f2;
+  --table-header-bg: transparent;
 }
 
 .dark {
   --background: #1a1a1a;
   --foreground: #ffffff;
+  --table-bg: #474747;
+  --table-bg-even: #474747;
+  --table-header-bg: transparent;
 }
 
 .bg-log{
@@ -68,6 +74,11 @@ body {
   padding: 2rem;
   border-radius: 10px;
   margin-bottom: 1rem;
+  background-color: white !important;
+}
+
+.dark .card {
+  background-color: #474747 !important;
 }
 
 span.flag {
@@ -916,3 +927,51 @@ img.flag {
 .p-paginator .p-dropdown { order: 1; }
 
 /* end prime react ----------------------------------------------- */
+
+/* Custom DataTable styles */
+.p-datatable {
+    background-color: var(--table-bg) !important;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+    background-color: var(--table-header-bg) !important;
+    padding: 1.5rem !important;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+    padding: 1.5rem !important;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+    background-color: var(--table-bg) !important;
+}
+
+.p-datatable .p-datatable-tbody > tr:nth-child(even) {
+    background-color: var(--table-bg-even) !important;
+}
+
+/* Dark mode styles */
+.dark .p-datatable {
+    background-color: var(--table-bg) !important;
+    color: var(--foreground);
+}
+
+.dark .p-datatable .p-datatable-thead > tr > th {
+    background-color: var(--table-header-bg) !important;
+    color: var(--foreground);
+    padding: 1.5rem !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr > td {
+    padding: 1.5rem !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr {
+    background-color: var(--table-bg) !important;
+    color: var(--foreground);
+}
+
+.dark .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+    background-color: var(--table-bg-even) !important;
+    color: var(--foreground);
+}
