@@ -4,12 +4,12 @@ import path from "path";
 
 export async function DELETE(request, { params }) {
   try {
-    const { productId, commentId } = params;
+    const { id, commentId } = params;
     const dbPath = path.join(process.cwd(), "db.json");
     const dbData = JSON.parse(fs.readFileSync(dbPath, "utf8"));
 
     // پیدا کردن محصول مورد نظر
-    const productIndex = dbData.products.findIndex(p => p.id === parseInt(productId));
+    const productIndex = dbData.products.findIndex(p => p.id === parseInt(id));
     if (productIndex === -1) {
       return NextResponse.json({ error: "محصول یافت نشد" }, { status: 404 });
     }

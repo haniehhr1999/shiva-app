@@ -433,7 +433,7 @@ export default function DashboardPage() {
   const handleDeleteComment = async () => {
     try {
       // حذف نظر از محصول مربوطه
-      const response = await fetch(`/api/products/${selectedComment.productId}/comments/${selectedComment.id}`, {
+      const response = await fetch(`/api/products/${selectedComment.id}/comments/${selectedComment.id}`, {
         method: 'DELETE',
       });
 
