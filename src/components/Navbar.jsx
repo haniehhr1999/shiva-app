@@ -63,6 +63,10 @@ const Navbar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    console.log('user ====>' , user)
+  }, [user]);
+
   const handleLogout = async () => {
     try {
       const res = await fetch("/api/logout", {

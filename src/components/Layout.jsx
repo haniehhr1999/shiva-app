@@ -5,14 +5,25 @@ import Footer from "@/components/Footer";
 import useRouter from "next/router";
 import React from "react";
 
-const Layout = ({children}) => {
+const Layout = ({ children }) => {
+
+  let pathname = usePathname()
+  console.log('pathname ===>', pathname)
 
 
   return <div>
-    <Navbar />
+    {
+      pathname !== '/login' && pathname !== '/register' &&
+      <Navbar />
+    }
     {children}
-    <Footer />
-    
+
+    {
+      pathname !== '/login' && pathname !== '/register' &&
+      <Footer />
+
+    }
+
   </div>;
 };
 

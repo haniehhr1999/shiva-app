@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 // Import Swiper React components
-import { Swiper, SwiperSlide } from "swiper/react";
+// import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import Swiper styles
 import "swiper/css";
@@ -84,7 +84,7 @@ export default function Home() {
       <h3 className="text-xl text-center">پرفروش ترین ها</h3>
 
       <div className="p-6">
-        <Swiper
+        {/*<Swiper
           spaceBetween={50}
           slidesPerView={1}
           pagination={{
@@ -131,7 +131,7 @@ export default function Home() {
               Slide 3
             </div>
           </SwiperSlide>
-        </Swiper>
+        </Swiper>*/}
 
         <h3 className="text-xl text-center">سوالات متداول</h3>
 
