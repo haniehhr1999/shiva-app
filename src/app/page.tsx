@@ -80,7 +80,8 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-slate-100 dark:bg-slate-500 ">
+    <div className='px-20 dark:bg-[#0B090A]'>
+    <div className="bg-slate-100 dark:bg-[#0B090A]">
       <h3 className="text-xl text-center">پرفروش ترین ها</h3>
 
       <div className="p-6">
@@ -192,6 +193,7 @@ export default function Home() {
           molestiae voluptatum numquam.
         </p>
       </div>
+    </div>
     </div>
   );
 }

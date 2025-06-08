@@ -134,7 +134,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="bg-[#d9ed92] dark:bg-gray-800 p-4 transition-colors duration-300">
+    <div className="bg-[#d9ed92] dark:bg-[#161A1D] p-4 transition-colors duration-300">
       <Container>
         <div className="flex justify-between">
           <div className="flex items-center">
@@ -213,6 +213,9 @@ const Navbar = () => {
         visible={visible}
         position={position}
         style={{ width: "50vw" }}
+        headerStyle={{backgroundColor : '#161A1D'}}
+        contentStyle={{backgroundColor : '#161A1D'}}
+        maskStyle={{backgroundColor : 'red'}}
         onHide={() => {
           if (!visible) return;
           setVisible(false);
@@ -220,14 +223,14 @@ const Navbar = () => {
         footer={footerContent}
         draggable={false}
         resizable={false}
-        className="bg-white dark:bg-gray-800 rounded-xl p-8"
+        className="dark:bg-[#161A1D] rounded-xl p-8"
       >
         {purchases.length > 0 ? (
-          <ul className="space-y-4">
+          <ul className="space-y-4 dark:bg-[#161A1D]">
             {purchases.map((purchase, index) => (
               <li
                 key={index}
-                className="rounded px-5 py-3 bg-gray-100 dark:bg-gray-700 shadow-sm"
+                className="rounded px-5 py-3 bg-gray-100 dark:bg-[#0B090A] shadow-sm"
               >
                 <div className="flex justify-between items-center">
                   <div>

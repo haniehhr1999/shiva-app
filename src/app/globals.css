@@ -28,8 +28,8 @@ body {
 .dark {
   --background: #1a1a1a;
   --foreground: #ffffff;
-  --table-bg: #474747;
-  --table-bg-even: #474747;
+  --table-bg: #161A1D;
+  --table-bg-even: #161A1D;
   --table-header-bg: transparent;
 }
 
@@ -78,7 +78,7 @@ body {
 }
 
 .dark .card {
-  background-color: #474747 !important;
+  background-color: #161A1D !important;
 }
 
 span.flag {

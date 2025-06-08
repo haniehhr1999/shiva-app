@@ -60,7 +60,7 @@ const ProductItem = ({ id, title, body, price, img }) => {
   };
 
   return (
-    <div className="shadow-md rounded-md p-6">
+    <div className="shadow-md rounded-md p-6 dark:bg-[#161A1D]">
       <Toast ref={toast} />
       <Link href={`/store/${id}`} className="block">
         <div className="relative w-full aspect-square">
@@ -85,7 +85,7 @@ const ProductItem = ({ id, title, body, price, img }) => {
           handleAddToCart();
         }}
         disabled={loading}
-        className="w-full bg-green-600 text-white rounded py-2 hover:bg-green-700 transition-colors disabled:bg-green-400"
+        className="w-full bg-green-600 dark:bg-[#03440c] text-white rounded py-2 hover:bg-green-700 transition-colors disabled:bg-green-400"
       >
         {loading ? "در حال افزودن..." : "افزودن به سبد خرید"}
       </button>

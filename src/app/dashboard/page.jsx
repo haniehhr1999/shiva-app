@@ -487,7 +487,7 @@ export default function DashboardPage() {
   if (loading) return <p>در حال بارگذاری...</p>;
 
   return (
-    <div className="p-4">
+    <div className="p-4 bg-[#0B090A]">
       <h1 className="text-2xl font-bold mb-4 text-center">داشبورد مدیر</h1>
 
       {/* Add SimpleLineChart */}
@@ -532,8 +532,8 @@ export default function DashboardPage() {
         <h2 className="text-xl font-semibold mb-4 text-center">آمار مالی و پرداخت‌ها</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* کارت درآمد کل */}
-          <Card className="bg-white shadow-lg rounded-lg">
-            <div className="p-4">
+          <Card className="dark:bg-red-600 shadow-lg rounded-lg">
+            <div className="p-4 dark:bg-red-600">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-gray-500 text-sm">درآمد کل</h3>
@@ -552,7 +552,7 @@ export default function DashboardPage() {
           </Card>
 
           {/* کارت تعداد سفارشات */}
-          <Card className="bg-white shadow-lg rounded-lg">
+          <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
             <div className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -572,7 +572,7 @@ export default function DashboardPage() {
           </Card>
 
           {/* کارت میانگین سبد خرید */}
-          <Card className="bg-white shadow-lg rounded-lg">
+          <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
             <div className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -592,7 +592,7 @@ export default function DashboardPage() {
           </Card>
 
           {/* کارت تعداد مشتریان جدید */}
-          <Card className="bg-white shadow-lg rounded-lg">
+          <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
             <div className="p-4">
               <div className="flex items-center justify-between">
                 <div>

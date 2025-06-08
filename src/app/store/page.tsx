@@ -23,11 +23,11 @@ async function getProducts(): Promise<Product[]> {
   const res = await fetch('http://localhost:3000/api/products', {
     cache: 'no-store'
   });
-  
+
   if (!res.ok) {
     return [];
   }
-  
+
   return res.json();
 }
 
@@ -35,12 +35,12 @@ export default async function StorePage() {
   const products = await getProducts();
 
   return (
-    <Container>
-      <div className="py-8">
+    <div className='px-20 dark:bg-[#0B090A]'>
+      <div className="py-8 dark:bg-[#0B090A]">
         <h1 className="text-3xl text-[#38b000] text-center font-bold mb-8">
           فروشگاه
         </h1>
-        
+
         {products.length === 0 ? (
           <div className="text-center text-gray-500">
             محصولی یافت نشد
@@ -63,6 +63,6 @@ export default async function StorePage() {
           </div>
         )}
       </div>
-    </Container>
+    </div>
   );
 }
