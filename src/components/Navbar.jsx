@@ -7,8 +7,10 @@ import { FaUser } from "react-icons/fa";
 import { FaBasketShopping } from "react-icons/fa6";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
+import { Menu } from 'primereact/menu';
 import { useTheme } from "@/context/ThemeContext";
 import { FaMoon, FaSun } from "react-icons/fa";
+import { useRef } from "react";
 
 import React, { useEffect, useState } from "react";
 
@@ -16,6 +18,7 @@ const Navbar = () => {
   const path = usePathname();
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
+  const menu = useRef(null);
 
   console.log(path);
 
@@ -133,8 +136,39 @@ const Navbar = () => {
     setVisible(true);
   };
 
+  const userMenuItems = [
+    {
+      label: 'پروفایل',
+      icon: 'pi pi-user',
+      command: () => router.push('/profile')
+    },
+    ...(user?.role === "admin" ? [{
+      label: 'داشبورد',
+      icon: 'pi pi-th-large',
+      command: () => router.push('/dashboard')
+    }] : []),
+    {
+      label: 'خروج',
+      icon: 'pi pi-sign-out',
+      command: handleLogout
+    }
+  ];
+
+  const guestMenuItems = [
+    {
+      label: 'ورود',
+      icon: 'pi pi-sign-in',
+      command: () => router.push('/login')
+    },
+    {
+      label: 'ثبت نام',
+      icon: 'pi pi-user-plus',
+      command: () => router.push('/register')
+    }
+  ];
+
   return (
-    <div className="bg-[#d9ed92] dark:bg-[#161A1D] p-4 transition-colors duration-300">
+    <div className="bg-[#b0c4b1] dark:bg-[#161A1D] p-4 transition-colors duration-300">
       <Container>
         <div className="flex justify-between">
           <div className="flex items-center">
@@ -143,7 +177,7 @@ const Navbar = () => {
                 key={item.href}
                 className={`mx-3 ${
                   path === item.href
-                    ? "text-lime-500 font-bold"
+                    ? "text-[#31572c] font-bold"
                     : "text-gray-700 dark:text-gray-300"
                 }`}
                 href={item.href}
@@ -168,43 +202,30 @@ const Navbar = () => {
               onClick={() => show("top-right")}
               className="cursor-pointer mx-4 text-gray-700 dark:text-gray-300"
             />
-            <FaUser className="mx-2 text-gray-700 dark:text-gray-300" />
+            <div className="relative">
+              <FaUser 
+                onClick={(e) => menu.current.toggle(e)}
+                className="cursor-pointer mx-2 text-gray-700 dark:text-gray-300"
+              />
+              <Menu 
+                ref={menu} 
+                popup 
+                model={user ? userMenuItems : guestMenuItems}
+                className="dark:bg-[#161A1D] dark:text-gray-300"
+                style={{ width: '200px' }}
+                appendTo={document.body}
+                position="bottom"
+                offset={8}
+              />
+            </div>
+
             {user ? (
               <div className="flex items-center space-x-4 space-x-reverse">
                 <span className="text-gray-700 dark:text-gray-300">
                   سلام {user.username}
                 </span>
-                {user.role === "admin" && (
-                  <Link
-                    href="/dashboard"
-                    className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                  >
-                    داشبورد
-                  </Link>
-                )}
-                <button
-                  onClick={handleLogout}
-                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                >
-                  خروج
-                </button>
               </div>
-            ) : (
-              <div className="flex items-center space-x-4 space-x-reverse">
-                <Link
-                  href="/login"
-                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                >
-                  ورود
-                </Link>
-                <Link
-                  href="/register"
-                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                >
-                  ثبت نام
-                </Link>
-              </div>
-            )}
+            ) : null}
           </div>
         </div>
       </Container>
