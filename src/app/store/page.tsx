@@ -8,6 +8,7 @@ interface Product {
   title: string;
   body: string;
   price: number;
+  discount: number;
   img: string;
   comments: Array<{
     id: number;
@@ -56,6 +57,7 @@ export default async function StorePage() {
                     title={product.title}
                     body={product.body}
                     price={product.price}
+                    discount={product.discount}
                   />
                 </Link>
               </div>

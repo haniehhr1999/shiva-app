@@ -7,10 +7,12 @@ import { Toast } from "primereact/toast";
 import { useRef } from "react";
 import Link from "next/link";
 
-const ProductItem = ({ id, title, body, price, img }) => {
+const ProductItem = ({ id, title, body, price, img, discount = 0 }) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const toast = useRef(null);
+
+  const discountedPrice = discount > 0 ? Math.round(price * (1 - discount / 100)) : price;
 
   const handleAddToCart = async () => {
     try {
@@ -70,12 +72,33 @@ const ProductItem = ({ id, title, body, price, img }) => {
             alt={title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onError={(e) => {
+              e.currentTarget.src = '/images/placeholder.jpg';
+            }}
           />
+          {discount > 0 && (
+            <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+              {discount}% تخفیف
+            </div>
+          )}
         </div>
         <div className="py-3">
           <h2 className="mb-2 text-[#38b000] text-xl font-bold">{title}</h2>
           <p>{body}</p>
-          <p className="text-lg font-bold mt-2">{price.toLocaleString()} تومان</p>
+          <div className="flex justify-between items-center">
+            <div>
+              {discount > 0 ? (
+                <>
+                  <span className="text-gray-500 line-through text-sm">{price.toLocaleString()} تومان</span>
+                  <span className="text-green-500 mr-2 block">
+                    {discountedPrice.toLocaleString()} تومان
+                  </span>
+                </>
+              ) : (
+                <span className="text-green-500">{price.toLocaleString()} تومان</span>
+              )}
+            </div>
+          </div>
         </div>
       </Link>
       <button
