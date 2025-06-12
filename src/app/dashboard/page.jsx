@@ -33,17 +33,28 @@ import { Rating } from "primereact/rating";
 import { Card } from "primereact/card";
 
 
-import { Pie } from 'react-chartjs-2';
+import { Pie, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   ArcElement,
   Tooltip,
   Legend,
   CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
 } from 'chart.js';
 
 // ثبت کامپوننت‌های مورد نیاز Chart.js
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale);
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title
+);
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -146,6 +157,77 @@ export default function DashboardPage() {
         },
       },
     },
+  };
+
+  // تنظیمات نمودار میله‌ای
+  const barOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' ,
+        labels: {
+          font: {
+            family: 'Vazirmatn',
+          },
+        },
+      },
+      title: {
+        display: true,
+        text: 'آمار فروش محصولات',
+        font: {
+          family: 'Vazirmatn',
+          size: 16,
+        },
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'تعداد فروش',
+          font: {
+            family: 'Vazirmatn',
+          },
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'محصولات',
+          font: {
+            family: 'Vazirmatn',
+          },
+        },
+      },
+    },
+  };
+
+   // داده‌های فروش محصولات
+   const salesData = {
+    labels: ['برنج هاشمی', 'برنج صدری', 'برنج دودی', 'زیتون ماری', 'زیتون شکسته', 'چای کرک'],
+    datasets: [
+      {
+        label: 'فروش روزانه',
+        data: [12, 19, 3, 5, 2, 3],
+        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+      },
+      {
+        label: 'فروش هفتگی',
+        data: [65, 59, 80, 81, 56, 55],
+        backgroundColor: 'rgba(255, 99, 132, 0.8)',
+      },
+      {
+        label: 'فروش ماهانه',
+        data: [280, 250, 300, 290, 200, 220],
+        backgroundColor: 'rgba(75, 192, 192, 0.8)',
+      },
+      {
+        label: 'فروش سالانه',
+        data: [3200, 2800, 3500, 3300, 2400, 2600],
+        backgroundColor: 'rgba(153, 102, 255, 0.8)',
+      },
+    ],
   };
 
   useEffect(() => {
@@ -577,519 +659,537 @@ export default function DashboardPage() {
   if (loading) return <p>در حال بارگذاری...</p>;
 
   return (
-    <div className="p-4 bg-[#0B090A]">
-      <h1 className="text-2xl font-bold mb-4 text-center">داشبورد مدیر</h1>
+    <div className="min-h-screen bg-white dark:bg-[#0B090A] py-16">
+      <div className="max-w-6xl mx-auto px-4 md:px-20">
+        <h1 className="text-4xl font-bold text-[#38b000] text-center mb-12">
+          داشبورد
+        </h1>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        {/* نمودار جنسیت */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+        {/* نمودار فروش محصولات */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
           <h2 className="text-2xl font-bold text-[#38b000] mb-6 text-center">
-            توزیع جنسیت کاربران
+            آمار فروش محصولات
           </h2>
-          <div className="h-[400px] flex items-center justify-center">
-            <Pie data={genderData} options={options} />
+          <div className="h-[500px]">
+            <Bar data={salesData} options={barOptions} />
           </div>
         </div>
 
-        {/* نمودار توزیع جغرافیایی */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-[#38b000] mb-6 text-center">
-            توزیع جغرافیایی کاربران
-          </h2>
-          <div className="h-[400px] flex items-center justify-center">
-            <Pie data={locationData} options={options} />
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* نمودار جنسیت */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold text-[#38b000] mb-6 text-center">
+              توزیع جنسیت کاربران
+            </h2>
+            <div className="h-[400px] flex items-center justify-center">
+              <Pie data={genderData} options={options} />
+            </div>
+          </div>
+
+          {/* نمودار توزیع جغرافیایی */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold text-[#38b000] mb-6 text-center">
+              توزیع جغرافیایی کاربران
+            </h2>
+            <div className="h-[400px] flex items-center justify-center">
+              <Pie data={locationData} options={options} />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* توضیحات */}
-      <div className="mt-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-[#38b000] mb-4">
-          توضیحات
-        </h2>
-        <div className="space-y-4 text-gray-600 dark:text-gray-300">
-          <p>
-            • نمودار جنسیت نشان می‌دهد که ۴۵٪ از کاربران آقا، ۴۰٪ خانم و ۱۵٪ نامشخص هستند.
-          </p>
-          <p>
-            • نمودار توزیع جغرافیایی نشان می‌دهد که بیشترین کاربران از استان‌های تهران (۳۰٪)، گیلان (۲۵٪) و اصفهان (۱۵٪) هستند.
-          </p>
+        {/* توضیحات */}
+        <div className="mt-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold text-[#38b000] mb-4">
+            توضیحات
+          </h2>
+          <div className="space-y-4 text-gray-600 dark:text-gray-300">
+            <p>
+              • نمودار فروش محصولات نشان می‌دهد که برنج هاشمی و صدری بیشترین فروش را در تمام بازه‌های زمانی دارند.
+            </p>
+            <p>
+              • نمودار جنسیت نشان می‌دهد که ۴۵٪ از کاربران آقا، ۴۰٪ خانم و ۱۵٪ نامشخص هستند.
+            </p>
+            <p>
+              • نمودار توزیع جغرافیایی نشان می‌دهد که بیشترین کاربران از استان‌های تهران (۳۰٪)، گیلان (۲۵٪) و اصفهان (۱۵٪) هستند.
+            </p>
+          </div>
         </div>
-      </div>
-      {/* Add SimpleLineChart */}
-      <div className="mb-8 h-[400px] bg-white p-4 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4 text-center">نمودار فروش</h2>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
-            data={result}
-          >
-            <CartesianGrid stroke="#ccc" />
-            <XAxis
-              dataKey="date"
-              tick={{ fontSize: 12 }}
-              angle={-45}
-              textAnchor="end"
-              height={60}
-            />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="product1" stroke="#8884d8" name="برنج هاشمی" />
-            <Line type="monotone" dataKey="product2" stroke="#82ca9d" name="برنج صدری" />
-            <Line type="monotone" dataKey="product3" stroke="#fb8500" name="برنج دودی" />
-            <Line type="monotone" dataKey="product4" stroke="#8ecae6" name="برنج دم سیاه" />
-            <Line type="monotone" dataKey="product5" stroke="#ff8fab" name="زیتون ماری" />
-            <Line type="monotone" dataKey="product6" stroke="#ffd60a" name="زیتون شکسته" />
-            <Line type="monotone" dataKey="product7" stroke="#adc178" name="زیتون کنسروی" />
-            <Line type="monotone" dataKey="product8" stroke="#f00" name="رشته خشکار" />
-            <Line type="monotone" dataKey="product9" stroke="#4CAF50" name="چای کرک" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
 
-      {/* آمار مالی و پرداخت‌ها */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4 text-center">آمار مالی و پرداخت‌ها</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* کارت درآمد کل */}
-          <Card className="dark:bg-red-600 shadow-lg rounded-lg">
-            <div className="p-4 dark:bg-red-600">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-gray-500 text-sm">درآمد کل</h3>
-                  <p className="text-2xl font-bold text-green-600">۲۵,۰۰۰,۰۰۰ تومان</p>
-                </div>
-                <div className="bg-green-100 p-3 rounded-full">
-                  <i className="pi pi-dollar text-green-600 text-xl"></i>
-                </div>
-              </div>
-              <div className="mt-4">
-                <span className="text-green-600 text-sm">
-                  <i className="pi pi-arrow-up"></i> ۱۲٪ نسبت به ماه گذشته
-                </span>
-              </div>
-            </div>
-          </Card>
-
-          {/* کارت تعداد سفارشات */}
-          <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
-            <div className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-gray-500 text-sm">تعداد سفارشات</h3>
-                  <p className="text-2xl font-bold text-blue-600">۱۵۶ سفارش</p>
-                </div>
-                <div className="bg-blue-100 p-3 rounded-full">
-                  <i className="pi pi-shopping-cart text-blue-600 text-xl"></i>
-                </div>
-              </div>
-              <div className="mt-4">
-                <span className="text-blue-600 text-sm">
-                  <i className="pi pi-arrow-up"></i> ۸٪ نسبت به ماه گذشته
-                </span>
-              </div>
-            </div>
-          </Card>
-
-          {/* کارت میانگین سبد خرید */}
-          <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
-            <div className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-gray-500 text-sm">میانگین سبد خرید</h3>
-                  <p className="text-2xl font-bold text-purple-600">۱۶۰,۰۰۰ تومان</p>
-                </div>
-                <div className="bg-purple-100 p-3 rounded-full">
-                  <i className="pi pi-chart-line text-purple-600 text-xl"></i>
-                </div>
-              </div>
-              <div className="mt-4">
-                <span className="text-purple-600 text-sm">
-                  <i className="pi pi-arrow-up"></i> ۵٪ نسبت به ماه گذشته
-                </span>
-              </div>
-            </div>
-          </Card>
-
-          {/* کارت تعداد مشتریان جدید */}
-          <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
-            <div className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-gray-500 text-sm">مشتریان جدید</h3>
-                  <p className="text-2xl font-bold text-orange-600">۲۴ مشتری</p>
-                </div>
-                <div className="bg-orange-100 p-3 rounded-full">
-                  <i className="pi pi-users text-orange-600 text-xl"></i>
-                </div>
-              </div>
-              <div className="mt-4">
-                <span className="text-orange-600 text-sm">
-                  <i className="pi pi-arrow-up"></i> ۱۵٪ نسبت به ماه گذشته
-                </span>
-              </div>
-            </div>
-          </Card>
+        {/* Add SimpleLineChart */}
+        <div className="mb-8 h-[400px] bg-white p-4 rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-4 text-center">نمودار فروش</h2>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+              data={result}
+            >
+              <CartesianGrid stroke="#ccc" />
+              <XAxis
+                dataKey="date"
+                tick={{ fontSize: 12 }}
+                angle={-45}
+                textAnchor="end"
+                height={60}
+              />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="product1" stroke="#8884d8" name="برنج هاشمی" />
+              <Line type="monotone" dataKey="product2" stroke="#82ca9d" name="برنج صدری" />
+              <Line type="monotone" dataKey="product3" stroke="#fb8500" name="برنج دودی" />
+              <Line type="monotone" dataKey="product4" stroke="#8ecae6" name="برنج دم سیاه" />
+              <Line type="monotone" dataKey="product5" stroke="#ff8fab" name="زیتون ماری" />
+              <Line type="monotone" dataKey="product6" stroke="#ffd60a" name="زیتون شکسته" />
+              <Line type="monotone" dataKey="product7" stroke="#adc178" name="زیتون کنسروی" />
+              <Line type="monotone" dataKey="product8" stroke="#f00" name="رشته خشکار" />
+              <Line type="monotone" dataKey="product9" stroke="#4CAF50" name="چای کرک" />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
-      </div>
 
-      {/* <Button label="افزودن کاربر" icon="pi pi-check" iconPos="right" /> */}
-      <Button
-        label="افزودن کاربر"
-        icon="pi pi-arrow-down"
-        onClick={() => show("top")}
-        className="p-button-warning"
-        style={{ minWidth: "10rem" }}
-      />
+        {/* آمار مالی و پرداخت‌ها */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4 text-center">آمار مالی و پرداخت‌ها</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* کارت درآمد کل */}
+            <Card className="dark:bg-red-600 shadow-lg rounded-lg">
+              <div className="p-4 dark:bg-red-600">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-gray-500 text-sm">درآمد کل</h3>
+                    <p className="text-2xl font-bold text-green-600">۲۵,۰۰۰,۰۰۰ تومان</p>
+                  </div>
+                  <div className="bg-green-100 p-3 rounded-full">
+                    <i className="pi pi-dollar text-green-600 text-xl"></i>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <span className="text-green-600 text-sm">
+                    <i className="pi pi-arrow-up"></i> ۱۲٪ نسبت به ماه گذشته
+                  </span>
+                </div>
+              </div>
+            </Card>
 
-      <div className="card">
-        <DataTable
-          value={users}
-          paginator
-          rows={10}
-          rowsPerPageOptions={[5, 10, 25, 50]}
-          tableStyle={{ minWidth: "50rem" }}
-          className="p-datatable-sm"
-          emptyMessage="هیچ کاربری یافت نشد"
-          loading={loading}
-          dir="rtl"
-          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-        >
-          <Column
-            field="id"
-            header="شناسه"
-            sortable
-            style={{ width: "5%" }}
-            className="text-center"
-          ></Column>
-          <Column
-            field="username"
-            header="نام کاربری"
-            sortable
-            style={{ width: "15%" }}
-            className="text-center"
-          ></Column>
-          <Column
-            field="email"
-            header="ایمیل"
-            sortable
-            style={{ width: "20%" }}
-            className="text-center"
-          ></Column>
-          <Column
-            field="password"
-            header="رمز عبور"
-            body={passwordBodyTemplate}
-            style={{ width: "20%" }}
-          ></Column>
-          <Column
-            field="role"
-            header="نقش"
-            body={roleBodyTemplate}
-            sortable
-            style={{ width: "15%" }}
-          ></Column>
-          <Column
-            field="purchases"
-            header="تعداد خریدها"
-            body={purchasesBodyTemplate}
-            sortable
-            style={{ width: "10%" }}
-          ></Column>
-          <Column
-            body={actionsBodyTemplate}
-            header="عملیات"
-            style={{ width: "15%" }}
-          ></Column>
-        </DataTable>
-      </div>
+            {/* کارت تعداد سفارشات */}
+            <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-gray-500 text-sm">تعداد سفارشات</h3>
+                    <p className="text-2xl font-bold text-blue-600">۱۵۶ سفارش</p>
+                  </div>
+                  <div className="bg-blue-100 p-3 rounded-full">
+                    <i className="pi pi-shopping-cart text-blue-600 text-xl"></i>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <span className="text-blue-600 text-sm">
+                    <i className="pi pi-arrow-up"></i> ۸٪ نسبت به ماه گذشته
+                  </span>
+                </div>
+              </div>
+            </Card>
 
-      <Dropdown
-        value={selectedDuration}
-        onChange={(e) => setSelectedDuration(e.value)}
-        options={durations}
-        optionLabel="name"
-        placeholder="Select a duration"
-        className="w-full md:w-14rem"
-      />
+            {/* کارت میانگین سبد خرید */}
+            <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-gray-500 text-sm">میانگین سبد خرید</h3>
+                    <p className="text-2xl font-bold text-purple-600">۱۶۰,۰۰۰ تومان</p>
+                  </div>
+                  <div className="bg-purple-100 p-3 rounded-full">
+                    <i className="pi pi-chart-line text-purple-600 text-xl"></i>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <span className="text-purple-600 text-sm">
+                    <i className="pi pi-arrow-up"></i> ۵٪ نسبت به ماه گذشته
+                  </span>
+                </div>
+              </div>
+            </Card>
 
-      <h3 className="text-center">بازخوردها و نظرات مشتریان</h3>
+            {/* کارت تعداد مشتریان جدید */}
+            <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-gray-500 text-sm">مشتریان جدید</h3>
+                    <p className="text-2xl font-bold text-orange-600">۲۴ مشتری</p>
+                  </div>
+                  <div className="bg-orange-100 p-3 rounded-full">
+                    <i className="pi pi-users text-orange-600 text-xl"></i>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <span className="text-orange-600 text-sm">
+                    <i className="pi pi-arrow-up"></i> ۱۵٪ نسبت به ماه گذشته
+                  </span>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
 
-      <div className="card">
-        <Card>
+        {/* <Button label="افزودن کاربر" icon="pi pi-check" iconPos="right" /> */}
+        <Button
+          label="افزودن کاربر"
+          icon="pi pi-arrow-down"
+          onClick={() => show("top")}
+          className="p-button-warning"
+          style={{ minWidth: "10rem" }}
+        />
+
+        <div className="card">
           <DataTable
-            value={comments}
+            value={users}
             paginator
             rows={10}
             rowsPerPageOptions={[5, 10, 25, 50]}
             tableStyle={{ minWidth: "50rem" }}
-            loading={loading}
-            filters={filters}
-            globalFilterFields={["username", "productTitle", "text"]}
-            header={header}
-            emptyMessage="هیچ نظری یافت نشد."
             className="p-datatable-sm"
+            emptyMessage="هیچ کاربری یافت نشد"
+            loading={loading}
+            dir="rtl"
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
           >
             <Column
-              field="username"
-              header="نام کاربر"
+              field="id"
+              header="شناسه"
               sortable
-              filter
-              filterPlaceholder="جستجو بر اساس نام کاربر"
-              style={{ minWidth: "12rem" }}
-            />
-            <Column
-              field="productTitle"
-              header="نام محصول"
-              sortable
-              filter
-              filterPlaceholder="جستجو بر اساس نام محصول"
-              style={{ minWidth: "14rem" }}
-            />
-            <Column
-              field="text"
-              header="متن نظر"
-              sortable
-              filter
-              filterPlaceholder="جستجو در متن نظر"
-              style={{ minWidth: "20rem" }}
-            />
-            <Column
-              field="rating"
-              header="امتیاز"
-              sortable
-              body={ratingBodyTemplate}
-              style={{ minWidth: "10rem" }}
-            />
-            <Column
-              field="createdAtJalali"
-              header="تاریخ ثبت"
-              sortable
-              body={dateBodyTemplate}
-              style={{ minWidth: "10rem" }}
-            />
-            <Column
-              body={commentActionsBodyTemplate}
-              header="عملیات"
-              style={{ minWidth: "8rem" }}
+              style={{ width: "5%" }}
               className="text-center"
-            />
+            ></Column>
+            <Column
+              field="username"
+              header="نام کاربری"
+              sortable
+              style={{ width: "15%" }}
+              className="text-center"
+            ></Column>
+            <Column
+              field="email"
+              header="ایمیل"
+              sortable
+              style={{ width: "20%" }}
+              className="text-center"
+            ></Column>
+            <Column
+              field="password"
+              header="رمز عبور"
+              body={passwordBodyTemplate}
+              style={{ width: "20%" }}
+            ></Column>
+            <Column
+              field="role"
+              header="نقش"
+              body={roleBodyTemplate}
+              sortable
+              style={{ width: "15%" }}
+            ></Column>
+            <Column
+              field="purchases"
+              header="تعداد خریدها"
+              body={purchasesBodyTemplate}
+              sortable
+              style={{ width: "10%" }}
+            ></Column>
+            <Column
+              body={actionsBodyTemplate}
+              header="عملیات"
+              style={{ width: "15%" }}
+            ></Column>
           </DataTable>
-        </Card>
-      </div>
-
-      {/* add user Dialog */}
-      <Dialog
-        header="افزودن کاربر"
-        visible={visible}
-        position={position}
-        style={{ width: "50vw" }}
-        onHide={() => {
-          if (!visible) return;
-          setVisible(false);
-        }}
-        footer={footerContent}
-        draggable={false}
-        resizable={false}
-      >
-        <div className="field bg-red-200">
-          <div>
-            <label htmlFor="username">نام کاربری</label>
-            <InputText
-              id="username"
-              className="w-full"
-              value={newUsername}
-              onChange={(e) => setNewUsername(e.target.value)}
-              required
-              autoFocus
-            />
-          </div>
-
-          <div>
-            <label htmlFor="email">ایمیل</label>
-            <InputText
-              id="email"
-              className="w-full"
-              value={newUseremail}
-              onChange={(e) => setNewUseremail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password">رمز عبور</label>
-            <InputText
-              id="password"
-              className="w-full"
-              value={newUserpass}
-              onChange={(e) => setNewUserpass(e.target.value)}
-              required
-            />
-          </div>
         </div>
-      </Dialog>
 
-      {/* Edit Dialog */}
-      <Dialog
-        visible={editDialogVisible}
-        style={{ width: "450px" }}
-        header="ویرایش کاربر"
-        modal
-        className="p-fluid"
-        footer={editDialogFooter}
-        onHide={() => setEditDialogVisible(false)}
-        dir="rtl"
-      >
-        {selectedUser && (
+        <Dropdown
+          value={selectedDuration}
+          onChange={(e) => setSelectedDuration(e.value)}
+          options={durations}
+          optionLabel="name"
+          placeholder="Select a duration"
+          className="w-full md:w-14rem"
+        />
+
+        <h3 className="text-center">بازخوردها و نظرات مشتریان</h3>
+
+        <div className="card">
+          <Card>
+            <DataTable
+              value={comments}
+              paginator
+              rows={10}
+              rowsPerPageOptions={[5, 10, 25, 50]}
+              tableStyle={{ minWidth: "50rem" }}
+              loading={loading}
+              filters={filters}
+              globalFilterFields={["username", "productTitle", "text"]}
+              header={header}
+              emptyMessage="هیچ نظری یافت نشد."
+              className="p-datatable-sm"
+            >
+              <Column
+                field="username"
+                header="نام کاربر"
+                sortable
+                filter
+                filterPlaceholder="جستجو بر اساس نام کاربر"
+                style={{ minWidth: "12rem" }}
+              />
+              <Column
+                field="productTitle"
+                header="نام محصول"
+                sortable
+                filter
+                filterPlaceholder="جستجو بر اساس نام محصول"
+                style={{ minWidth: "14rem" }}
+              />
+              <Column
+                field="text"
+                header="متن نظر"
+                sortable
+                filter
+                filterPlaceholder="جستجو در متن نظر"
+                style={{ minWidth: "20rem" }}
+              />
+              <Column
+                field="rating"
+                header="امتیاز"
+                sortable
+                body={ratingBodyTemplate}
+                style={{ minWidth: "10rem" }}
+              />
+              <Column
+                field="createdAtJalali"
+                header="تاریخ ثبت"
+                sortable
+                body={dateBodyTemplate}
+                style={{ minWidth: "10rem" }}
+              />
+              <Column
+                body={commentActionsBodyTemplate}
+                header="عملیات"
+                style={{ minWidth: "8rem" }}
+                className="text-center"
+              />
+            </DataTable>
+          </Card>
+        </div>
+
+        {/* add user Dialog */}
+        <Dialog
+          header="افزودن کاربر"
+          visible={visible}
+          position={position}
+          style={{ width: "50vw" }}
+          onHide={() => {
+            if (!visible) return;
+            setVisible(false);
+          }}
+          footer={footerContent}
+          draggable={false}
+          resizable={false}
+        >
           <div className="field bg-red-200">
-            <label htmlFor="username">نام کاربری</label>
-            <InputText
-              id="username"
-              value={selectedUser.username}
-              onChange={(e) =>
-                setSelectedUser({ ...selectedUser, username: e.target.value })
-              }
-              required
-              autoFocus
-            />
-            <label htmlFor="email">ایمیل</label>
-            <InputText
-              id="email"
-              value={selectedUser.email}
-              onChange={(e) =>
-                setSelectedUser({ ...selectedUser, email: e.target.value })
-              }
-              required
-            />
-            <label htmlFor="password">رمز عبور</label>
-            <InputText
-              id="password"
-              value={selectedUser.password}
-              onChange={(e) =>
-                setSelectedUser({ ...selectedUser, password: e.target.value })
-              }
-              required
-            />
+            <div>
+              <label htmlFor="username">نام کاربری</label>
+              <InputText
+                id="username"
+                className="w-full"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+                required
+                autoFocus
+              />
+            </div>
+
+            <div>
+              <label htmlFor="email">ایمیل</label>
+              <InputText
+                id="email"
+                className="w-full"
+                value={newUseremail}
+                onChange={(e) => setNewUseremail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password">رمز عبور</label>
+              <InputText
+                id="password"
+                className="w-full"
+                value={newUserpass}
+                onChange={(e) => setNewUserpass(e.target.value)}
+                required
+              />
+            </div>
           </div>
-        )}
-      </Dialog>
+        </Dialog>
 
-      {/* View/Edit Dialog */}
-      <Dialog
-        visible={viewDialogVisible}
-        style={{ width: "450px" }}
-        header={`ویرایش کاربر ${selectedUser?.username}`}
-        modal
-        className="p-fluid bg-slate-200 p-5 rounded-lg"
-        footer={viewDialogFooter}
-        onHide={() => setViewDialogVisible(false)}
-        dir="rtl"
-      >
-        {selectedUser && (
-          <div className="field my-6">
-            <label htmlFor="view-username">نام کاربری</label>
-            <InputText
-              className="bg-white rounded py-2 px-3 my-4"
-              id="view-username"
-              value={selectedUser.username}
-              onChange={(e) =>
-                setSelectedUser({ ...selectedUser, username: e.target.value })
-              }
-              required
-              autoFocus
+        {/* Edit Dialog */}
+        <Dialog
+          visible={editDialogVisible}
+          style={{ width: "450px" }}
+          header="ویرایش کاربر"
+          modal
+          className="p-fluid"
+          footer={editDialogFooter}
+          onHide={() => setEditDialogVisible(false)}
+          dir="rtl"
+        >
+          {selectedUser && (
+            <div className="field bg-red-200">
+              <label htmlFor="username">نام کاربری</label>
+              <InputText
+                id="username"
+                value={selectedUser.username}
+                onChange={(e) =>
+                  setSelectedUser({ ...selectedUser, username: e.target.value })
+                }
+                required
+                autoFocus
+              />
+              <label htmlFor="email">ایمیل</label>
+              <InputText
+                id="email"
+                value={selectedUser.email}
+                onChange={(e) =>
+                  setSelectedUser({ ...selectedUser, email: e.target.value })
+                }
+                required
+              />
+              <label htmlFor="password">رمز عبور</label>
+              <InputText
+                id="password"
+                value={selectedUser.password}
+                onChange={(e) =>
+                  setSelectedUser({ ...selectedUser, password: e.target.value })
+                }
+                required
+              />
+            </div>
+          )}
+        </Dialog>
+
+        {/* View/Edit Dialog */}
+        <Dialog
+          visible={viewDialogVisible}
+          style={{ width: "450px" }}
+          header={`ویرایش کاربر ${selectedUser?.username}`}
+          modal
+          className="p-fluid bg-slate-200 p-5 rounded-lg"
+          footer={viewDialogFooter}
+          onHide={() => setViewDialogVisible(false)}
+          dir="rtl"
+        >
+          {selectedUser && (
+            <div className="field my-6">
+              <label htmlFor="view-username">نام کاربری</label>
+              <InputText
+                className="bg-white rounded py-2 px-3 my-4"
+                id="view-username"
+                value={selectedUser.username}
+                onChange={(e) =>
+                  setSelectedUser({ ...selectedUser, username: e.target.value })
+                }
+                required
+                autoFocus
+              />
+              <label htmlFor="view-email">ایمیل</label>
+              <InputText
+                className="bg-white rounded py-2 px-3 mb-4"
+                id="view-email"
+                value={selectedUser.email}
+                onChange={(e) =>
+                  setSelectedUser({ ...selectedUser, email: e.target.value })
+                }
+                required
+              />
+              <label htmlFor="view-password">رمز عبور</label>
+              <InputText
+                className="bg-white rounded py-2 px-3 mb-4"
+                id="view-password"
+                value={selectedUser.password}
+                onChange={(e) =>
+                  setSelectedUser({ ...selectedUser, password: e.target.value })
+                }
+                required
+              />
+            </div>
+          )}
+        </Dialog>
+
+        {/* Delete Dialog */}
+        <Dialog
+          visible={deleteDialogVisible}
+          style={{ width: "450px" }}
+          header="تایید حذف"
+          modal
+          footer={deleteDialogFooter}
+          onHide={() => setDeleteDialogVisible(false)}
+          dir="rtl"
+        >
+          <div className="confirmation-content">
+            <i
+              className="pi pi-exclamation-triangle mr-3"
+              style={{ fontSize: "2rem" }}
             />
-            <label htmlFor="view-email">ایمیل</label>
-            <InputText
-              className="bg-white rounded py-2 px-3 mb-4"
-              id="view-email"
-              value={selectedUser.email}
-              onChange={(e) =>
-                setSelectedUser({ ...selectedUser, email: e.target.value })
-              }
-              required
-            />
-            <label htmlFor="view-password">رمز عبور</label>
-            <InputText
-              className="bg-white rounded py-2 px-3 mb-4"
-              id="view-password"
-              value={selectedUser.password}
-              onChange={(e) =>
-                setSelectedUser({ ...selectedUser, password: e.target.value })
-              }
-              required
-            />
+            <span>آیا از حذف این کاربر اطمینان دارید؟</span>
           </div>
-        )}
-      </Dialog>
+        </Dialog>
 
-      {/* Delete Dialog */}
-      <Dialog
-        visible={deleteDialogVisible}
-        style={{ width: "450px" }}
-        header="تایید حذف"
-        modal
-        footer={deleteDialogFooter}
-        onHide={() => setDeleteDialogVisible(false)}
-        dir="rtl"
-      >
-        <div className="confirmation-content">
-          <i
-            className="pi pi-exclamation-triangle mr-3"
-            style={{ fontSize: "2rem" }}
-          />
-          <span>آیا از حذف این کاربر اطمینان دارید؟</span>
-        </div>
-      </Dialog>
+        {/* Role Change Dialog */}
+        <Dialog
+          visible={roleChangeDialogVisible}
+          style={{ width: "450px" }}
+          header="تغییر نقش کاربر"
+          modal
+          footer={roleChangeDialogFooter}
+          onHide={() => setRoleChangeDialogVisible(false)}
+          dir="rtl"
+          className="bg-red-200 p-5 rounded-lg"
+        >
+          <div className="confirmation-content bg-red-200">
+            <i
+              className="pi pi-exclamation-triangle mr-3"
+              style={{ fontSize: "2rem" }}
+            />
+            <span>
+              آیا از تغییر نقش کاربر {selectedUser?.username} از{" "}
+              {selectedUser?.role} به{" "}
+              {selectedUser?.role === "admin" ? "کاربر عادی" : "مدیر"} اطمینان
+              دارید؟
+            </span>
+          </div>
+        </Dialog>
 
-      {/* Role Change Dialog */}
-      <Dialog
-        visible={roleChangeDialogVisible}
-        style={{ width: "450px" }}
-        header="تغییر نقش کاربر"
-        modal
-        footer={roleChangeDialogFooter}
-        onHide={() => setRoleChangeDialogVisible(false)}
-        dir="rtl"
-        className="bg-red-200 p-5 rounded-lg"
-      >
-        <div className="confirmation-content bg-red-200">
-          <i
-            className="pi pi-exclamation-triangle mr-3"
-            style={{ fontSize: "2rem" }}
-          />
-          <span>
-            آیا از تغییر نقش کاربر {selectedUser?.username} از{" "}
-            {selectedUser?.role} به{" "}
-            {selectedUser?.role === "admin" ? "کاربر عادی" : "مدیر"} اطمینان
-            دارید؟
-          </span>
-        </div>
-      </Dialog>
-
-      {/* Delete Comment Dialog */}
-      <Dialog
-        visible={deleteCommentDialogVisible}
-        style={{ width: "450px" }}
-        header="تایید حذف"
-        modal
-        footer={deleteCommentDialogFooter}
-        onHide={() => setDeleteCommentDialogVisible(false)}
-        dir="rtl"
-      >
-        <div className="confirmation-content">
-          <i
-            className="pi pi-exclamation-triangle mr-3"
-            style={{ fontSize: "2rem" }}
-          />
-          <span>آیا از حذف این نظر اطمینان دارید؟</span>
-        </div>
-      </Dialog>
+        {/* Delete Comment Dialog */}
+        <Dialog
+          visible={deleteCommentDialogVisible}
+          style={{ width: "450px" }}
+          header="تایید حذف"
+          modal
+          footer={deleteCommentDialogFooter}
+          onHide={() => setDeleteCommentDialogVisible(false)}
+          dir="rtl"
+        >
+          <div className="confirmation-content">
+            <i
+              className="pi pi-exclamation-triangle mr-3"
+              style={{ fontSize: "2rem" }}
+            />
+            <span>آیا از حذف این نظر اطمینان دارید؟</span>
+          </div>
+        </Dialog>
+      </div>
     </div>
   );
 }
