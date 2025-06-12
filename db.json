@@ -474,6 +474,7 @@
       "title": "برنج هاشمی",
       "body": "برنج هاشمی مرغوب شمال با کیفیت عالی و طعم بی نظیر",
       "price": 320000,
+      "discount": 15,
       "img": "/images/rice1.jpg",
       "comments": [
         {
@@ -510,6 +511,7 @@
       "title": "برنج صدری",
       "body": "برنج صدری درجه یک با عطر و طعم فوق العاده",
       "price": 280000,
+      "discount": 0,
       "img": "/images/rice2.jpg",
       "comments": [
         {
@@ -546,6 +548,7 @@
       "title": "برنج دودی",
       "body": "برنج دودی با طعم دودی طبیعی و کیفیت عالی",
       "price": 350000,
+      "discount": 20,
       "img": "/images/rice3.jpg",
       "comments": [
         {
@@ -582,6 +585,7 @@
       "title": "برنج دم سیاه",
       "body": "برنج دم سیاه با کیفیت عالی و طعم بی نظیر",
       "price": 369000,
+      "discount": 10,
       "img": "/images/rice1.jpg",
       "comments": [
         {
@@ -618,6 +622,7 @@
       "title": "زیتون ماری",
       "body": "زیتون ماری تازه و خوش طعم",
       "price": 85000,
+      "discount": 0,
       "img": "/images/olive1.jpg",
       "comments": [
         {
@@ -654,6 +659,7 @@
       "title": "زیتون شکسته",
       "body": "زیتون شکسته با کیفیت عالی",
       "price": 75000,
+      "discount": 25,
       "img": "/images/olive2.jpg",
       "comments": [
         {
@@ -690,6 +696,7 @@
       "title": "زیتون کنسروی",
       "body": "زیتون کنسروی با کیفیت عالی و طعم بی نظیر",
       "price": 65000,
+      "discount": 0,
       "img": "/images/olive3.jpg",
       "comments": [
         {
@@ -726,6 +733,7 @@
       "title": "رشته خشکار",
       "body": "رشته خشکار با کیفیت عالی و طعم بی نظیر",
       "price": 45000,
+      "discount": 30,
       "img": "/images/reshte.jpg",
       "comments": [
         {
@@ -762,6 +770,7 @@
       "title": "چای کرک",
       "body": "چای کرک با کیفیت عالی و طعم بی نظیر",
       "price": 55000,
+      "discount": 5,
       "img": "/images/kerak.jpg",
       "comments": [
         {
