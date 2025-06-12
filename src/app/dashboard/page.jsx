@@ -20,8 +20,8 @@ import {
   Line,
   XAxis,
   YAxis,
-  Tooltip,
-  Legend,
+  // Tooltip,
+  // Legend,
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
@@ -31,6 +31,19 @@ import { CiEdit } from "react-icons/ci";
 import { CiRead } from "react-icons/ci";
 import { Rating } from "primereact/rating";
 import { Card } from "primereact/card";
+
+
+import { Pie } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+} from 'chart.js';
+
+// ثبت کامپوننت‌های مورد نیاز Chart.js
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale);
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -56,6 +69,84 @@ export default function DashboardPage() {
     { name: "ماهانه", code: "monthly" },
     { name: "سالانه", code: "LDN" },
   ];
+
+  // داده‌های جنسیت کاربران
+  const genderData = {
+    labels: ['آقایان', 'خانم‌ها', 'نامشخص'],
+    datasets: [
+      {
+        data: [45, 40, 15],
+        backgroundColor: [
+          'rgba(54, 162, 235, 0.8)',
+          'rgba(255, 99, 132, 0.8)',
+          'rgba(201, 203, 207, 0.8)',
+        ],
+        borderColor: [
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 99, 132, 1)',
+          'rgba(201, 203, 207, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // داده‌های توزیع جغرافیایی
+  const locationData = {
+    labels: [
+      'تهران',
+      'گیلان',
+      'اصفهان',
+      'خراسان رضوی',
+      'فارس',
+      'سایر استان‌ها',
+    ],
+    datasets: [
+      {
+        data: [30, 25, 15, 10, 8, 12],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.8)',
+          'rgba(54, 162, 235, 0.8)',
+          'rgba(255, 206, 86, 0.8)',
+          'rgba(75, 192, 192, 0.8)',
+          'rgba(153, 102, 255, 0.8)',
+          'rgba(255, 159, 64, 0.8)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // تنظیمات نمودار
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          font: {
+            family: 'Vazirmatn',
+          },
+        },
+      },
+      title: {
+        display: true,
+        text: 'توزیع کاربران',
+        font: {
+          family: 'Vazirmatn',
+          size: 16,
+        },
+      },
+    },
+  };
 
   useEffect(() => {
     async function checkUser() {
@@ -86,7 +177,7 @@ export default function DashboardPage() {
       try {
         const response = await fetch("/api/products");
         const products = await response.json();
-        
+
         // جمع‌آوری تمام نظرات از محصولات
         const allComments = products.reduce((acc, product) => {
           const productComments = product.comments.map(comment => ({
@@ -96,7 +187,7 @@ export default function DashboardPage() {
           }));
           return [...acc, ...productComments];
         }, []);
-        
+
         setComments(allComments);
       } catch (error) {
         console.error("Error fetching comments:", error);
@@ -126,9 +217,8 @@ export default function DashboardPage() {
         rounded
         value={rowData.role}
         // severity={rowData.role === "admin" ? "#8ecae6" : "#e0e1dd"}
-        className={`text-center ${
-          rowData.role === "admin" ? "bg-[#8ecae6]" : "bg-[#e0e1dd]"
-        }`}
+        className={`text-center ${rowData.role === "admin" ? "bg-[#8ecae6]" : "bg-[#e0e1dd]"
+          }`}
       />
     );
   };
@@ -384,7 +474,7 @@ export default function DashboardPage() {
         // تبدیل تاریخ شمسی به آرایه برای مقایسه
         const [aYear, aMonth, aDay] = a.date.split('/').map(Number);
         const [bYear, bMonth, bDay] = b.date.split('/').map(Number);
-        
+
         // مقایسه سال
         if (aYear !== bYear) return aYear - bYear;
         // مقایسه ماه
@@ -490,6 +580,42 @@ export default function DashboardPage() {
     <div className="p-4 bg-[#0B090A]">
       <h1 className="text-2xl font-bold mb-4 text-center">داشبورد مدیر</h1>
 
+      <div className="grid md:grid-cols-2 gap-8">
+        {/* نمودار جنسیت */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold text-[#38b000] mb-6 text-center">
+            توزیع جنسیت کاربران
+          </h2>
+          <div className="h-[400px] flex items-center justify-center">
+            <Pie data={genderData} options={options} />
+          </div>
+        </div>
+
+        {/* نمودار توزیع جغرافیایی */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold text-[#38b000] mb-6 text-center">
+            توزیع جغرافیایی کاربران
+          </h2>
+          <div className="h-[400px] flex items-center justify-center">
+            <Pie data={locationData} options={options} />
+          </div>
+        </div>
+      </div>
+
+      {/* توضیحات */}
+      <div className="mt-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold text-[#38b000] mb-4">
+          توضیحات
+        </h2>
+        <div className="space-y-4 text-gray-600 dark:text-gray-300">
+          <p>
+            • نمودار جنسیت نشان می‌دهد که ۴۵٪ از کاربران آقا، ۴۰٪ خانم و ۱۵٪ نامشخص هستند.
+          </p>
+          <p>
+            • نمودار توزیع جغرافیایی نشان می‌دهد که بیشترین کاربران از استان‌های تهران (۳۰٪)، گیلان (۲۵٪) و اصفهان (۱۵٪) هستند.
+          </p>
+        </div>
+      </div>
       {/* Add SimpleLineChart */}
       <div className="mb-8 h-[400px] bg-white p-4 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4 text-center">نمودار فروش</h2>
@@ -504,8 +630,8 @@ export default function DashboardPage() {
             data={result}
           >
             <CartesianGrid stroke="#ccc" />
-            <XAxis 
-              dataKey="date" 
+            <XAxis
+              dataKey="date"
               tick={{ fontSize: 12 }}
               angle={-45}
               textAnchor="end"
