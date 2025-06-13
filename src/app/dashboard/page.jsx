@@ -74,6 +74,7 @@ export default function DashboardPage() {
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [deleteCommentDialogVisible, setDeleteCommentDialogVisible] = useState(false);
   const [selectedComment, setSelectedComment] = useState(null);
+  const [selectedTimePeriod, setSelectedTimePeriod] = useState('daily');
   const durations = [
     { name: "روزانه", code: "day" },
     { name: "هفتگی", code: "weekly" },
@@ -203,31 +204,54 @@ export default function DashboardPage() {
     },
   };
 
-   // داده‌های فروش محصولات
-   const salesData = {
-    labels: ['برنج هاشمی', 'برنج صدری', 'برنج دودی', 'زیتون ماری', 'زیتون شکسته', 'چای کرک'],
+   // داده‌های فروش محصولات بر اساس بازه زمانی
+   const salesDataByPeriod = {
+    daily: {
+      labels: ['برنج هاشمی', 'برنج صدری', 'برنج دودی', 'زیتون ماری', 'زیتون شکسته', 'چای کرک'],
+      data: [12, 19, 3, 5, 2, 3],
+      label: 'فروش روزانه'
+    },
+    weekly: {
+      labels: ['برنج هاشمی', 'برنج صدری', 'برنج دودی', 'زیتون ماری', 'زیتون شکسته', 'چای کرک'],
+      data: [65, 59, 80, 81, 56, 55],
+      label: 'فروش هفتگی'
+    },
+    monthly: {
+      labels: ['برنج هاشمی', 'برنج صدری', 'برنج دودی', 'زیتون ماری', 'زیتون شکسته', 'چای کرک'],
+      data: [280, 250, 300, 290, 200, 220],
+      label: 'فروش ماهانه'
+    },
+    yearly: {
+      labels: ['برنج هاشمی', 'برنج صدری', 'برنج دودی', 'زیتون ماری', 'زیتون شکسته', 'چای کرک'],
+      data: [3200, 2800, 3500, 3300, 2400, 2600],
+      label: 'فروش سالانه'
+    },
+    twoYearly: {
+      labels: ['برنج هاشمی', 'برنج صدری', 'برنج دودی', 'زیتون ماری', 'زیتون شکسته', 'چای کرک'],
+      data: [6500, 5800, 7200, 6800, 4800, 5200],
+      label: 'فروش دو سال اخیر'
+    }
+  };
+
+  // گزینه‌های دراپ‌داون
+  const timePeriodOptions = [
+    { name: 'روزانه', value: 'daily' },
+    { name: 'هفتگی', value: 'weekly' },
+    { name: 'ماهانه', value: 'monthly' },
+    { name: 'سالانه', value: 'yearly' },
+    { name: 'دو سال اخیر', value: 'twoYearly' }
+  ];
+
+  // داده‌های نمودار بر اساس بازه زمانی انتخاب شده
+  const currentSalesData = {
+    labels: salesDataByPeriod[selectedTimePeriod].labels,
     datasets: [
       {
-        label: 'فروش روزانه',
-        data: [12, 19, 3, 5, 2, 3],
+        label: salesDataByPeriod[selectedTimePeriod].label,
+        data: salesDataByPeriod[selectedTimePeriod].data,
         backgroundColor: 'rgba(54, 162, 235, 0.8)',
-      },
-      {
-        label: 'فروش هفتگی',
-        data: [65, 59, 80, 81, 56, 55],
-        backgroundColor: 'rgba(255, 99, 132, 0.8)',
-      },
-      {
-        label: 'فروش ماهانه',
-        data: [280, 250, 300, 290, 200, 220],
-        backgroundColor: 'rgba(75, 192, 192, 0.8)',
-      },
-      {
-        label: 'فروش سالانه',
-        data: [3200, 2800, 3500, 3300, 2400, 2600],
-        backgroundColor: 'rgba(153, 102, 255, 0.8)',
-      },
-    ],
+      }
+    ]
   };
 
   useEffect(() => {
@@ -667,11 +691,22 @@ export default function DashboardPage() {
 
         {/* نمودار فروش محصولات */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
-          <h2 className="text-2xl font-bold text-[#38b000] mb-6 text-center">
-            آمار فروش محصولات
-          </h2>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-[#38b000]">
+              آمار فروش محصولات
+            </h2>
+            <Dropdown
+              value={selectedTimePeriod}
+              options={timePeriodOptions}
+              onChange={(e) => setSelectedTimePeriod(e.value)}
+              optionLabel="name"
+              optionValue="value"
+              placeholder="انتخاب بازه زمانی"
+              className="w-48"
+            />
+          </div>
           <div className="h-[500px]">
-            <Bar data={salesData} options={barOptions} />
+            <Bar data={currentSalesData} options={barOptions} />
           </div>
         </div>
 

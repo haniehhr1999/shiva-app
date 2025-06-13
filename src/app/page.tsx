@@ -184,15 +184,15 @@ export default function Home() {
 
   return (
     <div className='px-20 dark:bg-[#0B090A]'>
-      <div className="bg-slate-100 dark:bg-[#0B090A]">
+    <div className="bg-slate-100 dark:bg-[#0B090A]">
         {/* <h3 className="text-xl text-center mb-6">پرفروش ترین ها</h3> */}
 
-        <div className="p-6">
+      <div className="p-6">
           <Swiper
             spaceBetween={30}
-            slidesPerView={1}
+          slidesPerView={1}
             navigation={true}
-            pagination={{
+          pagination={{
               clickable: true,
             }}
             autoplay={{
@@ -201,20 +201,20 @@ export default function Home() {
             }}
             modules={[Navigation, Pagination, Autoplay]}
             className="mySwiper"
-          >
-            <SwiperSlide>
+        >
+          <SwiperSlide>
               <div className="bg-gradient-to-r from-green-400 to-blue-500 rounded-lg p-8 text-white">
                 <h2 className="text-2xl font-bold mb-4">تخفیف ویژه میوه‌های فصل</h2>
                 <p>تا ۳۰٪ تخفیف برای خریدهای بالای ۵۰۰ هزار تومان</p>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide>
               <div className="bg-gradient-to-r from-purple-400 to-pink-500 rounded-lg p-8 text-white">
                 <h2 className="text-2xl font-bold mb-4">ارسال رایگان</h2>
                 <p>برای تمام سفارش‌های بالای ۱ میلیون تومان</p>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide>
               <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg p-8 text-white">
                 <h2 className="text-2xl font-bold mb-4">تازه‌ترین محصولات</h2>
                 <p>هر روز محصولات تازه از مزارع و باغات</p>
@@ -282,8 +282,8 @@ export default function Home() {
           )}
 
           <h3 className="text-xl text-center my-8">سوالات متداول</h3>
-          <Accordion>{createDynamicTabs()}</Accordion>
-        </div>
+        <Accordion>{createDynamicTabs()}</Accordion>
+      </div>
 
         <div className="my-12">
           <h3 className="text-xl text-center mb-8">محصولات ویژه</h3>
@@ -339,7 +339,7 @@ export default function Home() {
               </button>
             </div>
           </div>
-        </div>
+      </div>
 
         <div className="my-12">
           <h3 className="text-xl text-center mb-8">چرا ما را انتخاب کنید؟</h3>
@@ -355,7 +355,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </div>
+    </div>
     </div>
   );
 }

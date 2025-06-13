@@ -19,6 +19,7 @@ const RegisterPage = () => {
       body: JSON.stringify({ username , email , pass }),
     });
 
+    console.log('res ==>' , res)
     
 
     if (res.ok) {
