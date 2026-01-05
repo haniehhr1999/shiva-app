@@ -242,16 +242,18 @@ const Navbar = () => {
         </div>
       </Container>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col">
-          <DialogHeader className="pb-4">
+        <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col bg-white dark:bg-gray-900 border-2 border-green-200 dark:border-green-800 shadow-2xl">
+          <DialogHeader className="pb-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 rounded-t-lg -mx-6 -mt-6 px-6 pt-6 mb-4 border-b border-green-200 dark:border-green-800">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <ShoppingBag className="w-5 h-5 text-primary" />
+                <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg shadow-lg">
+                  <ShoppingBag className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <DialogTitle className="text-2xl">سبد خرید شما</DialogTitle>
-                  <DialogDescription className="mt-1">
+                  <DialogTitle className="text-2xl bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                    سبد خرید شما
+                  </DialogTitle>
+                  <DialogDescription className="mt-1 text-foreground font-medium">
                     {purchases.length > 0 
                       ? `${purchases.length} محصول در سبد خرید شما` 
                       : "سبد خرید شما خالی است"}
@@ -259,7 +261,7 @@ const Navbar = () => {
                 </div>
               </div>
               {purchases.length > 0 && (
-                <Badge variant="secondary" className="text-lg px-3 py-1">
+                <Badge className="text-lg px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
                   {purchases.reduce((sum, p) => sum + p.quantity, 0)} عدد
                 </Badge>
               )}
@@ -274,7 +276,7 @@ const Navbar = () => {
                 {purchases.map((purchase, index) => (
                   <Card
                     key={index}
-                    className="group hover:shadow-md transition-all duration-300 border-2 hover:border-primary/50"
+                    className="group hover:shadow-xl transition-all duration-300 border-2 border-green-200 dark:border-green-800 hover:border-green-400 dark:hover:border-green-600 bg-gradient-to-br from-white to-green-50/30 dark:from-gray-800 dark:to-green-950/20"
                   >
                     <CardContent className="p-4">
                       <div className="flex gap-4">
@@ -345,10 +347,10 @@ const Navbar = () => {
                               <div className="text-sm text-muted-foreground mb-1">
                                 قیمت واحد
                               </div>
-                              <div className="text-lg font-bold text-primary">
+                              <div className="text-lg font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                                 {purchase.price.toLocaleString()} تومان
                               </div>
-                              <div className="text-xl font-bold text-green-600 dark:text-green-400 mt-1">
+                              <div className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mt-1">
                                 {(purchase.price * purchase.quantity).toLocaleString()} تومان
                               </div>
                             </div>
@@ -363,16 +365,19 @@ const Navbar = () => {
               <Separator className="my-4" />
 
               {/* خلاصه سفارش */}
-              <div className="space-y-3 pb-4">
+              <div className="space-y-3 pb-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 rounded-lg p-4 border-2 border-green-200 dark:border-green-800">
                 <div className="flex justify-between items-center text-lg">
-                  <span className="text-muted-foreground">تعداد کل:</span>
-                  <span className="font-semibold">
+                  <span className="text-foreground font-medium">تعداد کل:</span>
+                  <span className="font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                     {purchases.reduce((sum, p) => sum + p.quantity, 0)} عدد
                   </span>
                 </div>
-                <div className="flex justify-between items-center text-xl font-bold pt-2 border-t">
-                  <span>جمع کل سفارش:</span>
-                  <span className="text-2xl text-primary">
+                <Separator className="bg-green-200 dark:bg-green-800" />
+                <div className="flex justify-between items-center text-xl font-bold pt-2">
+                  <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                    جمع کل سفارش:
+                  </span>
+                  <span className="text-2xl bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                     {purchases
                       .reduce(
                         (total, purchase) =>
@@ -386,12 +391,16 @@ const Navbar = () => {
               </div>
 
               <DialogFooter className="gap-2 sm:gap-0">
-                <Button variant="outline" onClick={() => setOpen(false)}>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setOpen(false)}
+                  className="border-2 border-green-300 dark:border-green-700 hover:bg-green-50 dark:hover:bg-green-950/30"
+                >
                   ادامه خرید
                 </Button>
                 <Button 
                   onClick={handleCheckout}
-                  className="bg-primary hover:bg-primary/90 flex-1 sm:flex-initial"
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg flex-1 sm:flex-initial"
                 >
                   <ShoppingBag className="ml-2 w-4 h-4" />
                   تسویه حساب
@@ -400,14 +409,19 @@ const Navbar = () => {
             </>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-4">
-                <ShoppingBag className="w-12 h-12 text-muted-foreground" />
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900 dark:to-emerald-900 flex items-center justify-center mb-4 shadow-lg">
+                <ShoppingBag className="w-12 h-12 text-green-600 dark:text-green-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">سبد خرید شما خالی است</h3>
-              <p className="text-muted-foreground mb-6 max-w-sm">
+              <h3 className="text-xl font-semibold mb-2 bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                سبد خرید شما خالی است
+              </h3>
+              <p className="text-foreground mb-6 max-w-sm font-medium">
                 محصولات مورد علاقه خود را به سبد خرید اضافه کنید
               </p>
-              <Button onClick={() => { setOpen(false); router.push('/store'); }}>
+              <Button 
+                onClick={() => { setOpen(false); router.push('/store'); }}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
+              >
                 مشاهده محصولات
               </Button>
             </div>
