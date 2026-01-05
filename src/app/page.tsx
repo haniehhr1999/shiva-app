@@ -230,14 +230,16 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {categories.map((category) => (
-                <div key={category.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                  <div className="h-48 bg-gray-200 relative">
+                <div key={category.id} className="bg-card rounded-lg border shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+                  <div className="h-48 bg-muted relative">
                     <img
-                      src={category.image}
+                      src={category.image || '/images/placeholder.svg'}
                       alt={category.name}
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        e.currentTarget.src = '/images/placeholder.jpg';
+                        if (e.currentTarget.src !== `${window.location.origin}/images/placeholder.svg`) {
+                          e.currentTarget.src = '/images/placeholder.svg';
+                        }
                       }}
                     />
                   </div>

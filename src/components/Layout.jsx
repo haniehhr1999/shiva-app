@@ -8,7 +8,6 @@ import React from "react";
 const Layout = ({ children }) => {
 
   let pathname = usePathname()
-  console.log('pathname ===>', pathname)
 
 
   return <div>

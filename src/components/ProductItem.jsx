@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { Toast } from "primereact/toast";
 import { useRef } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const ProductItem = ({ id, title, body, price, img, discount = 0 }) => {
   const [loading, setLoading] = useState(false);
@@ -62,57 +65,56 @@ const ProductItem = ({ id, title, body, price, img, discount = 0 }) => {
   };
 
   return (
-    <div className="shadow-md rounded-md p-6 dark:bg-[#161A1D]">
+    <Card className="overflow-hidden">
       <Toast ref={toast} />
       <Link href={`/store/${id}`} className="block">
         <div className="relative w-full aspect-square">
           <Image
-            src={img}
-            className="rounded-md object-cover"
+            src={img || '/images/placeholder.svg'}
+            className="object-cover"
             alt={title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            onError={(e) => {
-              e.currentTarget.src = '/images/placeholder.jpg';
-            }}
           />
           {discount > 0 && (
-            <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+            <Badge variant="destructive" className="absolute top-2 right-2">
               {discount}% تخفیف
-            </div>
+            </Badge>
           )}
         </div>
-        <div className="py-3">
+        <CardContent className="py-3">
           <h2 className="mb-2 text-[#38b000] text-xl font-bold">{title}</h2>
-          <p>{body}</p>
-          <div className="flex justify-between items-center">
+          <p className="text-muted-foreground">{body}</p>
+          <div className="flex justify-between items-center mt-2">
             <div>
               {discount > 0 ? (
                 <>
-                  <span className="text-gray-500 line-through text-sm">{price.toLocaleString()} تومان</span>
-                  <span className="text-green-500 mr-2 block">
+                  <span className="text-muted-foreground line-through text-sm block">{price.toLocaleString()} تومان</span>
+                  <span className="text-green-500 font-bold">
                     {discountedPrice.toLocaleString()} تومان
                   </span>
                 </>
               ) : (
-                <span className="text-green-500">{price.toLocaleString()} تومان</span>
+                <span className="text-green-500 font-bold">{price.toLocaleString()} تومان</span>
               )}
             </div>
           </div>
-        </div>
+        </CardContent>
       </Link>
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          handleAddToCart();
-        }}
-        disabled={loading}
-        className="w-full bg-green-600 dark:bg-[#03440c] text-white rounded py-2 hover:bg-green-700 transition-colors disabled:bg-green-400"
-      >
-        {loading ? "در حال افزودن..." : "افزودن به سبد خرید"}
-      </button>
-    </div>
+      <CardFooter className="pt-0">
+        <Button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleAddToCart();
+          }}
+          disabled={loading}
+          className="w-full bg-green-600 hover:bg-green-700 text-white"
+        >
+          {loading ? "در حال افزودن..." : "افزودن به سبد خرید"}
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 

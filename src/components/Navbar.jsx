@@ -5,9 +5,14 @@ import { useRouter } from "next/navigation";
 import Container from "@/components/Container";
 import { FaUser } from "react-icons/fa";
 import { FaBasketShopping } from "react-icons/fa6";
-import { Dialog } from "primereact/dialog";
-import { Button } from "primereact/button";
-import { Menu } from 'primereact/menu';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useTheme } from "@/context/ThemeContext";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useRef } from "react";
@@ -18,9 +23,6 @@ const Navbar = () => {
   const path = usePathname();
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
-  const menu = useRef(null);
-
-  console.log(path);
 
   const [user, setUser] = useState(null);
   const [purchases, setPurchases] = useState([]);
@@ -67,7 +69,7 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    console.log('user ====>' , user)
+    // User state updated
   }, [user]);
 
   const handleLogout = async () => {
@@ -111,8 +113,7 @@ const Navbar = () => {
     
   ];
 
-  const [visible, setVisible] = useState(false);
-  const [position, setPosition] = useState("center");
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -120,52 +121,6 @@ const Navbar = () => {
     }
   }, [user]);
 
-  const footerContent = (
-    <div>
-      <Button
-        label="بستن"
-        icon="pi pi-times"
-        onClick={() => setVisible(false)}
-        className="p-button-text"
-      />
-    </div>
-  );
-
-  const show = (position) => {
-    setPosition(position);
-    setVisible(true);
-  };
-
-  const userMenuItems = [
-    {
-      label: 'پروفایل',
-      icon: 'pi pi-user',
-      command: () => router.push('/profile')
-    },
-    ...(user?.role === "admin" ? [{
-      label: 'داشبورد',
-      icon: 'pi pi-th-large',
-      command: () => router.push('/dashboard')
-    }] : []),
-    {
-      label: 'خروج',
-      icon: 'pi pi-sign-out',
-      command: handleLogout
-    }
-  ];
-
-  const guestMenuItems = [
-    {
-      label: 'ورود',
-      icon: 'pi pi-sign-in',
-      command: () => router.push('/login')
-    },
-    {
-      label: 'ثبت نام',
-      icon: 'pi pi-user-plus',
-      command: () => router.push('/register')
-    }
-  ];
 
   return (
     <div className="bg-[#b0c4b1] dark:bg-[#161A1D] p-4 transition-colors duration-300">
@@ -199,25 +154,42 @@ const Navbar = () => {
               )}
             </button>
             <FaBasketShopping
-              onClick={() => show("top-right")}
+              onClick={() => setOpen(true)}
               className="cursor-pointer mx-4 text-gray-700 dark:text-gray-300"
             />
-            <div className="relative">
-              <FaUser 
-                onClick={(e) => menu.current.toggle(e)}
-                className="cursor-pointer mx-2 text-gray-700 dark:text-gray-300"
-              />
-              <Menu 
-                ref={menu} 
-                popup 
-                model={user ? userMenuItems : guestMenuItems}
-                className="dark:bg-[#161A1D] dark:text-gray-300"
-                style={{ width: '200px' }}
-                appendTo={document.body}
-                position="bottom"
-                offset={8}
-              />
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="mx-2">
+                  <FaUser className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {user ? (
+                  <>
+                    <DropdownMenuItem onClick={() => router.push('/profile')}>
+                      پروفایل
+                    </DropdownMenuItem>
+                    {user.role === "admin" && (
+                      <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+                        داشبورد
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem onClick={handleLogout}>
+                      خروج
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem onClick={() => router.push('/login')}>
+                      ورود
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push('/register')}>
+                      ثبت نام
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {user ? (
               <div className="flex items-center space-x-4 space-x-reverse">
@@ -229,93 +201,91 @@ const Navbar = () => {
           </div>
         </div>
       </Container>
-      <Dialog
-        header="سبد خرید شما "
-        visible={visible}
-        position={position}
-        style={{ width: "50vw" }}
-        headerStyle={{backgroundColor : '#161A1D'}}
-        contentStyle={{backgroundColor : '#161A1D'}}
-        maskStyle={{backgroundColor : 'red'}}
-        onHide={() => {
-          if (!visible) return;
-          setVisible(false);
-        }}
-        footer={footerContent}
-        draggable={false}
-        resizable={false}
-        className="dark:bg-[#161A1D] rounded-xl p-8"
-      >
-        {purchases.length > 0 ? (
-          <ul className="space-y-4 dark:bg-[#161A1D]">
-            {purchases.map((purchase, index) => (
-              <li
-                key={index}
-                className="rounded px-5 py-3 bg-gray-100 dark:bg-[#0B090A] shadow-sm"
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-bold text-lg text-gray-800 dark:text-gray-200">
-                      {purchase.title}
-                    </h3>
-                    <div className="flex items-center gap-2 mt-2">
-                      <button
-                        onClick={() =>
-                          updateQuantity(
-                            purchase.productId,
-                            purchase.quantity - 1
-                          )
-                        }
-                        className="w-8 h-8 flex items-center justify-center bg-gray-200 dark:bg-gray-600 rounded-full hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300"
-                      >
-                        -
-                      </button>
-                      <span className="text-gray-600 dark:text-gray-400 w-8 text-center">
-                        {purchase.quantity}
-                      </span>
-                      <button
-                        onClick={() =>
-                          updateQuantity(
-                            purchase.productId,
-                            purchase.quantity + 1
-                          )
-                        }
-                        className="w-8 h-8 flex items-center justify-center bg-gray-200 dark:bg-gray-600 rounded-full hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300"
-                      >
-                        +
-                      </button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>سبد خرید شما</DialogTitle>
+          </DialogHeader>
+          {purchases.length > 0 ? (
+            <div className="space-y-4">
+              {purchases.map((purchase, index) => (
+                <div
+                  key={index}
+                  className="rounded-lg px-5 py-3 bg-muted shadow-sm"
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="font-bold text-lg">
+                        {purchase.title}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() =>
+                            updateQuantity(
+                              purchase.productId,
+                              purchase.quantity - 1
+                            )
+                          }
+                        >
+                          -
+                        </Button>
+                        <span className="w-8 text-center">
+                          {purchase.quantity}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() =>
+                            updateQuantity(
+                              purchase.productId,
+                              purchase.quantity + 1
+                            )
+                          }
+                        >
+                          +
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="text-lg font-bold text-green-600 dark:text-green-400">
+                      {(purchase.price * purchase.quantity).toLocaleString()}{" "}
+                      تومان
                     </div>
                   </div>
-                  <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                    {(purchase.price * purchase.quantity).toLocaleString()}{" "}
-                    تومان
-                  </div>
                 </div>
-              </li>
-            ))}
-            <div className="mt-4 pt-4 border-t border-gray-300 dark:border-gray-600">
-              <div className="flex justify-between items-center text-xl font-bold">
-                <span className="text-gray-800 dark:text-gray-200">
-                  جمع کل:
-                </span>
-                <span className="text-green-600 dark:text-green-400">
-                  {purchases
-                    .reduce(
-                      (total, purchase) =>
-                        total + purchase.price * purchase.quantity,
-                      0
-                    )
-                    .toLocaleString()}{" "}
-                  تومان
-                </span>
+              ))}
+              <div className="mt-4 pt-4 border-t">
+                <div className="flex justify-between items-center text-xl font-bold">
+                  <span>
+                    جمع کل:
+                  </span>
+                  <span className="text-green-600 dark:text-green-400">
+                    {purchases
+                      .reduce(
+                        (total, purchase) =>
+                          total + purchase.price * purchase.quantity,
+                        0
+                      )
+                      .toLocaleString()}{" "}
+                    تومان
+                  </span>
+                </div>
               </div>
             </div>
-          </ul>
-        ) : (
-          <div className="text-center py-8 text-gray-600 dark:text-gray-400">
-            سبد خرید شما خالی است
-          </div>
-        )}
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              سبد خرید شما خالی است
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              بستن
+            </Button>
+          </DialogFooter>
+        </DialogContent>
       </Dialog>
     </div>
   );
