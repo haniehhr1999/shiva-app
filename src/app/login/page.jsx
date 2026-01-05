@@ -6,7 +6,15 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Loader2, Mail, Lock, LogIn } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -36,8 +44,8 @@ export default function LoginPage() {
       }
 
       // Successful login
-      router.push("/"); // Redirect to home page
-      router.refresh(); // Refresh the page to update the navbar
+      router.push("/");
+      router.refresh();
     } catch (error) {
       setError(error.message);
     } finally {
@@ -46,58 +54,122 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-log flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="max-w-md w-full">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl">ورود به حساب کاربری</CardTitle>
+    <div 
+      className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative"
+      style={{
+        backgroundImage: 'url(/images/bg-login.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      {/* Overlay روشن‌تر برای نمایش بهتر عکس */}
+      <div className="absolute inset-0 bg-black/20 dark:bg-black/30"></div>
+      
+      <Card className="w-full max-w-md border-0 shadow-2xl relative z-10 bg-background/90 backdrop-blur-md">
+        <CardHeader className="space-y-1 pb-4">
+          <div className="flex items-center justify-center mb-2">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <LogIn className="w-6 h-6 text-primary" />
+            </div>
+          </div>
+          <CardTitle className="text-2xl font-bold text-center">
+            ورود به حساب کاربری
+          </CardTitle>
+          <CardDescription className="text-center">
+            لطفاً اطلاعات خود را وارد کنید
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="email">ایمیل</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="ایمیل"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium">
+                  ایمیل
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    placeholder="example@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pr-10"
+                    disabled={loading}
+                  />
+                </div>
               </div>
-              <div>
-                <Label htmlFor="password">رمز عبور</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  placeholder="رمز عبور"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium">
+                  رمز عبور
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    placeholder="رمز عبور خود را وارد کنید"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pr-10"
+                    disabled={loading}
+                  />
+                </div>
               </div>
             </div>
 
             {error && (
-              <div className="text-destructive text-sm text-center">{error}</div>
+              <Alert variant="destructive" className="mt-4">
+                <AlertDescription className="text-sm">
+                  {error}
+                </AlertDescription>
+              </Alert>
             )}
 
             <Button
               type="submit"
               disabled={loading}
               className="w-full"
+              size="lg"
             >
-              {loading ? "در حال ورود..." : "ورود"}
+              {loading ? (
+                <>
+                  <Loader2 className="ml-2 w-4 h-4 animate-spin" />
+                  در حال ورود...
+                </>
+              ) : (
+                <>
+                  <LogIn className="ml-2 w-4 h-4" />
+                  ورود
+                </>
+              )}
             </Button>
 
-            <div className="text-sm text-center">
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground">
+                  یا
+                </span>
+              </div>
+            </div>
+
+            <div className="text-center text-sm">
+              <span className="text-muted-foreground">
+                حساب کاربری ندارید؟{" "}
+              </span>
               <Link
                 href="/register"
                 className="font-medium text-primary hover:underline"
               >
-                حساب کاربری ندارید؟ ثبت نام کنید
+                ثبت نام کنید
               </Link>
             </div>
           </form>
