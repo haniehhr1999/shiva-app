@@ -2,28 +2,19 @@
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import useRouter from "next/router";
 import React from "react";
 
 const Layout = ({ children }) => {
+  const pathname = usePathname();
+  const showNavbar = pathname !== '/login' && pathname !== '/register';
 
-  let pathname = usePathname()
-
-
-  return <div>
-    {
-      pathname !== '/login' && pathname !== '/register' &&
-      <Navbar />
-    }
-    {children}
-
-    {
-      pathname !== '/login' && pathname !== '/register' &&
-      <Footer />
-
-    }
-
-  </div>;
+  return (
+    <div>
+      {showNavbar && <Navbar />}
+      {children}
+      {showNavbar && <Footer />}
+    </div>
+  );
 };
 
 export default Layout;

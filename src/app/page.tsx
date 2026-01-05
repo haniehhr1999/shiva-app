@@ -47,7 +47,6 @@ interface Product {
 }
 
 export default function Home() {
-  const [isClient, setIsClient] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -114,7 +113,6 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    setIsClient(true);
     fetchCategories();
     fetchReviews();
     fetchProducts();
@@ -161,10 +159,6 @@ export default function Home() {
     alert("با تشکر! شما در خبرنامه ما عضو شدید.");
     setEmail("");
   };
-
-  if (!isClient) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
