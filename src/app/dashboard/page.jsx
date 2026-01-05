@@ -2,18 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { Tag } from "primereact/tag";
-import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
-import { Dialog } from "primereact/dialog";
-import { InputTextarea } from "primereact/inputtextarea";
-import { Dropdown } from "primereact/dropdown";
-import { FaTrash } from "react-icons/fa";
-import { FaUser } from "react-icons/fa";
-import { MdModeEdit } from "react-icons/md";
-import { FaEye } from "react-icons/fa";
+import { 
+  Table, 
+  TableBody, 
+  TableCaption, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow,
+  TableFooter
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import SimpleLineChart from "../../components/SimpleLineChart";
 import {
   LineChart,
@@ -29,8 +35,7 @@ import { CiUser } from "react-icons/ci";
 import { CiTrash } from "react-icons/ci";
 import { CiEdit } from "react-icons/ci";
 import { CiRead } from "react-icons/ci";
-import { Rating } from "primereact/rating";
-import { Card } from "primereact/card";
+import { Star } from "lucide-react";
 
 
 import { Pie, Bar } from 'react-chartjs-2';
@@ -75,6 +80,14 @@ export default function DashboardPage() {
   const [deleteCommentDialogVisible, setDeleteCommentDialogVisible] = useState(false);
   const [selectedComment, setSelectedComment] = useState(null);
   const [selectedTimePeriod, setSelectedTimePeriod] = useState('daily');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [commentsPage, setCommentsPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [commentsRowsPerPage, setCommentsRowsPerPage] = useState(10);
+  const [sortField, setSortField] = useState(null);
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [filteredComments, setFilteredComments] = useState([]);
   const durations = [
     { name: "روزانه", code: "day" },
     { name: "هفتگی", code: "weekly" },
@@ -263,14 +276,18 @@ export default function DashboardPage() {
           return;
         }
         const data = await res.json();
-        // if (data.role !== "admin") {
-        //   router.replace("/");
-        //   return;
-        // }
         setUserRole(data.role);
+        
+        // چک کردن نقش admin
+        if (data.role !== "admin") {
+          router.replace("/");
+          return;
+        }
+        
         fetchUsers();
         setLoading(false);
       } catch (error) {
+        console.error("Error checking user:", error);
         router.replace("/login");
       }
     }
@@ -311,69 +328,59 @@ export default function DashboardPage() {
         const data = await res.json();
         console.log("data------", data);
         setUsers(data);
+        setFilteredUsers(data);
       }
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   }
 
-  const roleBodyTemplate = (rowData) => {
+  // فیلتر و مرتب‌سازی کاربران
+  useEffect(() => {
+    let filtered = [...users];
+    
+    // مرتب‌سازی
+    if (sortField) {
+      filtered.sort((a, b) => {
+        const aVal = a[sortField];
+        const bVal = b[sortField];
+        if (sortOrder === 'asc') {
+          return aVal > bVal ? 1 : -1;
+        } else {
+          return aVal < bVal ? 1 : -1;
+        }
+      });
+    }
+    
+    setFilteredUsers(filtered);
+  }, [users, sortField, sortOrder]);
+
+  // فیلتر نظرات
+  useEffect(() => {
+    let filtered = [...comments];
+    
+    if (globalFilterValue) {
+      filtered = filtered.filter(comment => 
+        comment.username?.toLowerCase().includes(globalFilterValue.toLowerCase()) ||
+        comment.productTitle?.toLowerCase().includes(globalFilterValue.toLowerCase()) ||
+        comment.text?.toLowerCase().includes(globalFilterValue.toLowerCase())
+      );
+    }
+    
+    setFilteredComments(filtered);
+  }, [comments, globalFilterValue]);
+
+  const roleBodyTemplate = (role) => {
     return (
-      <Tag
-        rounded
-        value={rowData.role}
-        // severity={rowData.role === "admin" ? "#8ecae6" : "#e0e1dd"}
-        className={`text-center ${rowData.role === "admin" ? "bg-[#8ecae6]" : "bg-[#e0e1dd]"
-          }`}
-      />
+      <Badge 
+        variant={role === "admin" ? "default" : "secondary"}
+        className={role === "admin" ? "bg-blue-500 hover:bg-blue-600" : "bg-gray-400 hover:bg-gray-500"}
+      >
+        {role}
+      </Badge>
     );
   };
 
-  const purchasesBodyTemplate = (rowData) => {
-    return <div className="text-center">{rowData.purchases.length}</div>;
-  };
-
-  const passwordBodyTemplate = (rowData) => {
-    return (
-      <div className="flex align-items-center justify-content-center">
-        <span className="font-bold text-primary">{rowData.password}</span>
-      </div>
-    );
-  };
-
-  const actionsBodyTemplate = (rowData) => {
-    console.log(rowData);
-    return (
-      <div className="flex gap-2 justify-content-center">
-        <CiRead
-          className="cursor-pointer text-blue-600 text-xl"
-          onClick={() => {
-            setSelectedUser(rowData);
-            setViewDialogVisible(true);
-            router.push(`/purchases/${rowData.id}`);
-          }}
-        />
-        <CiTrash
-          className="cursor-pointer text-red-600 text-xl"
-          onClick={() => {
-            setSelectedUser(rowData);
-            setDeleteDialogVisible(true);
-          }}
-        />
-        <CiUser
-          className="cursor-pointer text-blue-600 text-xl"
-          onClick={() => handleRoleChange(rowData)}
-        />
-        <CiEdit
-          className="cursor-pointer text-green-600 text-xl"
-          onClick={() => {
-            setSelectedUser(rowData);
-            setEditDialogVisible(true);
-          }}
-        />
-      </div>
-    );
-  };
 
   const handleRoleChange = (user) => {
     setSelectedUser(user);
@@ -453,101 +460,8 @@ export default function DashboardPage() {
     }
   };
 
-  const editDialogFooter = (
-    <div>
-      <Button
-        label="انصراف"
-        icon="pi pi-times"
-        onClick={() => setEditDialogVisible(false)}
-        className="p-button-text"
-      />
-      <Button
-        className="bg-green-700"
-        label="ذخیره"
-        icon="pi pi-check"
-        onClick={handleEdit}
-        autoFocus
-      />
-    </div>
-  );
-
-  const deleteDialogFooter = (
-    <div>
-      <Button
-        label="خیر"
-        icon="pi pi-times"
-        onClick={() => setDeleteDialogVisible(false)}
-        className="p-button-text"
-      />
-      <Button
-        label="بله"
-        icon="pi pi-check"
-        onClick={handleDelete}
-        severity="danger"
-        autoFocus
-      />
-    </div>
-  );
-
-  const viewDialogFooter = (
-    <div>
-      <Button
-        label="انصراف"
-        icon="pi pi-times"
-        onClick={() => setViewDialogVisible(false)}
-        className="p-button-text"
-      />
-      <Button
-        label="ذخیره"
-        icon="pi pi-check"
-        onClick={handleViewEdit}
-        autoFocus
-      />
-    </div>
-  );
-
-  const roleChangeDialogFooter = (
-    <div>
-      <Button
-        label="انصراف"
-        icon="pi pi-times"
-        onClick={() => setRoleChangeDialogVisible(false)}
-        className="p-button-text bg-red-700 text-white rounded px-3 py-1"
-      />
-      <Button
-        label="تایید"
-        icon="pi pi-check"
-        onClick={confirmRoleChange}
-        severity="warning"
-        autoFocus
-        className="bg-green-700 mx-3  text-white rounded px-3 py-1"
-      />
-    </div>
-  );
 
   const [visible, setVisible] = useState(false);
-  const [position, setPosition] = useState("center");
-  const footerContent = (
-    <div>
-      <Button
-        label="No"
-        icon="pi pi-times"
-        onClick={() => setVisible(false)}
-        className="p-button-text"
-      />
-      <Button
-        label="Yes"
-        icon="pi pi-check"
-        onClick={() => setVisible(false)}
-        autoFocus
-      />
-    </div>
-  );
-
-  const show = (position) => {
-    setPosition(position);
-    setVisible(true);
-  };
 
   // 1️⃣ تمام خریدها رو به یک آرایه‌ی واحد جمع می‌کنیم
   const allPurchases = users.flatMap((user) => user.purchases);
@@ -596,35 +510,25 @@ export default function DashboardPage() {
   // نمایش نتیجه
   console.log('Sorted data:', result);
 
-  const filters = {
-    global: { value: globalFilterValue, matchMode: "contains" },
-    username: { value: null, matchMode: "contains" },
-    productTitle: { value: null, matchMode: "contains" },
-    text: { value: null, matchMode: "contains" }
+
+  const ratingBodyTemplate = (rating) => {
+    return (
+      <div className="flex items-center gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            className={`w-4 h-4 ${
+              star <= rating
+                ? "fill-yellow-400 text-yellow-400"
+                : "fill-gray-300 text-gray-300"
+            }`}
+          />
+        ))}
+      </div>
+    );
   };
 
-  const ratingBodyTemplate = (rowData) => {
-    return <Rating value={rowData.rating} readOnly stars={5} cancel={false} />;
-  };
 
-  const dateBodyTemplate = (rowData) => {
-    return rowData.createdAtJalali;
-  };
-
-  const header = (
-    <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-      <h4 className="m-0">نظرات کاربران</h4>
-      <span className="p-input-icon-left">
-        <i className="pi pi-search" />
-        <InputText
-          value={globalFilterValue}
-          onChange={(e) => setGlobalFilterValue(e.target.value)}
-          placeholder="جستجو..."
-          className="p-inputtext-sm"
-        />
-      </span>
-    </div>
-  );
 
   const handleDeleteComment = async () => {
     try {
@@ -644,41 +548,7 @@ export default function DashboardPage() {
     }
   };
 
-  const deleteCommentDialogFooter = (
-    <div>
-      <Button
-        label="خیر"
-        icon="pi pi-times"
-        onClick={() => setDeleteCommentDialogVisible(false)}
-        className="p-button-text"
-      />
-      <Button
-        label="بله"
-        icon="pi pi-check"
-        onClick={handleDeleteComment}
-        severity="danger"
-        autoFocus
-      />
-    </div>
-  );
 
-  const commentActionsBodyTemplate = (rowData) => {
-    return (
-      <div className="flex gap-2 justify-content-center">
-        <Button
-          icon="pi pi-trash"
-          rounded
-          text
-          severity="secondary"
-          style={{ color: 'black' }}
-          onClick={() => {
-            setSelectedComment(rowData);
-            setDeleteCommentDialogVisible(true);
-          }}
-        />
-      </div>
-    );
-  };
 
   if (loading) return <p>در حال بارگذاری...</p>;
 
@@ -695,15 +565,18 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-bold text-[#38b000]">
               آمار فروش محصولات
             </h2>
-            <Dropdown
-              value={selectedTimePeriod}
-              options={timePeriodOptions}
-              onChange={(e) => setSelectedTimePeriod(e.value)}
-              optionLabel="name"
-              optionValue="value"
-              placeholder="انتخاب بازه زمانی"
-              className="w-48"
-            />
+            <Select value={selectedTimePeriod} onValueChange={setSelectedTimePeriod}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="انتخاب بازه زمانی" />
+              </SelectTrigger>
+              <SelectContent>
+                {timePeriodOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="h-[500px]">
             <Bar data={currentSalesData} options={barOptions} />
@@ -792,437 +665,646 @@ export default function DashboardPage() {
           <h2 className="text-xl font-semibold mb-4 text-center">آمار مالی و پرداخت‌ها</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* کارت درآمد کل */}
-            <Card className="dark:bg-red-600 shadow-lg rounded-lg">
-              <div className="p-4 dark:bg-red-600">
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-gray-500 text-sm">درآمد کل</h3>
-                    <p className="text-2xl font-bold text-green-600">۲۵,۰۰۰,۰۰۰ تومان</p>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-2">درآمد کل</h3>
+                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">۲۵,۰۰۰,۰۰۰ تومان</p>
                   </div>
-                  <div className="bg-green-100 p-3 rounded-full">
-                    <i className="pi pi-dollar text-green-600 text-xl"></i>
+                  <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full">
+                    <span className="text-green-600 dark:text-green-400 text-xl">💰</span>
                   </div>
                 </div>
                 <div className="mt-4">
-                  <span className="text-green-600 text-sm">
-                    <i className="pi pi-arrow-up"></i> ۱۲٪ نسبت به ماه گذشته
+                  <span className="text-green-600 dark:text-green-400 text-sm flex items-center gap-1">
+                    <span>↑</span> ۱۲٪ نسبت به ماه گذشته
                   </span>
                 </div>
-              </div>
+              </CardContent>
             </Card>
 
             {/* کارت تعداد سفارشات */}
-            <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
-              <div className="p-4">
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-gray-500 text-sm">تعداد سفارشات</h3>
-                    <p className="text-2xl font-bold text-blue-600">۱۵۶ سفارش</p>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-2">تعداد سفارشات</h3>
+                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">۱۵۶ سفارش</p>
                   </div>
-                  <div className="bg-blue-100 p-3 rounded-full">
-                    <i className="pi pi-shopping-cart text-blue-600 text-xl"></i>
+                  <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
+                    <span className="text-blue-600 dark:text-blue-400 text-xl">🛒</span>
                   </div>
                 </div>
                 <div className="mt-4">
-                  <span className="text-blue-600 text-sm">
-                    <i className="pi pi-arrow-up"></i> ۸٪ نسبت به ماه گذشته
+                  <span className="text-blue-600 dark:text-blue-400 text-sm flex items-center gap-1">
+                    <span>↑</span> ۸٪ نسبت به ماه گذشته
                   </span>
                 </div>
-              </div>
+              </CardContent>
             </Card>
 
             {/* کارت میانگین سبد خرید */}
-            <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
-              <div className="p-4">
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-gray-500 text-sm">میانگین سبد خرید</h3>
-                    <p className="text-2xl font-bold text-purple-600">۱۶۰,۰۰۰ تومان</p>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-2">میانگین سبد خرید</h3>
+                    <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">۱۶۰,۰۰۰ تومان</p>
                   </div>
-                  <div className="bg-purple-100 p-3 rounded-full">
-                    <i className="pi pi-chart-line text-purple-600 text-xl"></i>
+                  <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full">
+                    <span className="text-purple-600 dark:text-purple-400 text-xl">📊</span>
                   </div>
                 </div>
                 <div className="mt-4">
-                  <span className="text-purple-600 text-sm">
-                    <i className="pi pi-arrow-up"></i> ۵٪ نسبت به ماه گذشته
+                  <span className="text-purple-600 dark:text-purple-400 text-sm flex items-center gap-1">
+                    <span>↑</span> ۵٪ نسبت به ماه گذشته
                   </span>
                 </div>
-              </div>
+              </CardContent>
             </Card>
 
             {/* کارت تعداد مشتریان جدید */}
-            <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
-              <div className="p-4">
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-gray-500 text-sm">مشتریان جدید</h3>
-                    <p className="text-2xl font-bold text-orange-600">۲۴ مشتری</p>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-2">مشتریان جدید</h3>
+                    <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">۲۴ مشتری</p>
                   </div>
-                  <div className="bg-orange-100 p-3 rounded-full">
-                    <i className="pi pi-users text-orange-600 text-xl"></i>
+                  <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-full">
+                    <span className="text-orange-600 dark:text-orange-400 text-xl">👥</span>
                   </div>
                 </div>
                 <div className="mt-4">
-                  <span className="text-orange-600 text-sm">
-                    <i className="pi pi-arrow-up"></i> ۱۵٪ نسبت به ماه گذشته
+                  <span className="text-orange-600 dark:text-orange-400 text-sm flex items-center gap-1">
+                    <span>↑</span> ۱۵٪ نسبت به ماه گذشته
                   </span>
                 </div>
-              </div>
+              </CardContent>
             </Card>
           </div>
         </div>
 
-        {/* <Button label="افزودن کاربر" icon="pi pi-check" iconPos="right" /> */}
-        <Button
-          label="افزودن کاربر"
-          icon="pi pi-arrow-down"
-          onClick={() => show("top")}
-          className="p-button-warning"
-          style={{ minWidth: "10rem" }}
-        />
+        {/* جدول کاربران */}
+        <Card className="mb-8 border-0 shadow-xl">
+          <CardHeader className="bg-gradient-to-r from-blue-500/10 to-purple-500/10">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                مدیریت کاربران
+              </CardTitle>
+              <Button
+                onClick={() => setVisible(true)}
+                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+              >
+                افزودن کاربر
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="text-center py-8">در حال بارگذاری...</div>
+            ) : filteredUsers.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">هیچ کاربری یافت نشد</div>
+            ) : (
+              <>
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/50">
+                        <TableHead 
+                          className="cursor-pointer hover:bg-muted"
+                          onClick={() => {
+                            setSortField('id');
+                            setSortOrder(sortField === 'id' && sortOrder === 'asc' ? 'desc' : 'asc');
+                          }}
+                        >
+                          شناسه {sortField === 'id' && (sortOrder === 'asc' ? '↑' : '↓')}
+                        </TableHead>
+                        <TableHead 
+                          className="cursor-pointer hover:bg-muted"
+                          onClick={() => {
+                            setSortField('username');
+                            setSortOrder(sortField === 'username' && sortOrder === 'asc' ? 'desc' : 'asc');
+                          }}
+                        >
+                          نام کاربری {sortField === 'username' && (sortOrder === 'asc' ? '↑' : '↓')}
+                        </TableHead>
+                        <TableHead 
+                          className="cursor-pointer hover:bg-muted"
+                          onClick={() => {
+                            setSortField('email');
+                            setSortOrder(sortField === 'email' && sortOrder === 'asc' ? 'desc' : 'asc');
+                          }}
+                        >
+                          ایمیل {sortField === 'email' && (sortOrder === 'asc' ? '↑' : '↓')}
+                        </TableHead>
+                        <TableHead>رمز عبور</TableHead>
+                        <TableHead 
+                          className="cursor-pointer hover:bg-muted"
+                          onClick={() => {
+                            setSortField('role');
+                            setSortOrder(sortField === 'role' && sortOrder === 'asc' ? 'desc' : 'asc');
+                          }}
+                        >
+                          نقش {sortField === 'role' && (sortOrder === 'asc' ? '↑' : '↓')}
+                        </TableHead>
+                        <TableHead 
+                          className="cursor-pointer hover:bg-muted"
+                          onClick={() => {
+                            setSortField('purchases');
+                            setSortOrder(sortField === 'purchases' && sortOrder === 'asc' ? 'desc' : 'asc');
+                          }}
+                        >
+                          تعداد خریدها {sortField === 'purchases' && (sortOrder === 'asc' ? '↑' : '↓')}
+                        </TableHead>
+                        <TableHead>عملیات</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredUsers
+                        .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+                        .map((user) => (
+                        <TableRow key={user.id} className="hover:bg-muted/50">
+                          <TableCell className="font-medium text-center">{user.id}</TableCell>
+                          <TableCell className="text-center">{user.username}</TableCell>
+                          <TableCell className="text-center">{user.email}</TableCell>
+                          <TableCell className="text-center">
+                            <span className="font-bold text-primary">{user.password}</span>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {roleBodyTemplate(user.role)}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {user.purchases?.length || 0}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2 justify-center">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                onClick={() => {
+                                  setSelectedUser(user);
+                                  setViewDialogVisible(true);
+                                  router.push(`/purchases/${user.id}`);
+                                }}
+                              >
+                                <CiRead className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                onClick={() => {
+                                  setSelectedUser(user);
+                                  setDeleteDialogVisible(true);
+                                }}
+                              >
+                                <CiTrash className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                onClick={() => handleRoleChange(user)}
+                              >
+                                <CiUser className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                onClick={() => {
+                                  setSelectedUser(user);
+                                  setEditDialogVisible(true);
+                                }}
+                              >
+                                <CiEdit className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                {/* Pagination */}
+                <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center gap-2">
+                    <Label>تعداد در هر صفحه:</Label>
+                    <Select value={rowsPerPage.toString()} onValueChange={(val) => {
+                      setRowsPerPage(Number(val));
+                      setCurrentPage(1);
+                    }}>
+                      <SelectTrigger className="w-20">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      قبلی
+                    </Button>
+                    <span className="text-sm text-muted-foreground">
+                      صفحه {currentPage} از {Math.ceil(filteredUsers.length / rowsPerPage)}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(prev => Math.min(Math.ceil(filteredUsers.length / rowsPerPage), prev + 1))}
+                      disabled={currentPage >= Math.ceil(filteredUsers.length / rowsPerPage)}
+                    >
+                      بعدی
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
 
-        <div className="card">
-          <DataTable
-            value={users}
-            paginator
-            rows={10}
-            rowsPerPageOptions={[5, 10, 25, 50]}
-            tableStyle={{ minWidth: "50rem" }}
-            className="p-datatable-sm"
-            emptyMessage="هیچ کاربری یافت نشد"
-            loading={loading}
-            dir="rtl"
-            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-          >
-            <Column
-              field="id"
-              header="شناسه"
-              sortable
-              style={{ width: "5%" }}
-              className="text-center"
-            ></Column>
-            <Column
-              field="username"
-              header="نام کاربری"
-              sortable
-              style={{ width: "15%" }}
-              className="text-center"
-            ></Column>
-            <Column
-              field="email"
-              header="ایمیل"
-              sortable
-              style={{ width: "20%" }}
-              className="text-center"
-            ></Column>
-            <Column
-              field="password"
-              header="رمز عبور"
-              body={passwordBodyTemplate}
-              style={{ width: "20%" }}
-            ></Column>
-            <Column
-              field="role"
-              header="نقش"
-              body={roleBodyTemplate}
-              sortable
-              style={{ width: "15%" }}
-            ></Column>
-            <Column
-              field="purchases"
-              header="تعداد خریدها"
-              body={purchasesBodyTemplate}
-              sortable
-              style={{ width: "10%" }}
-            ></Column>
-            <Column
-              body={actionsBodyTemplate}
-              header="عملیات"
-              style={{ width: "15%" }}
-            ></Column>
-          </DataTable>
-        </div>
-
-        <Dropdown
-          value={selectedDuration}
-          onChange={(e) => setSelectedDuration(e.value)}
-          options={durations}
-          optionLabel="name"
-          placeholder="Select a duration"
-          className="w-full md:w-14rem"
-        />
-
-        <h3 className="text-center">بازخوردها و نظرات مشتریان</h3>
-
-        <div className="card">
-          <Card>
-            <DataTable
-              value={comments}
-              paginator
-              rows={10}
-              rowsPerPageOptions={[5, 10, 25, 50]}
-              tableStyle={{ minWidth: "50rem" }}
-              loading={loading}
-              filters={filters}
-              globalFilterFields={["username", "productTitle", "text"]}
-              header={header}
-              emptyMessage="هیچ نظری یافت نشد."
-              className="p-datatable-sm"
-            >
-              <Column
-                field="username"
-                header="نام کاربر"
-                sortable
-                filter
-                filterPlaceholder="جستجو بر اساس نام کاربر"
-                style={{ minWidth: "12rem" }}
-              />
-              <Column
-                field="productTitle"
-                header="نام محصول"
-                sortable
-                filter
-                filterPlaceholder="جستجو بر اساس نام محصول"
-                style={{ minWidth: "14rem" }}
-              />
-              <Column
-                field="text"
-                header="متن نظر"
-                sortable
-                filter
-                filterPlaceholder="جستجو در متن نظر"
-                style={{ minWidth: "20rem" }}
-              />
-              <Column
-                field="rating"
-                header="امتیاز"
-                sortable
-                body={ratingBodyTemplate}
-                style={{ minWidth: "10rem" }}
-              />
-              <Column
-                field="createdAtJalali"
-                header="تاریخ ثبت"
-                sortable
-                body={dateBodyTemplate}
-                style={{ minWidth: "10rem" }}
-              />
-              <Column
-                body={commentActionsBodyTemplate}
-                header="عملیات"
-                style={{ minWidth: "8rem" }}
-                className="text-center"
-              />
-            </DataTable>
-          </Card>
-        </div>
+        {/* جدول نظرات */}
+        <Card className="mb-8 border-0 shadow-xl">
+          <CardHeader className="bg-gradient-to-r from-purple-500/10 to-pink-500/10">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <CardTitle className="text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                بازخوردها و نظرات مشتریان
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Input
+                    type="text"
+                    placeholder="جستجو..."
+                    value={globalFilterValue}
+                    onChange={(e) => setGlobalFilterValue(e.target.value)}
+                    className="pr-10 w-64"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    🔍
+                  </span>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="text-center py-8">در حال بارگذاری...</div>
+            ) : filteredComments.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">هیچ نظری یافت نشد</div>
+            ) : (
+              <>
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/50">
+                        <TableHead>نام کاربر</TableHead>
+                        <TableHead>نام محصول</TableHead>
+                        <TableHead>متن نظر</TableHead>
+                        <TableHead>امتیاز</TableHead>
+                        <TableHead>تاریخ ثبت</TableHead>
+                        <TableHead className="text-center">عملیات</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredComments
+                        .slice((commentsPage - 1) * commentsRowsPerPage, commentsPage * commentsRowsPerPage)
+                        .map((comment) => (
+                        <TableRow key={comment.id} className="hover:bg-muted/50">
+                          <TableCell className="font-medium">{comment.username}</TableCell>
+                          <TableCell>{comment.productTitle}</TableCell>
+                          <TableCell className="max-w-md">
+                            <p className="line-clamp-2">{comment.text}</p>
+                          </TableCell>
+                          <TableCell>
+                            {ratingBodyTemplate(comment.rating)}
+                          </TableCell>
+                          <TableCell>{comment.createdAtJalali || comment.createdAt}</TableCell>
+                          <TableCell>
+                            <div className="flex justify-center">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                onClick={() => {
+                                  setSelectedComment(comment);
+                                  setDeleteCommentDialogVisible(true);
+                                }}
+                              >
+                                <CiTrash className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                {/* Pagination */}
+                <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center gap-2">
+                    <Label>تعداد در هر صفحه:</Label>
+                    <Select value={commentsRowsPerPage.toString()} onValueChange={(val) => {
+                      setCommentsRowsPerPage(Number(val));
+                      setCommentsPage(1);
+                    }}>
+                      <SelectTrigger className="w-20">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCommentsPage(prev => Math.max(1, prev - 1))}
+                      disabled={commentsPage === 1}
+                    >
+                      قبلی
+                    </Button>
+                    <span className="text-sm text-muted-foreground">
+                      صفحه {commentsPage} از {Math.ceil(filteredComments.length / commentsRowsPerPage)}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCommentsPage(prev => Math.min(Math.ceil(filteredComments.length / commentsRowsPerPage), prev + 1))}
+                      disabled={commentsPage >= Math.ceil(filteredComments.length / commentsRowsPerPage)}
+                    >
+                      بعدی
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
 
         {/* add user Dialog */}
-        <Dialog
-          header="افزودن کاربر"
-          visible={visible}
-          position={position}
-          style={{ width: "50vw" }}
-          onHide={() => {
-            if (!visible) return;
-            setVisible(false);
-          }}
-          footer={footerContent}
-          draggable={false}
-          resizable={false}
-        >
-          <div className="field bg-red-200">
-            <div>
-              <label htmlFor="username">نام کاربری</label>
-              <InputText
-                id="username"
-                className="w-full"
-                value={newUsername}
-                onChange={(e) => setNewUsername(e.target.value)}
-                required
-                autoFocus
-              />
+        <Dialog open={visible} onOpenChange={setVisible}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>افزودن کاربر</DialogTitle>
+              <DialogDescription>
+                اطلاعات کاربر جدید را وارد کنید
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="username">نام کاربری</Label>
+                <Input
+                  id="username"
+                  value={newUsername}
+                  onChange={(e) => setNewUsername(e.target.value)}
+                  required
+                  autoFocus
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">ایمیل</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={newUseremail}
+                  onChange={(e) => setNewUseremail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">رمز عبور</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={newUserpass}
+                  onChange={(e) => setNewUserpass(e.target.value)}
+                  required
+                />
+              </div>
             </div>
-
-            <div>
-              <label htmlFor="email">ایمیل</label>
-              <InputText
-                id="email"
-                className="w-full"
-                value={newUseremail}
-                onChange={(e) => setNewUseremail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password">رمز عبور</label>
-              <InputText
-                id="password"
-                className="w-full"
-                value={newUserpass}
-                onChange={(e) => setNewUserpass(e.target.value)}
-                required
-              />
-            </div>
-          </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setVisible(false)}>
+                انصراف
+              </Button>
+              <Button onClick={() => setVisible(false)}>
+                افزودن
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
 
         {/* Edit Dialog */}
-        <Dialog
-          visible={editDialogVisible}
-          style={{ width: "450px" }}
-          header="ویرایش کاربر"
-          modal
-          className="p-fluid"
-          footer={editDialogFooter}
-          onHide={() => setEditDialogVisible(false)}
-          dir="rtl"
-        >
-          {selectedUser && (
-            <div className="field bg-red-200">
-              <label htmlFor="username">نام کاربری</label>
-              <InputText
-                id="username"
-                value={selectedUser.username}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, username: e.target.value })
-                }
-                required
-                autoFocus
-              />
-              <label htmlFor="email">ایمیل</label>
-              <InputText
-                id="email"
-                value={selectedUser.email}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, email: e.target.value })
-                }
-                required
-              />
-              <label htmlFor="password">رمز عبور</label>
-              <InputText
-                id="password"
-                value={selectedUser.password}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, password: e.target.value })
-                }
-                required
-              />
-            </div>
-          )}
+        <Dialog open={editDialogVisible} onOpenChange={setEditDialogVisible}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>ویرایش کاربر</DialogTitle>
+              <DialogDescription>
+                اطلاعات کاربر را ویرایش کنید
+              </DialogDescription>
+            </DialogHeader>
+            {selectedUser && (
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-username">نام کاربری</Label>
+                  <Input
+                    id="edit-username"
+                    value={selectedUser.username}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, username: e.target.value })
+                    }
+                    required
+                    autoFocus
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-email">ایمیل</Label>
+                  <Input
+                    id="edit-email"
+                    type="email"
+                    value={selectedUser.email}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, email: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-password">رمز عبور</Label>
+                  <Input
+                    id="edit-password"
+                    type="password"
+                    value={selectedUser.password}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, password: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setEditDialogVisible(false)}>
+                انصراف
+              </Button>
+              <Button 
+                onClick={handleEdit}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              >
+                ذخیره
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
 
         {/* View/Edit Dialog */}
-        <Dialog
-          visible={viewDialogVisible}
-          style={{ width: "450px" }}
-          header={`ویرایش کاربر ${selectedUser?.username}`}
-          modal
-          className="p-fluid bg-slate-200 p-5 rounded-lg"
-          footer={viewDialogFooter}
-          onHide={() => setViewDialogVisible(false)}
-          dir="rtl"
-        >
-          {selectedUser && (
-            <div className="field my-6">
-              <label htmlFor="view-username">نام کاربری</label>
-              <InputText
-                className="bg-white rounded py-2 px-3 my-4"
-                id="view-username"
-                value={selectedUser.username}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, username: e.target.value })
-                }
-                required
-                autoFocus
-              />
-              <label htmlFor="view-email">ایمیل</label>
-              <InputText
-                className="bg-white rounded py-2 px-3 mb-4"
-                id="view-email"
-                value={selectedUser.email}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, email: e.target.value })
-                }
-                required
-              />
-              <label htmlFor="view-password">رمز عبور</label>
-              <InputText
-                className="bg-white rounded py-2 px-3 mb-4"
-                id="view-password"
-                value={selectedUser.password}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, password: e.target.value })
-                }
-                required
-              />
-            </div>
-          )}
+        <Dialog open={viewDialogVisible} onOpenChange={setViewDialogVisible}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>ویرایش کاربر {selectedUser?.username}</DialogTitle>
+              <DialogDescription>
+                اطلاعات کاربر را مشاهده و ویرایش کنید
+              </DialogDescription>
+            </DialogHeader>
+            {selectedUser && (
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="view-username">نام کاربری</Label>
+                  <Input
+                    id="view-username"
+                    value={selectedUser.username}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, username: e.target.value })
+                    }
+                    required
+                    autoFocus
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="view-email">ایمیل</Label>
+                  <Input
+                    id="view-email"
+                    type="email"
+                    value={selectedUser.email}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, email: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="view-password">رمز عبور</Label>
+                  <Input
+                    id="view-password"
+                    type="password"
+                    value={selectedUser.password}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, password: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setViewDialogVisible(false)}>
+                انصراف
+              </Button>
+              <Button 
+                onClick={handleViewEdit}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              >
+                ذخیره
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
 
         {/* Delete Dialog */}
-        <Dialog
-          visible={deleteDialogVisible}
-          style={{ width: "450px" }}
-          header="تایید حذف"
-          modal
-          footer={deleteDialogFooter}
-          onHide={() => setDeleteDialogVisible(false)}
-          dir="rtl"
-        >
-          <div className="confirmation-content">
-            <i
-              className="pi pi-exclamation-triangle mr-3"
-              style={{ fontSize: "2rem" }}
-            />
-            <span>آیا از حذف این کاربر اطمینان دارید؟</span>
-          </div>
+        <Dialog open={deleteDialogVisible} onOpenChange={setDeleteDialogVisible}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>تایید حذف</DialogTitle>
+              <DialogDescription>
+                آیا از حذف کاربر {selectedUser?.username} اطمینان دارید؟
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDeleteDialogVisible(false)}>
+                خیر
+              </Button>
+              <Button 
+                variant="destructive"
+                onClick={handleDelete}
+              >
+                بله، حذف کن
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
 
         {/* Role Change Dialog */}
-        <Dialog
-          visible={roleChangeDialogVisible}
-          style={{ width: "450px" }}
-          header="تغییر نقش کاربر"
-          modal
-          footer={roleChangeDialogFooter}
-          onHide={() => setRoleChangeDialogVisible(false)}
-          dir="rtl"
-          className="bg-red-200 p-5 rounded-lg"
-        >
-          <div className="confirmation-content bg-red-200">
-            <i
-              className="pi pi-exclamation-triangle mr-3"
-              style={{ fontSize: "2rem" }}
-            />
-            <span>
-              آیا از تغییر نقش کاربر {selectedUser?.username} از{" "}
-              {selectedUser?.role} به{" "}
-              {selectedUser?.role === "admin" ? "کاربر عادی" : "مدیر"} اطمینان
-              دارید؟
-            </span>
-          </div>
+        <Dialog open={roleChangeDialogVisible} onOpenChange={setRoleChangeDialogVisible}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>تغییر نقش کاربر</DialogTitle>
+              <DialogDescription>
+                آیا از تغییر نقش کاربر <strong>{selectedUser?.username}</strong> از{" "}
+                <strong>{selectedUser?.role}</strong> به{" "}
+                <strong>{selectedUser?.role === "admin" ? "کاربر عادی" : "مدیر"}</strong> اطمینان
+                دارید؟
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setRoleChangeDialogVisible(false)}>
+                انصراف
+              </Button>
+              <Button 
+                onClick={confirmRoleChange}
+                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+              >
+                تایید
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
 
         {/* Delete Comment Dialog */}
-        <Dialog
-          visible={deleteCommentDialogVisible}
-          style={{ width: "450px" }}
-          header="تایید حذف"
-          modal
-          footer={deleteCommentDialogFooter}
-          onHide={() => setDeleteCommentDialogVisible(false)}
-          dir="rtl"
-        >
-          <div className="confirmation-content">
-            <i
-              className="pi pi-exclamation-triangle mr-3"
-              style={{ fontSize: "2rem" }}
-            />
-            <span>آیا از حذف این نظر اطمینان دارید؟</span>
-          </div>
+        <Dialog open={deleteCommentDialogVisible} onOpenChange={setDeleteCommentDialogVisible}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>تایید حذف</DialogTitle>
+              <DialogDescription>
+                آیا از حذف این نظر اطمینان دارید؟
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDeleteCommentDialogVisible(false)}>
+                خیر
+              </Button>
+              <Button 
+                variant="destructive"
+                onClick={handleDeleteComment}
+              >
+                بله، حذف کن
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
       </div>
     </div>
