@@ -5,8 +5,12 @@ import { useRouter } from "next/navigation";
 import Container from "@/components/Container";
 import { FaUser } from "react-icons/fa";
 import { FaBasketShopping } from "react-icons/fa6";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Minus, Plus, Trash2, ShoppingBag, X } from "lucide-react";
+import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +32,10 @@ const Navbar = () => {
   const [purchases, setPurchases] = useState([]);
 
   const updateQuantity = async (productId, newQuantity) => {
+    if (newQuantity < 1) {
+      removeFromCart(productId);
+      return;
+    }
     try {
       const res = await fetch("/api/cart/update", {
         method: "POST",
@@ -45,6 +53,38 @@ const Navbar = () => {
     } catch (error) {
       console.error("Error updating quantity:", error);
     }
+  };
+
+  const removeFromCart = async (productId) => {
+    try {
+      const res = await fetch("/api/cart/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId, quantity: 0 }),
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setPurchases(data.purchases);
+      }
+    } catch (error) {
+      console.error("Error removing from cart:", error);
+    }
+  };
+
+  const getProductImage = (productId) => {
+    // این تابع می‌تواند از API محصولات تصویر را بگیرد
+    // فعلاً placeholder برمی‌گردانیم
+    return '/images/placeholder.svg';
+  };
+
+  const handleCheckout = () => {
+    // TODO: Navigate to checkout page
+    router.push('/checkout');
+    setOpen(false);
   };
 
   const updateCart = async () => {
@@ -202,67 +242,137 @@ const Navbar = () => {
         </div>
       </Container>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>سبد خرید شما</DialogTitle>
-          </DialogHeader>
-          {purchases.length > 0 ? (
-            <div className="space-y-4">
-              {purchases.map((purchase, index) => (
-                <div
-                  key={index}
-                  className="rounded-lg px-5 py-3 bg-muted shadow-sm"
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="font-bold text-lg">
-                        {purchase.title}
-                      </h3>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() =>
-                            updateQuantity(
-                              purchase.productId,
-                              purchase.quantity - 1
-                            )
-                          }
-                        >
-                          -
-                        </Button>
-                        <span className="w-8 text-center">
-                          {purchase.quantity}
-                        </span>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() =>
-                            updateQuantity(
-                              purchase.productId,
-                              purchase.quantity + 1
-                            )
-                          }
-                        >
-                          +
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                      {(purchase.price * purchase.quantity).toLocaleString()}{" "}
-                      تومان
-                    </div>
-                  </div>
+        <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col">
+          <DialogHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <ShoppingBag className="w-5 h-5 text-primary" />
                 </div>
-              ))}
-              <div className="mt-4 pt-4 border-t">
-                <div className="flex justify-between items-center text-xl font-bold">
-                  <span>
-                    جمع کل:
+                <div>
+                  <DialogTitle className="text-2xl">سبد خرید شما</DialogTitle>
+                  <DialogDescription className="mt-1">
+                    {purchases.length > 0 
+                      ? `${purchases.length} محصول در سبد خرید شما` 
+                      : "سبد خرید شما خالی است"}
+                  </DialogDescription>
+                </div>
+              </div>
+              {purchases.length > 0 && (
+                <Badge variant="secondary" className="text-lg px-3 py-1">
+                  {purchases.reduce((sum, p) => sum + p.quantity, 0)} عدد
+                </Badge>
+              )}
+            </div>
+          </DialogHeader>
+          
+          <Separator />
+
+          {purchases.length > 0 ? (
+            <>
+              <div className="flex-1 overflow-y-auto space-y-4 py-4 pr-2">
+                {purchases.map((purchase, index) => (
+                  <Card
+                    key={index}
+                    className="group hover:shadow-md transition-all duration-300 border-2 hover:border-primary/50"
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex gap-4">
+                        {/* تصویر محصول */}
+                        <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                          <Image
+                            src={getProductImage(purchase.productId)}
+                            alt={purchase.title}
+                            fill
+                            className="object-cover"
+                            sizes="80px"
+                          />
+                        </div>
+
+                        {/* اطلاعات محصول */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <h3 className="font-bold text-lg truncate group-hover:text-primary transition-colors">
+                              {purchase.title}
+                            </h3>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+                              onClick={() => removeFromCart(purchase.productId)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          
+                          <div className="flex items-center justify-between gap-4 mt-3">
+                            {/* کنترل تعداد */}
+                            <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 hover:bg-background"
+                                onClick={() =>
+                                  updateQuantity(
+                                    purchase.productId,
+                                    purchase.quantity - 1
+                                  )
+                                }
+                                disabled={purchase.quantity <= 1}
+                              >
+                                <Minus className="w-4 h-4" />
+                              </Button>
+                              <span className="w-10 text-center font-semibold text-lg">
+                                {purchase.quantity}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 hover:bg-background"
+                                onClick={() =>
+                                  updateQuantity(
+                                    purchase.productId,
+                                    purchase.quantity + 1
+                                  )
+                                }
+                              >
+                                <Plus className="w-4 h-4" />
+                              </Button>
+                            </div>
+
+                            {/* قیمت */}
+                            <div className="text-left">
+                              <div className="text-sm text-muted-foreground mb-1">
+                                قیمت واحد
+                              </div>
+                              <div className="text-lg font-bold text-primary">
+                                {purchase.price.toLocaleString()} تومان
+                              </div>
+                              <div className="text-xl font-bold text-green-600 dark:text-green-400 mt-1">
+                                {(purchase.price * purchase.quantity).toLocaleString()} تومان
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              <Separator className="my-4" />
+
+              {/* خلاصه سفارش */}
+              <div className="space-y-3 pb-4">
+                <div className="flex justify-between items-center text-lg">
+                  <span className="text-muted-foreground">تعداد کل:</span>
+                  <span className="font-semibold">
+                    {purchases.reduce((sum, p) => sum + p.quantity, 0)} عدد
                   </span>
-                  <span className="text-green-600 dark:text-green-400">
+                </div>
+                <div className="flex justify-between items-center text-xl font-bold pt-2 border-t">
+                  <span>جمع کل سفارش:</span>
+                  <span className="text-2xl text-primary">
                     {purchases
                       .reduce(
                         (total, purchase) =>
@@ -274,17 +384,34 @@ const Navbar = () => {
                   </span>
                 </div>
               </div>
-            </div>
+
+              <DialogFooter className="gap-2 sm:gap-0">
+                <Button variant="outline" onClick={() => setOpen(false)}>
+                  ادامه خرید
+                </Button>
+                <Button 
+                  onClick={handleCheckout}
+                  className="bg-primary hover:bg-primary/90 flex-1 sm:flex-initial"
+                >
+                  <ShoppingBag className="ml-2 w-4 h-4" />
+                  تسویه حساب
+                </Button>
+              </DialogFooter>
+            </>
           ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              سبد خرید شما خالی است
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-4">
+                <ShoppingBag className="w-12 h-12 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">سبد خرید شما خالی است</h3>
+              <p className="text-muted-foreground mb-6 max-w-sm">
+                محصولات مورد علاقه خود را به سبد خرید اضافه کنید
+              </p>
+              <Button onClick={() => { setOpen(false); router.push('/store'); }}>
+                مشاهده محصولات
+              </Button>
             </div>
           )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>
-              بستن
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

@@ -1,15 +1,23 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
-// Import Swiper styles
+import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-import { Accordion, AccordionTab } from "primereact/accordion";
-import { FaTruck, FaHeadset, FaShieldAlt, FaLeaf } from "react-icons/fa";
-
-// import required modules
+import "swiper/css/effect-fade";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { FaTruck, FaHeadset, FaShieldAlt, FaLeaf, FaStar, FaShoppingCart, FaArrowLeft } from "react-icons/fa";
+import { Sparkles, TrendingUp, Award } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import ProductItem from "@/components/ProductItem";
 
 interface Category {
   id: string;
@@ -29,101 +37,87 @@ interface Review {
   createdAtJalali: string;
 }
 
+interface Product {
+  id: number;
+  title: string;
+  body: string;
+  price: number;
+  discount: number;
+  img: string;
+}
+
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
-  const [tabs, setTabs] = useState([
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [email, setEmail] = useState("");
+
+  const tabs = [
     {
-      header: "سفارشم کی به دستم میرسه",
+      header: "سفارشم کی به دستم میرسه؟",
       children: (
-        <p className="m-0">بستگی داره به اینکه شما کجای ایران ساکن هستید</p>
+        <p className="text-muted-foreground leading-relaxed">
+          بستگی داره به اینکه شما کجای ایران ساکن هستید. برای شهرهای بزرگ معمولاً ۲۴ تا ۴۸ ساعت و برای شهرهای کوچک ۳ تا ۵ روز کاری زمان می‌بره.
+        </p>
       ),
     },
     {
       header: "چرا قیمت ثابت وجود ندارد برای اجناس؟",
       children: (
-        <p className="m-0">
-          قیمت ها دائما درحال نوسان هستن و خود کشاورز ها این قیمت رو تعیین میکنن
+        <p className="text-muted-foreground leading-relaxed">
+          قیمت‌ها دائماً در حال نوسان هستند و خود کشاورزها این قیمت را تعیین می‌کنند. ما مستقیماً از مزرعه به شما می‌فروشیم، پس قیمت‌ها بر اساس شرایط بازار و فصل تغییر می‌کنند.
         </p>
       ),
     },
     {
-      header: "نحوه ی خرید و پرداخت چگونه است؟",
+      header: "نحوه خرید و پرداخت چگونه است؟",
       children: (
-        <p className="m-0">
-          شما میتونید با مراجعه به صفحه فروشگاه محصول خود را انتخاب کنید و سپس
-          با انتخاب محصول مورد نظر خود را خریداری کنید
+        <p className="text-muted-foreground leading-relaxed">
+          شما می‌تونید با مراجعه به صفحه فروشگاه محصول خود را انتخاب کنید و سپس با انتخاب محصول مورد نظر خود را خریداری کنید. پرداخت به صورت آنلاین و یا پرداخت در محل امکان‌پذیر است.
         </p>
       ),
     },
-  ]);
-
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [reviewsLoading, setReviewsLoading] = useState(true);
-
-  const [featuredProducts] = useState([
-    {
-      id: 1,
-      name: "سیب قرمز",
-      price: 45000,
-      discount: 15,
-      image: "/images/apple.jpg",
-      stock: 10
-    },
-    {
-      id: 2,
-      name: "پسته تازه",
-      price: 850000,
-      discount: 0,
-      image: "/images/pistachio.jpg",
-      stock: 5
-    },
-    {
-      id: 3,
-      name: "زعفران",
-      price: 1200000,
-      discount: 20,
-      image: "/images/saffron.jpg",
-      stock: 8
-    },
-    {
-      id: 4,
-      name: "انار",
-      price: 35000,
-      discount: 0,
-      image: "/images/pomegranate.jpg",
-      stock: 15
-    }
-  ]);
+  ];
 
   const benefits = [
     {
       icon: <FaTruck className="text-4xl" />,
       title: "ارسال سریع",
-      description: "ارسال در همان روز سفارش"
+      description: "ارسال در همان روز سفارش",
+      color: "text-blue-500",
+      bgColor: "bg-blue-50 dark:bg-blue-950",
     },
     {
       icon: <FaHeadset className="text-4xl" />,
       title: "پشتیبانی 24 ساعته",
-      description: "پاسخگویی در تمام ساعات"
+      description: "پاسخگویی در تمام ساعات",
+      color: "text-green-500",
+      bgColor: "bg-green-50 dark:bg-green-950",
     },
     {
       icon: <FaShieldAlt className="text-4xl" />,
       title: "ضمانت اصالت",
-      description: "تضمین کیفیت محصولات"
+      description: "تضمین کیفیت محصولات",
+      color: "text-purple-500",
+      bgColor: "bg-purple-50 dark:bg-purple-950",
     },
     {
       icon: <FaLeaf className="text-4xl" />,
       title: "محصولات ارگانیک",
-      description: "تازه و طبیعی"
-    }
+      description: "تازه و طبیعی",
+      color: "text-emerald-500",
+      bgColor: "bg-emerald-50 dark:bg-emerald-950",
+    },
   ];
 
   useEffect(() => {
     setIsClient(true);
     fetchCategories();
     fetchReviews();
+    fetchProducts();
   }, []);
 
   const fetchCategories = async () => {
@@ -142,7 +136,7 @@ export default function Home() {
     try {
       const response = await fetch('/api/reviews');
       const data = await response.json();
-      setReviews(data);
+      setReviews(data.slice(0, 6)); // فقط 6 تا نمایش بده
     } catch (error) {
       console.error('Error fetching reviews:', error);
     } finally {
@@ -150,214 +144,316 @@ export default function Home() {
     }
   };
 
-  if (!isClient) {
-    // اگر SSR است، چیزی رندر نکن
-    return null;
-  }
-  // try {
-  //   const cookieStore = await cookies();
-  //   const token = cookieStore.get("token");
-  //   const isVerify = await verifyJwt(token);
-
-  //   console.log('token =>' , token)
-
-  //   if (!isVerify) {
-  //     redirect("login");
-  //   }
-  // } catch (error) {
-  //   redirect('/login')
-  // }
-
-  const createDynamicTabs = () => {
-    return tabs.map((tab, i) => {
-      return (
-        <AccordionTab
-          key={tab.header}
-          header={tab.header}
-          disabled={tab.disabled}
-        >
-          {tab.children}
-        </AccordionTab>
-      );
-    });
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('/api/products');
+      const data = await response.json();
+      // نمایش 4 محصول اول با تخفیف یا پرفروش
+      setProducts(data.slice(0, 4));
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
   };
 
-  return (
-    <div className='px-20 dark:bg-[#0B090A]'>
-    <div className="bg-slate-100 dark:bg-[#0B090A]">
-        {/* <h3 className="text-xl text-center mb-6">پرفروش ترین ها</h3> */}
+  const handleNewsletter = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Implement newsletter subscription
+    alert("با تشکر! شما در خبرنامه ما عضو شدید.");
+    setEmail("");
+  };
 
-      <div className="p-6">
-          <Swiper
-            spaceBetween={30}
+  if (!isClient) {
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      {/* Hero Section با Swiper */}
+      <section className="relative overflow-hidden">
+        <Swiper
+          spaceBetween={0}
           slidesPerView={1}
-            navigation={true}
-          pagination={{
-              clickable: true,
-            }}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-            }}
-            modules={[Navigation, Pagination, Autoplay]}
-            className="mySwiper"
+          navigation={true}
+          pagination={{ clickable: true }}
+          autoplay={{
+            delay: 4000,
+            disableOnInteraction: false,
+          }}
+          effect="fade"
+          modules={[Navigation, Pagination, Autoplay, EffectFade]}
+          className="h-[500px] md:h-[600px]"
         >
           <SwiperSlide>
-              <div className="bg-gradient-to-r from-green-400 to-blue-500 rounded-lg p-8 text-white">
-                <h2 className="text-2xl font-bold mb-4">تخفیف ویژه میوه‌های فصل</h2>
-                <p>تا ۳۰٪ تخفیف برای خریدهای بالای ۵۰۰ هزار تومان</p>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-              <div className="bg-gradient-to-r from-purple-400 to-pink-500 rounded-lg p-8 text-white">
-                <h2 className="text-2xl font-bold mb-4">ارسال رایگان</h2>
-                <p>برای تمام سفارش‌های بالای ۱ میلیون تومان</p>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-              <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg p-8 text-white">
-                <h2 className="text-2xl font-bold mb-4">تازه‌ترین محصولات</h2>
-                <p>هر روز محصولات تازه از مزارع و باغات</p>
+            <div className="relative h-full bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/20"></div>
+              <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
+                <Badge className="mb-4 bg-white/20 text-white border-white/30 backdrop-blur-sm">
+                  <Sparkles className="w-3 h-3 mr-2" />
+                  تخفیف ویژه
+                </Badge>
+                <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-fade-in">
+                  تخفیف ویژه میوه‌های فصل
+                </h1>
+                <p className="text-xl md:text-2xl mb-8 text-white/90">
+                  تا ۳۰٪ تخفیف برای خریدهای بالای ۵۰۰ هزار تومان
+                </p>
+                <Button size="lg" className="bg-white text-green-600 hover:bg-white/90 text-lg px-8 py-6">
+                  <FaShoppingCart className="ml-2" />
+                  خرید کنید
+                </Button>
               </div>
-            </SwiperSlide>
-          </Swiper>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide>
+            <div className="relative h-full bg-gradient-to-br from-purple-500 via-pink-500 to-rose-600 flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/20"></div>
+              <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
+                <Badge className="mb-4 bg-white/20 text-white border-white/30 backdrop-blur-sm">
+                  <FaTruck className="w-3 h-3 mr-2" />
+                  ارسال رایگان
+                </Badge>
+                <h1 className="text-4xl md:text-6xl font-bold mb-4">
+                  ارسال رایگان
+                </h1>
+                <p className="text-xl md:text-2xl mb-8 text-white/90">
+                  برای تمام سفارش‌های بالای ۱ میلیون تومان
+                </p>
+                <Button size="lg" className="bg-white text-purple-600 hover:bg-white/90 text-lg px-8 py-6">
+                  مشاهده محصولات
+                </Button>
+              </div>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide>
+            <div className="relative h-full bg-gradient-to-br from-amber-400 via-orange-500 to-red-600 flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/20"></div>
+              <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
+                <Badge className="mb-4 bg-white/20 text-white border-white/30 backdrop-blur-sm">
+                  <TrendingUp className="w-3 h-3 mr-2" />
+                  محصولات تازه
+                </Badge>
+                <h1 className="text-4xl md:text-6xl font-bold mb-4">
+                  تازه‌ترین محصولات
+                </h1>
+                <p className="text-xl md:text-2xl mb-8 text-white/90">
+                  هر روز محصولات تازه از مزارع و باغات
+                </p>
+                <Button size="lg" className="bg-white text-orange-600 hover:bg-white/90 text-lg px-8 py-6">
+                  خرید کنید
+                </Button>
+              </div>
+            </div>
+          </SwiperSlide>
+        </Swiper>
+      </section>
 
-          <h3 className="text-xl text-center my-8">دسته‌بندی محصولات</h3>
+      <div className="container mx-auto px-4 md:px-6 lg:px-20 py-12">
+        {/* دسته‌بندی محصولات */}
+        <section className="mb-16">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-2">دسته‌بندی محصولات</h2>
+              <p className="text-muted-foreground">محصولات تازه و با کیفیت</p>
+            </div>
+            <Link href="/store">
+              <Button variant="outline" className="hidden md:flex">
+                مشاهده همه
+                <FaArrowLeft className="mr-2" />
+              </Button>
+            </Link>
+          </div>
           {loading ? (
-            <div className="flex justify-center items-center h-48">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <Card key={i}>
+                  <Skeleton className="h-48 w-full" />
+                  <CardContent className="p-4">
+                    <Skeleton className="h-6 w-24 mx-auto" />
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {categories.map((category) => (
-                <div key={category.id} className="bg-card rounded-lg border shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
-                  <div className="h-48 bg-muted relative">
-                    <img
-                      src={category.image || '/images/placeholder.svg'}
-                      alt={category.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        if (e.currentTarget.src !== `${window.location.origin}/images/placeholder.svg`) {
-                          e.currentTarget.src = '/images/placeholder.svg';
-                        }
-                      }}
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h4 className="text-lg font-semibold text-center">{category.name}</h4>
-                  </div>
-                </div>
+                <Link key={category.id} href={`/store?category=${category.name}`}>
+                  <Card className="group overflow-hidden border-2 hover:border-primary transition-all duration-300 hover:shadow-xl cursor-pointer">
+                    <div className="relative h-48 overflow-hidden">
+                      <Image
+                        src={category.image || '/images/placeholder.svg'}
+                        alt={category.name}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <CardContent className="p-6 text-center">
+                      <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
+                        {category.name}
+                      </h3>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           )}
+        </section>
 
-          <h3 className="text-xl text-center my-8">نظرات مشتریان</h3>
-          {reviewsLoading ? (
-            <div className="flex justify-center items-center h-48">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+        {/* محصولات ویژه */}
+        {products.length > 0 && (
+          <section className="mb-16">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Award className="w-6 h-6 text-primary" />
+                  <h2 className="text-3xl md:text-4xl font-bold">محصولات ویژه</h2>
+                </div>
+                <p className="text-muted-foreground">پرفروش‌ترین و محبوب‌ترین محصولات</p>
+              </div>
+              <Link href="/store">
+                <Button variant="outline" className="hidden md:flex">
+                  مشاهده همه
+                  <FaArrowLeft className="mr-2" />
+                </Button>
+              </Link>
             </div>
-          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {products.map((product) => (
+                <ProductItem
+                  key={product.id}
+                  id={product.id}
+                  title={product.title}
+                  body={product.body}
+                  price={product.price}
+                  img={product.img}
+                  discount={product.discount}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* نظرات مشتریان */}
+        <section className="mb-16">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-2">نظرات مشتریان</h2>
+              <p className="text-muted-foreground">تجربه خرید مشتریان ما</p>
+            </div>
+          </div>
+          {reviewsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(3)].map((_, i) => (
+                <Card key={i} className="p-6">
+                  <Skeleton className="h-20 w-20 rounded-full mb-4" />
+                  <Skeleton className="h-4 w-full mb-2" />
+                  <Skeleton className="h-4 w-3/4" />
+                </Card>
+              ))}
+            </div>
+          ) : reviews.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {reviews.map((review) => (
-                <div key={review.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                      <span className="text-xl font-bold">{review.username[0]}</span>
+                <Card key={review.id} className="p-6 hover:shadow-lg transition-shadow duration-300">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-white font-bold text-lg">
+                      {review.username[0]}
                     </div>
-                    <div className="mr-4">
-                      <h4 className="font-semibold">{review.username}</h4>
-                      <div className="flex text-yellow-400">
-                        {[...Array(review.rating)].map((_, i) => (
-                          <span key={i}>★</span>
+                    <div className="flex-1">
+                      <h4 className="font-semibold mb-1">{review.username}</h4>
+                      <div className="flex items-center gap-1 text-yellow-500">
+                        {[...Array(5)].map((_, i) => (
+                          <FaStar
+                            key={i}
+                            className={i < review.rating ? "fill-current" : "text-gray-300"}
+                            size={14}
+                          />
                         ))}
                       </div>
                     </div>
                   </div>
-                  <p className="text-gray-600 dark:text-gray-300 mb-2">{review.text}</p>
-                  <div className="flex justify-between items-center text-sm text-gray-500">
-                    <span>{review.productTitle}</span>
-                    <span>{review.createdAtJalali}</span>
+                  <p className="text-muted-foreground mb-4 leading-relaxed">{review.text}</p>
+                  <Separator className="my-4" />
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">{review.productTitle}</span>
+                    <span className="text-muted-foreground">{review.createdAtJalali}</span>
                   </div>
-                </div>
+                </Card>
               ))}
             </div>
+          ) : (
+            <Card className="p-12 text-center">
+              <p className="text-muted-foreground">هنوز نظری ثبت نشده است</p>
+            </Card>
           )}
+        </section>
 
-          <h3 className="text-xl text-center my-8">سوالات متداول</h3>
-        <Accordion>{createDynamicTabs()}</Accordion>
-      </div>
+        {/* سوالات متداول */}
+        <section className="mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">سوالات متداول</h2>
+          <Card className="max-w-3xl mx-auto">
+            <Accordion type="single" collapsible className="w-full">
+              {tabs.map((tab, index) => (
+                <AccordionItem key={index} value={`item-${index}`} className="px-6">
+                  <AccordionTrigger className="text-right hover:no-underline">
+                    {tab.header}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-right">
+                    {tab.children}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Card>
+        </section>
 
-        <div className="my-12">
-          <h3 className="text-xl text-center mb-8">محصولات ویژه</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product) => (
-              <div key={product.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div className="h-48 bg-gray-200 relative">
-                  {product.discount > 0 && (
-                    <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm">
-                      {product.discount}% تخفیف
-                    </div>
-                  )}
-                  {/* تصویر محصول */}
-                </div>
-                <div className="p-4">
-                  <h4 className="text-lg font-semibold mb-2">{product.name}</h4>
-                  <div className="flex justify-between items-center mb-4">
-                    <div>
-                      {product.discount > 0 ? (
-                        <>
-                          <span className="text-gray-500 line-through text-sm">{product.price.toLocaleString()} تومان</span>
-                          <span className="text-green-500 mr-2">
-                            {Math.round(product.price * (1 - product.discount / 100)).toLocaleString()} تومان
-                          </span>
-                        </>
-                      ) : (
-                        <span className="text-green-500">{product.price.toLocaleString()} تومان</span>
-                      )}
-                    </div>
-                    <span className="text-sm text-gray-500">موجودی: {product.stock}</span>
-                  </div>
-                  <button className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors">
-                    افزودن به سبد خرید
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* عضویت در خبرنامه */}
+        <section className="mb-16">
+          <Card className="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border-primary/20 overflow-hidden relative">
+            <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5"></div>
+            <CardContent className="p-8 md:p-12 text-center relative z-10">
+              <Sparkles className="w-12 h-12 mx-auto mb-4 text-primary" />
+              <h3 className="text-2xl md:text-3xl font-bold mb-4">عضویت در خبرنامه</h3>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                برای اطلاع از آخرین محصولات، تخفیف‌های ویژه و پیشنهادات خاص در خبرنامه ما عضو شوید
+              </p>
+              <form onSubmit={handleNewsletter} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                <Input
+                  type="email"
+                  placeholder="ایمیل خود را وارد کنید"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-1"
+                  required
+                />
+                <Button type="submit" className="bg-primary hover:bg-primary/90">
+                  عضویت
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </section>
 
-        <div className="my-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg p-8 text-white">
-          <div className="max-w-2xl mx-auto text-center">
-            <h3 className="text-2xl font-bold mb-4">عضویت در خبرنامه</h3>
-            <p className="mb-6">برای اطلاع از آخرین محصولات و تخفیف‌ها در خبرنامه ما عضو شوید</p>
-            <div className="flex gap-4">
-              <input
-                type="email"
-                placeholder="ایمیل خود را وارد کنید"
-                className="flex-1 px-4 py-2 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-white"
-              />
-              <button className="bg-white text-green-500 px-6 py-2 rounded-lg hover:bg-gray-100 transition-colors">
-                عضویت
-              </button>
-            </div>
-          </div>
-      </div>
-
-        <div className="my-12">
-          <h3 className="text-xl text-center mb-8">چرا ما را انتخاب کنید؟</h3>
+        {/* چرا ما را انتخاب کنید */}
+        <section className="mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">چرا ما را انتخاب کنید؟</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {benefits.map((benefit, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
-                <div className="text-green-500 mb-4 flex justify-center">
+              <Card
+                key={index}
+                className="p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-2 hover:border-primary/50"
+              >
+                <div className={`${benefit.bgColor} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${benefit.color}`}>
                   {benefit.icon}
                 </div>
                 <h4 className="text-lg font-semibold mb-2">{benefit.title}</h4>
-                <p className="text-gray-600 dark:text-gray-300">{benefit.description}</p>
-              </div>
+                <p className="text-muted-foreground">{benefit.description}</p>
+              </Card>
             ))}
           </div>
-        </div>
-    </div>
+        </section>
+      </div>
     </div>
   );
 }
