@@ -32,8 +32,7 @@ import { CiRead } from "react-icons/ci";
 import { Rating } from "primereact/rating";
 import { Card } from "primereact/card";
 
-
-import { Pie, Bar } from 'react-chartjs-2';
+import { Pie, Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -43,7 +42,10 @@ import {
   LinearScale,
   BarElement,
   Title,
-} from 'chart.js';
+} from "chart.js";
+
+import { FaReply } from "react-icons/fa";
+// import { FaTrash } from 'react-icons/fa';
 
 // ثبت کامپوننت‌های مورد نیاز Chart.js
 ChartJS.register(
@@ -53,7 +55,7 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
-  Title
+  Title,
 );
 
 export default function DashboardPage() {
@@ -72,9 +74,10 @@ export default function DashboardPage() {
   const [selectedDuration, setSelectedDuration] = useState(null);
   const [comments, setComments] = useState([]);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-  const [deleteCommentDialogVisible, setDeleteCommentDialogVisible] = useState(false);
+  const [deleteCommentDialogVisible, setDeleteCommentDialogVisible] =
+    useState(false);
   const [selectedComment, setSelectedComment] = useState(null);
-  const [selectedTimePeriod, setSelectedTimePeriod] = useState('daily');
+  const [selectedTimePeriod, setSelectedTimePeriod] = useState("daily");
   const durations = [
     { name: "روزانه", code: "day" },
     { name: "هفتگی", code: "weekly" },
@@ -84,19 +87,19 @@ export default function DashboardPage() {
 
   // داده‌های جنسیت کاربران
   const genderData = {
-    labels: ['آقایان', 'خانم‌ها', 'نامشخص'],
+    labels: ["آقایان", "خانم‌ها", "نامشخص"],
     datasets: [
       {
         data: [45, 40, 15],
         backgroundColor: [
-          'rgba(54, 162, 235, 0.8)',
-          'rgba(255, 99, 132, 0.8)',
-          'rgba(201, 203, 207, 0.8)',
+          "rgba(54, 162, 235, 0.8)",
+          "rgba(255, 99, 132, 0.8)",
+          "rgba(201, 203, 207, 0.8)",
         ],
         borderColor: [
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(201, 203, 207, 1)',
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 99, 132, 1)",
+          "rgba(201, 203, 207, 1)",
         ],
         borderWidth: 1,
       },
@@ -106,31 +109,31 @@ export default function DashboardPage() {
   // داده‌های توزیع جغرافیایی
   const locationData = {
     labels: [
-      'تهران',
-      'گیلان',
-      'اصفهان',
-      'خراسان رضوی',
-      'فارس',
-      'سایر استان‌ها',
+      "تهران",
+      "گیلان",
+      "اصفهان",
+      "خراسان رضوی",
+      "فارس",
+      "سایر استان‌ها",
     ],
     datasets: [
       {
         data: [30, 25, 15, 10, 8, 12],
         backgroundColor: [
-          'rgba(255, 99, 132, 0.8)',
-          'rgba(54, 162, 235, 0.8)',
-          'rgba(255, 206, 86, 0.8)',
-          'rgba(75, 192, 192, 0.8)',
-          'rgba(153, 102, 255, 0.8)',
-          'rgba(255, 159, 64, 0.8)',
+          "rgba(255, 99, 132, 0.8)",
+          "rgba(54, 162, 235, 0.8)",
+          "rgba(255, 206, 86, 0.8)",
+          "rgba(75, 192, 192, 0.8)",
+          "rgba(153, 102, 255, 0.8)",
+          "rgba(255, 159, 64, 0.8)",
         ],
         borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
         ],
         borderWidth: 1,
       },
@@ -142,18 +145,18 @@ export default function DashboardPage() {
     responsive: true,
     plugins: {
       legend: {
-        position: 'bottom',
+        position: "bottom",
         labels: {
           font: {
-            family: 'Vazirmatn',
+            family: "Vazirmatn",
           },
         },
       },
       title: {
         display: true,
-        text: 'توزیع کاربران',
+        text: "توزیع کاربران",
         font: {
-          family: 'Vazirmatn',
+          family: "Vazirmatn",
           size: 16,
         },
       },
@@ -165,18 +168,18 @@ export default function DashboardPage() {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top' ,
+        position: "top",
         labels: {
           font: {
-            family: 'Vazirmatn',
+            family: "Vazirmatn",
           },
         },
       },
       title: {
         display: true,
-        text: 'آمار فروش محصولات',
+        text: "آمار فروش محصولات",
         font: {
-          family: 'Vazirmatn',
+          family: "Vazirmatn",
           size: 16,
         },
       },
@@ -186,60 +189,95 @@ export default function DashboardPage() {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'تعداد فروش',
+          text: "تعداد فروش",
           font: {
-            family: 'Vazirmatn',
+            family: "Vazirmatn",
           },
         },
       },
       x: {
         title: {
           display: true,
-          text: 'محصولات',
+          text: "محصولات",
           font: {
-            family: 'Vazirmatn',
+            family: "Vazirmatn",
           },
         },
       },
     },
   };
 
-   // داده‌های فروش محصولات بر اساس بازه زمانی
-   const salesDataByPeriod = {
+  // داده‌های فروش محصولات بر اساس بازه زمانی
+  const salesDataByPeriod = {
     daily: {
-      labels: ['برنج هاشمی', 'برنج صدری', 'برنج دودی', 'زیتون ماری', 'زیتون شکسته', 'چای کرک'],
+      labels: [
+        "برنج هاشمی",
+        "برنج صدری",
+        "برنج دودی",
+        "زیتون ماری",
+        "زیتون شکسته",
+        "چای کرک",
+      ],
       data: [12, 19, 3, 5, 2, 3],
-      label: 'فروش روزانه'
+      label: "فروش روزانه",
     },
     weekly: {
-      labels: ['برنج هاشمی', 'برنج صدری', 'برنج دودی', 'زیتون ماری', 'زیتون شکسته', 'چای کرک'],
+      labels: [
+        "برنج هاشمی",
+        "برنج صدری",
+        "برنج دودی",
+        "زیتون ماری",
+        "زیتون شکسته",
+        "چای کرک",
+      ],
       data: [65, 59, 80, 81, 56, 55],
-      label: 'فروش هفتگی'
+      label: "فروش هفتگی",
     },
     monthly: {
-      labels: ['برنج هاشمی', 'برنج صدری', 'برنج دودی', 'زیتون ماری', 'زیتون شکسته', 'چای کرک'],
+      labels: [
+        "برنج هاشمی",
+        "برنج صدری",
+        "برنج دودی",
+        "زیتون ماری",
+        "زیتون شکسته",
+        "چای کرک",
+      ],
       data: [280, 250, 300, 290, 200, 220],
-      label: 'فروش ماهانه'
+      label: "فروش ماهانه",
     },
     yearly: {
-      labels: ['برنج هاشمی', 'برنج صدری', 'برنج دودی', 'زیتون ماری', 'زیتون شکسته', 'چای کرک'],
+      labels: [
+        "برنج هاشمی",
+        "برنج صدری",
+        "برنج دودی",
+        "زیتون ماری",
+        "زیتون شکسته",
+        "چای کرک",
+      ],
       data: [3200, 2800, 3500, 3300, 2400, 2600],
-      label: 'فروش سالانه'
+      label: "فروش سالانه",
     },
     twoYearly: {
-      labels: ['برنج هاشمی', 'برنج صدری', 'برنج دودی', 'زیتون ماری', 'زیتون شکسته', 'چای کرک'],
+      labels: [
+        "برنج هاشمی",
+        "برنج صدری",
+        "برنج دودی",
+        "زیتون ماری",
+        "زیتون شکسته",
+        "چای کرک",
+      ],
       data: [6500, 5800, 7200, 6800, 4800, 5200],
-      label: 'فروش دو سال اخیر'
-    }
+      label: "فروش دو سال اخیر",
+    },
   };
 
   // گزینه‌های دراپ‌داون
   const timePeriodOptions = [
-    { name: 'روزانه', value: 'daily' },
-    { name: 'هفتگی', value: 'weekly' },
-    { name: 'ماهانه', value: 'monthly' },
-    { name: 'سالانه', value: 'yearly' },
-    { name: 'دو سال اخیر', value: 'twoYearly' }
+    { name: "روزانه", value: "daily" },
+    { name: "هفتگی", value: "weekly" },
+    { name: "ماهانه", value: "monthly" },
+    { name: "سالانه", value: "yearly" },
+    { name: "دو سال اخیر", value: "twoYearly" },
   ];
 
   // داده‌های نمودار بر اساس بازه زمانی انتخاب شده
@@ -249,9 +287,9 @@ export default function DashboardPage() {
       {
         label: salesDataByPeriod[selectedTimePeriod].label,
         data: salesDataByPeriod[selectedTimePeriod].data,
-        backgroundColor: 'rgba(54, 162, 235, 0.8)',
-      }
-    ]
+        backgroundColor: "rgba(54, 162, 235, 0.8)",
+      },
+    ],
   };
 
   useEffect(() => {
@@ -286,10 +324,10 @@ export default function DashboardPage() {
 
         // جمع‌آوری تمام نظرات از محصولات
         const allComments = products.reduce((acc, product) => {
-          const productComments = product.comments.map(comment => ({
+          const productComments = product.comments.map((comment) => ({
             ...comment,
             productTitle: product.title,
-            productId: product.id
+            productId: product.id,
           }));
           return [...acc, ...productComments];
         }, []);
@@ -318,13 +356,16 @@ export default function DashboardPage() {
   }
 
   const roleBodyTemplate = (rowData) => {
+    console.log(rowData);
+    // style={{ backgroundColor: "#f0f0f0" }}
     return (
       <Tag
         rounded
         value={rowData.role}
         // severity={rowData.role === "admin" ? "#8ecae6" : "#e0e1dd"}
-        className={`text-center ${rowData.role === "admin" ? "bg-[#8ecae6]" : "bg-[#e0e1dd]"
-          }`}
+        style={{
+          backgroundColor: rowData.role === "admin" ? "#8ecae6" : "#e0e1dd",
+        }}
       />
     );
   };
@@ -574,12 +615,12 @@ export default function DashboardPage() {
 
   // 3️⃣ تبدیل به آرایه و مرتب‌سازی بر اساس تاریخ
   const result = Object.values(groupedByDate)
-    .filter(item => item.date) // حذف مواردی که تاریخ ندارند
+    .filter((item) => item.date) // حذف مواردی که تاریخ ندارند
     .sort((a, b) => {
       try {
         // تبدیل تاریخ شمسی به آرایه برای مقایسه
-        const [aYear, aMonth, aDay] = a.date.split('/').map(Number);
-        const [bYear, bMonth, bDay] = b.date.split('/').map(Number);
+        const [aYear, aMonth, aDay] = a.date.split("/").map(Number);
+        const [bYear, bMonth, bDay] = b.date.split("/").map(Number);
 
         // مقایسه سال
         if (aYear !== bYear) return aYear - bYear;
@@ -588,19 +629,19 @@ export default function DashboardPage() {
         // مقایسه روز
         return aDay - bDay;
       } catch (error) {
-        console.error('Error sorting dates:', error);
+        console.error("Error sorting dates:", error);
         return 0;
       }
     });
 
   // نمایش نتیجه
-  console.log('Sorted data:', result);
+  console.log("Sorted data:", result);
 
   const filters = {
     global: { value: globalFilterValue, matchMode: "contains" },
     username: { value: null, matchMode: "contains" },
     productTitle: { value: null, matchMode: "contains" },
-    text: { value: null, matchMode: "contains" }
+    text: { value: null, matchMode: "contains" },
   };
 
   const ratingBodyTemplate = (rowData) => {
@@ -612,12 +653,13 @@ export default function DashboardPage() {
   };
 
   const header = (
-    <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
+    <div className="flex  flex-wrap gap-2 items-center justify-between">
       <h4 className="m-0">نظرات کاربران</h4>
       <span className="p-input-icon-left">
         <i className="pi pi-search" />
         <InputText
           value={globalFilterValue}
+          size="small"
           onChange={(e) => setGlobalFilterValue(e.target.value)}
           placeholder="جستجو..."
           className="p-inputtext-sm"
@@ -629,13 +671,18 @@ export default function DashboardPage() {
   const handleDeleteComment = async () => {
     try {
       // حذف نظر از محصول مربوطه
-      const response = await fetch(`/api/products/${selectedComment.id}/comments/${selectedComment.id}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/products/${selectedComment.id}/comments/${selectedComment.id}`,
+        {
+          method: "DELETE",
+        },
+      );
 
       if (response.ok) {
         // به‌روزرسانی لیست نظرات
-        const updatedComments = comments.filter(comment => comment.id !== selectedComment.id);
+        const updatedComments = comments.filter(
+          (comment) => comment.id !== selectedComment.id,
+        );
         setComments(updatedComments);
         setDeleteCommentDialogVisible(false);
       }
@@ -664,17 +711,34 @@ export default function DashboardPage() {
 
   const commentActionsBodyTemplate = (rowData) => {
     return (
-      <div className="flex gap-2 justify-content-center">
-        <Button
+      <div className="flex gap-2 justify-content-center items-center">
+        {/* <Button
           icon="pi pi-trash"
           rounded
           text
           severity="secondary"
-          style={{ color: 'black' }}
+          style={{ color: "black" }}
           onClick={() => {
             setSelectedComment(rowData);
             setDeleteCommentDialogVisible(true);
           }}
+        /> */}
+        <FaTrash
+          onClick={() => {
+            setSelectedComment(rowData);
+            setDeleteCommentDialogVisible(true);
+          }}
+          style={{ cursor: "pointer" }}
+          color="#dc3545"
+        />
+
+        <FaReply
+          className="text-[#0e5fb0]"
+          onClick={() => {
+            setSelectedComment(rowData);
+            setDeleteCommentDialogVisible(true);
+          }}
+          style={{ cursor: "pointer" }}
         />
       </div>
     );
@@ -684,7 +748,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0B090A] py-16">
-      <div className="max-w-6xl mx-auto px-4 md:px-20">
+      <div className="mx-auto md:px-10">
         <h1 className="text-4xl font-bold text-[#38b000] text-center mb-12">
           داشبورد
         </h1>
@@ -734,25 +798,28 @@ export default function DashboardPage() {
 
         {/* توضیحات */}
         <div className="mt-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-[#38b000] mb-4">
-            توضیحات
-          </h2>
+          <h2 className="text-2xl font-bold text-[#38b000] mb-4">توضیحات</h2>
           <div className="space-y-4 text-gray-600 dark:text-gray-300">
             <p>
-              • نمودار فروش محصولات نشان می‌دهد که برنج هاشمی و صدری بیشترین فروش را در تمام بازه‌های زمانی دارند.
+              • نمودار فروش محصولات نشان می‌دهد که برنج هاشمی و صدری بیشترین
+              فروش را در تمام بازه‌های زمانی دارند.
             </p>
             <p>
-              • نمودار جنسیت نشان می‌دهد که ۴۵٪ از کاربران آقا، ۴۰٪ خانم و ۱۵٪ نامشخص هستند.
+              • نمودار جنسیت نشان می‌دهد که ۴۵٪ از کاربران آقا، ۴۰٪ خانم و ۱۵٪
+              نامشخص هستند.
             </p>
             <p>
-              • نمودار توزیع جغرافیایی نشان می‌دهد که بیشترین کاربران از استان‌های تهران (۳۰٪)، گیلان (۲۵٪) و اصفهان (۱۵٪) هستند.
+              • نمودار توزیع جغرافیایی نشان می‌دهد که بیشترین کاربران از
+              استان‌های تهران (۳۰٪)، گیلان (۲۵٪) و اصفهان (۱۵٪) هستند.
             </p>
           </div>
         </div>
 
         {/* Add SimpleLineChart */}
         <div className="mb-8 h-[400px] bg-white p-4 rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4 text-center">نمودار فروش</h2>
+          <h2 className="text-xl font-semibold mb-4 text-center">
+            نمودار فروش
+          </h2>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               margin={{
@@ -774,22 +841,69 @@ export default function DashboardPage() {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="product1" stroke="#8884d8" name="برنج هاشمی" />
-              <Line type="monotone" dataKey="product2" stroke="#82ca9d" name="برنج صدری" />
-              <Line type="monotone" dataKey="product3" stroke="#fb8500" name="برنج دودی" />
-              <Line type="monotone" dataKey="product4" stroke="#8ecae6" name="برنج دم سیاه" />
-              <Line type="monotone" dataKey="product5" stroke="#ff8fab" name="زیتون ماری" />
-              <Line type="monotone" dataKey="product6" stroke="#ffd60a" name="زیتون شکسته" />
-              <Line type="monotone" dataKey="product7" stroke="#adc178" name="زیتون کنسروی" />
-              <Line type="monotone" dataKey="product8" stroke="#f00" name="رشته خشکار" />
-              <Line type="monotone" dataKey="product9" stroke="#4CAF50" name="چای کرک" />
+              <Line
+                type="monotone"
+                dataKey="product1"
+                stroke="#8884d8"
+                name="برنج هاشمی"
+              />
+              <Line
+                type="monotone"
+                dataKey="product2"
+                stroke="#82ca9d"
+                name="برنج صدری"
+              />
+              <Line
+                type="monotone"
+                dataKey="product3"
+                stroke="#fb8500"
+                name="برنج دودی"
+              />
+              <Line
+                type="monotone"
+                dataKey="product4"
+                stroke="#8ecae6"
+                name="برنج دم سیاه"
+              />
+              <Line
+                type="monotone"
+                dataKey="product5"
+                stroke="#ff8fab"
+                name="زیتون ماری"
+              />
+              <Line
+                type="monotone"
+                dataKey="product6"
+                stroke="#ffd60a"
+                name="زیتون شکسته"
+              />
+              <Line
+                type="monotone"
+                dataKey="product7"
+                stroke="#adc178"
+                name="زیتون کنسروی"
+              />
+              <Line
+                type="monotone"
+                dataKey="product8"
+                stroke="#f00"
+                name="رشته خشکار"
+              />
+              <Line
+                type="monotone"
+                dataKey="product9"
+                stroke="#4CAF50"
+                name="چای کرک"
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
         {/* آمار مالی و پرداخت‌ها */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4 text-center">آمار مالی و پرداخت‌ها</h2>
+          <h2 className="text-xl font-semibold mb-4 text-center">
+            آمار مالی و پرداخت‌ها
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* کارت درآمد کل */}
             <Card className="dark:bg-red-600 shadow-lg rounded-lg">
@@ -797,7 +911,9 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-gray-500 text-sm">درآمد کل</h3>
-                    <p className="text-2xl font-bold text-green-600">۲۵,۰۰۰,۰۰۰ تومان</p>
+                    <p className="text-2xl font-bold text-green-600">
+                      ۲۵,۰۰۰,۰۰۰ تومان
+                    </p>
                   </div>
                   <div className="bg-green-100 p-3 rounded-full">
                     <i className="pi pi-dollar text-green-600 text-xl"></i>
@@ -817,7 +933,9 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-gray-500 text-sm">تعداد سفارشات</h3>
-                    <p className="text-2xl font-bold text-blue-600">۱۵۶ سفارش</p>
+                    <p className="text-2xl font-bold text-blue-600">
+                      ۱۵۶ سفارش
+                    </p>
                   </div>
                   <div className="bg-blue-100 p-3 rounded-full">
                     <i className="pi pi-shopping-cart text-blue-600 text-xl"></i>
@@ -837,7 +955,9 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-gray-500 text-sm">میانگین سبد خرید</h3>
-                    <p className="text-2xl font-bold text-purple-600">۱۶۰,۰۰۰ تومان</p>
+                    <p className="text-2xl font-bold text-purple-600">
+                      ۱۶۰,۰۰۰ تومان
+                    </p>
                   </div>
                   <div className="bg-purple-100 p-3 rounded-full">
                     <i className="pi pi-chart-line text-purple-600 text-xl"></i>
@@ -857,7 +977,9 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-gray-500 text-sm">مشتریان جدید</h3>
-                    <p className="text-2xl font-bold text-orange-600">۲۴ مشتری</p>
+                    <p className="text-2xl font-bold text-orange-600">
+                      ۲۴ مشتری
+                    </p>
                   </div>
                   <div className="bg-orange-100 p-3 rounded-full">
                     <i className="pi pi-users text-orange-600 text-xl"></i>
@@ -882,67 +1004,67 @@ export default function DashboardPage() {
           style={{ minWidth: "10rem" }}
         />
 
-        <div className="card">
-          <DataTable
-            value={users}
-            paginator
-            rows={10}
-            rowsPerPageOptions={[5, 10, 25, 50]}
-            tableStyle={{ minWidth: "50rem" }}
-            className="p-datatable-sm"
-            emptyMessage="هیچ کاربری یافت نشد"
-            loading={loading}
-            dir="rtl"
-            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-          >
-            <Column
-              field="id"
-              header="شناسه"
-              sortable
-              style={{ width: "5%" }}
-              className="text-center"
-            ></Column>
-            <Column
-              field="username"
-              header="نام کاربری"
-              sortable
-              style={{ width: "15%" }}
-              className="text-center"
-            ></Column>
-            <Column
-              field="email"
-              header="ایمیل"
-              sortable
-              style={{ width: "20%" }}
-              className="text-center"
-            ></Column>
-            <Column
-              field="password"
-              header="رمز عبور"
-              body={passwordBodyTemplate}
-              style={{ width: "20%" }}
-            ></Column>
-            <Column
-              field="role"
-              header="نقش"
-              body={roleBodyTemplate}
-              sortable
-              style={{ width: "15%" }}
-            ></Column>
-            <Column
-              field="purchases"
-              header="تعداد خریدها"
-              body={purchasesBodyTemplate}
-              sortable
-              style={{ width: "10%" }}
-            ></Column>
-            <Column
-              body={actionsBodyTemplate}
-              header="عملیات"
-              style={{ width: "15%" }}
-            ></Column>
-          </DataTable>
-        </div>
+        <DataTable
+          value={users}
+          paginator
+          rows={10}
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          tableStyle={{ minWidth: "50rem" }}
+          className="p-datatable-sm"
+          emptyMessage="هیچ کاربری یافت نشد"
+          loading={loading}
+          dir="rtl"
+          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+        >
+          <Column
+            field="id"
+            header="شناسه"
+            sortable
+            style={{ width: "5%" }}
+            className="text-center"
+          ></Column>
+          <Column
+            field="username"
+            header="نام کاربری"
+            sortable
+            style={{ width: "15%" }}
+            className="text-center"
+          ></Column>
+          <Column
+            field="email"
+            header="ایمیل"
+            sortable
+            style={{ width: "20%" }}
+            className="text-center"
+          ></Column>
+          <Column
+            field="password"
+            header="رمز عبور"
+            body={passwordBodyTemplate}
+            style={{ width: "20%" }}
+          ></Column>
+          <Column
+            field="role"
+            header="نقش"
+            body={roleBodyTemplate}
+            sortable
+            style={{ width: "15%" }}
+          ></Column>
+          <Column
+            field="purchases"
+            header="تعداد خریدها"
+            body={purchasesBodyTemplate}
+            sortable
+            style={{ width: "10%" }}
+          ></Column>
+          <Column
+            body={actionsBodyTemplate}
+            header="عملیات"
+            style={{ width: "15%" }}
+          ></Column>
+        </DataTable>
+        {/* <div className="card">
+        </div> */}
 
         <Dropdown
           value={selectedDuration}
@@ -955,68 +1077,99 @@ export default function DashboardPage() {
 
         <h3 className="text-center">بازخوردها و نظرات مشتریان</h3>
 
-        <div className="card">
-          <Card>
-            <DataTable
-              value={comments}
-              paginator
-              rows={10}
-              rowsPerPageOptions={[5, 10, 25, 50]}
-              tableStyle={{ minWidth: "50rem" }}
-              loading={loading}
-              filters={filters}
-              globalFilterFields={["username", "productTitle", "text"]}
-              header={header}
-              emptyMessage="هیچ نظری یافت نشد."
-              className="p-datatable-sm"
-            >
-              <Column
-                field="username"
-                header="نام کاربر"
-                sortable
-                filter
-                filterPlaceholder="جستجو بر اساس نام کاربر"
-                style={{ minWidth: "12rem" }}
-              />
-              <Column
-                field="productTitle"
-                header="نام محصول"
-                sortable
-                filter
-                filterPlaceholder="جستجو بر اساس نام محصول"
-                style={{ minWidth: "14rem" }}
-              />
-              <Column
-                field="text"
-                header="متن نظر"
-                sortable
-                filter
-                filterPlaceholder="جستجو در متن نظر"
-                style={{ minWidth: "20rem" }}
-              />
-              <Column
-                field="rating"
-                header="امتیاز"
-                sortable
-                body={ratingBodyTemplate}
-                style={{ minWidth: "10rem" }}
-              />
-              <Column
-                field="createdAtJalali"
-                header="تاریخ ثبت"
-                sortable
-                body={dateBodyTemplate}
-                style={{ minWidth: "10rem" }}
-              />
-              <Column
-                body={commentActionsBodyTemplate}
-                header="عملیات"
-                style={{ minWidth: "8rem" }}
-                className="text-center"
-              />
-            </DataTable>
+        <DataTable
+          style={{
+            "--p-datatable-cell-padding": "0",
+            "--p-datatable-header-cell-padding": "0.5rem",
+          }}
+          value={comments}
+          paginator
+          rows={10}
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          tableStyle={{ minWidth: "50rem" }}
+          loading={loading}
+          filters={filters}
+          globalFilterFields={["username", "productTitle", "text"]}
+          header={header}
+          emptyMessage="هیچ نظری یافت نشد."
+          className="p-datatable-sm table-no-padding custom-datatable"
+        >
+          <Column
+            header="#"
+            body={(data, options) => options.rowIndex + 1}
+            style={{ minWidth: "3rem", textAlign: "center" }}
+          />
+          <Column
+            field="username"
+            header="نام کاربر"
+            sortable
+            filter
+            filterPlaceholder="جستجو بر اساس نام کاربر"
+            style={{ minWidth: "12rem" }}
+          />
+          <Column
+            field="productTitle"
+            header="نام محصول"
+            sortable
+            filter
+            filterPlaceholder="جستجو بر اساس نام محصول"
+            style={{ minWidth: "14rem" }}
+          />
+          <Column
+            field="text"
+            header="متن نظر"
+            sortable
+            filter
+            filterPlaceholder="جستجو در متن نظر"
+            style={{ minWidth: "20rem" }}
+            body={(rowData) => {
+              const maxLength = 50;
+              const text = rowData.text;
+              const truncatedText =
+                text.length > maxLength
+                  ? text.substring(0, maxLength) + "..."
+                  : text;
+
+              return (
+                <div
+                  title={rowData.text}
+                  style={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {truncatedText}
+                </div>
+              );
+            }}
+          />
+
+          <Column
+            field="rating"
+            header="امتیاز"
+            sortable
+            body={ratingBodyTemplate}
+            style={{ minWidth: "10rem" }}
+          />
+          <Column
+            field="createdAtJalali"
+            header="تاریخ ثبت"
+            sortable
+            body={dateBodyTemplate}
+            style={{ minWidth: "10rem" }}
+          />
+          <Column
+            body={commentActionsBodyTemplate}
+            header="عملیات"
+            style={{ minWidth: "8rem" }}
+            className="text-center"
+          />
+        </DataTable>
+        {/* <div className="card">
+          <Card >
           </Card>
-        </div>
+        </div> */}
 
         {/* add user Dialog */}
         <Dialog

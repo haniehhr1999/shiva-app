@@ -975,3 +975,15 @@ img.flag {
     background-color: var(--table-bg-even) !important;
     color: var(--foreground);
 }
+
+.table-no-padding td {
+  padding: 0 !important;
+}
+
+.custom-datatable .p-datatable-tbody > tr > td {
+  padding: 10px !important;
+}
+
+.custom-datatable .p-datatable-thead > tr > th {
+  padding: 0.5rem !important;
+}

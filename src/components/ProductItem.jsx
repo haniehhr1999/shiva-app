@@ -72,9 +72,9 @@ const ProductItem = ({ id, title, body, price, img, discount = 0 }) => {
             alt={title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            onError={(e) => {
-              e.currentTarget.src = '/images/placeholder.jpg';
-            }}
+            // onError={(e) => {
+            //   e.currentTarget.src = '/images/placeholder.jpg';
+            // }}
           />
           {discount > 0 && (
             <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">

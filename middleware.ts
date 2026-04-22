@@ -6,7 +6,11 @@ const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-k
 export async function middleware(request) {
   const token = request.cookies.get('token')?.value;
 
+  console.log(token)
+
   if (!token) {
+  console.log('99999999999999999999999999')
+
     // اگر توکن نیست، اجازه میدیم به صفحه ورود یا صفحه اول که توکن ساخته میشه بره
     if (request.nextUrl.pathname.startsWith('/login')) {
       return NextResponse.next();

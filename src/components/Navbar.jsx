@@ -14,7 +14,8 @@ import { useRef } from "react";
 
 import React, { useEffect, useState } from "react";
 
-const Navbar = () => {
+const Navbar = ({ initialUser }) => {
+  console.log({initialUser})
   const path = usePathname();
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
@@ -50,6 +51,7 @@ const Navbar = () => {
       const res = await fetch("/api/userinfo", { credentials: "include" });
       if (res.ok) {
         const data = await res.json();
+        console.log({data})
         setUser(data);
         setPurchases(data.purchases || []);
       }
@@ -219,10 +221,10 @@ const Navbar = () => {
               />
             </div>
 
-            {user ? (
+            {initialUser  ? (
               <div className="flex items-center space-x-4 space-x-reverse">
                 <span className="text-gray-700 dark:text-gray-300">
-                  سلام {user.username}
+                  سلام {initialUser.username}
                 </span>
               </div>
             ) : null}

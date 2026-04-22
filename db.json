@@ -1,13 +1,11 @@
 {
-  "users": [
-    {
+  "users": [{
       "id": 1,
       "username": "haniye",
       "email": "haniye@example.com",
       "role": "user",
       "password": "847392",
-      "purchases": [
-        {
+      "purchases": [{
           "productId": 1,
           "title": "برنج هاشمی",
           "price": 320000,
@@ -39,8 +37,7 @@
       "email": "admin@example.com",
       "role": "admin",
       "password": "123456",
-      "purchases": [
-        {
+      "purchases": [{
           "productId": 9,
           "title": "چای کرک",
           "price": 55000,
@@ -64,8 +61,7 @@
       "email": "ali@example.com",
       "role": "user",
       "password": "987654",
-      "purchases": [
-        {
+      "purchases": [{
           "productId": 4,
           "title": "برنج دم سیاه",
           "price": 369000,
@@ -97,8 +93,7 @@
       "email": "sara@example.com",
       "role": "admin",
       "password": "456789",
-      "purchases": [
-        {
+      "purchases": [{
           "productId": 3,
           "title": "برنج دودی",
           "price": 350000,
@@ -138,8 +133,7 @@
       "email": "mohammad@example.com",
       "role": "user",
       "password": "234567",
-      "purchases": [
-        {
+      "purchases": [{
           "productId": 2,
           "title": "برنج صدری",
           "price": 280000,
@@ -171,8 +165,7 @@
       "email": "fatemeh@example.com",
       "role": "user",
       "password": "345678",
-      "purchases": [
-        {
+      "purchases": [{
           "productId": 1,
           "title": "برنج هاشمی",
           "price": 320000,
@@ -212,8 +205,7 @@
       "email": "reza@example.com",
       "role": "user",
       "password": "567890",
-      "purchases": [
-        {
+      "purchases": [{
           "productId": 4,
           "title": "برنج دم سیاه",
           "price": 369000,
@@ -245,8 +237,7 @@
       "email": "maryam@example.com",
       "role": "user",
       "password": "678901",
-      "purchases": [
-        {
+      "purchases": [{
           "productId": 2,
           "title": "برنج صدری",
           "price": 280000,
@@ -294,8 +285,7 @@
       "email": "ahmad@example.com",
       "role": "user",
       "password": "789012",
-      "purchases": [
-        {
+      "purchases": [{
           "productId": 3,
           "title": "برنج دودی",
           "price": 350000,
@@ -327,8 +317,7 @@
       "email": "zahra@example.com",
       "role": "user",
       "password": "890890",
-      "purchases": [
-        {
+      "purchases": [{
           "productId": 1,
           "title": "برنج هاشمی",
           "price": 320000,
@@ -368,8 +357,7 @@
       "email": "hossein@example.com",
       "role": "user",
       "password": "901234",
-      "purchases": [
-        {
+      "purchases": [{
           "productId": 4,
           "title": "برنج دم سیاه",
           "price": 369000,
@@ -401,8 +389,7 @@
       "email": "superadmin@example.com",
       "role": "admin",
       "password": "654321",
-      "purchases": [
-        {
+      "purchases": [{
           "productId": 2,
           "title": "برنج صدری",
           "price": 280000,
@@ -442,8 +429,7 @@
       "email": "rahimi@gmail.com",
       "role": "user",
       "password": "654321",
-      "purchases": [
-        {
+      "purchases": [{
           "productId": 3,
           "quantity": 4,
           "title": "برنج دودی",
@@ -465,18 +451,24 @@
       "email": "goli@gmail.com",
       "role": "user",
       "purchases": []
+    },
+    {
+      "id": 15,
+      "username": "amir",
+      "email": "amira@gmail.com",
+      "role": "user",
+      "purchases": []
     }
   ],
-  "products": [
-    {
+  "products": [{
       "id": 1,
       "title": "برنج هاشمی",
       "body": "برنج هاشمی مرغوب شمال با کیفیت عالی و طعم بی نظیر",
       "price": 320000,
       "discount": 15,
+      "category": "rice",
       "img": "/images/rice1.jpg",
-      "comments": [
-        {
+      "comments": [{
           "id": 1748352204253,
           "userId": 1,
           "username": "haniye",
@@ -511,9 +503,10 @@
       "body": "برنج صدری درجه یک با عطر و طعم فوق العاده",
       "price": 280000,
       "discount": 0,
+      "category": "rice",
+
       "img": "/images/rice2.jpg",
-      "comments": [
-        {
+      "comments": [{
           "id": 1748352204255,
           "userId": 2,
           "username": "admin",
@@ -547,10 +540,11 @@
       "title": "برنج دودی",
       "body": "برنج دودی با طعم دودی طبیعی و کیفیت عالی",
       "price": 350000,
+      "category": "rice",
+
       "discount": 20,
       "img": "/images/rice3.jpg",
-      "comments": [
-        {
+      "comments": [{
           "id": 1748352204257,
           "userId": 4,
           "username": "sara",
@@ -584,10 +578,11 @@
       "title": "برنج دم سیاه",
       "body": "برنج دم سیاه با کیفیت عالی و طعم بی نظیر",
       "price": 369000,
+      "category": "rice",
+
       "discount": 10,
       "img": "/images/rice1.jpg",
-      "comments": [
-        {
+      "comments": [{
           "id": 1748352204259,
           "userId": 7,
           "username": "reza",
@@ -621,10 +616,11 @@
       "title": "زیتون ماری",
       "body": "زیتون ماری تازه و خوش طعم",
       "price": 85000,
+      "category": "olive",
+
       "discount": 0,
       "img": "/images/olive1.jpg",
-      "comments": [
-        {
+      "comments": [{
           "id": 1748352204261,
           "userId": 9,
           "username": "ahmad",
@@ -658,10 +654,11 @@
       "title": "زیتون شکسته",
       "body": "زیتون شکسته با کیفیت عالی",
       "price": 75000,
+      "category": "olive",
+
       "discount": 25,
       "img": "/images/olive2.jpg",
-      "comments": [
-        {
+      "comments": [{
           "id": 1748352204263,
           "userId": 11,
           "username": "hossein",
@@ -696,9 +693,10 @@
       "body": "زیتون کنسروی با کیفیت عالی و طعم بی نظیر",
       "price": 65000,
       "discount": 0,
+      "category": "olive",
+
       "img": "/images/olive3.jpg",
-      "comments": [
-        {
+      "comments": [{
           "id": 1748352204265,
           "userId": 13,
           "username": "amir",
@@ -733,9 +731,10 @@
       "body": "رشته خشکار با کیفیت عالی و طعم بی نظیر",
       "price": 45000,
       "discount": 30,
+      "category": "other",
+
       "img": "/images/reshte.jpg",
-      "comments": [
-        {
+      "comments": [{
           "id": 1748352204267,
           "userId": 2,
           "username": "admin",
@@ -770,9 +769,10 @@
       "body": "چای کرک با کیفیت عالی و طعم بی نظیر",
       "price": 55000,
       "discount": 5,
+      "category": "tea",
+
       "img": "/images/kerak.jpg",
-      "comments": [
-        {
+      "comments": [{
           "id": 1748352204269,
           "userId": 4,
           "username": "sara",
@@ -802,8 +802,7 @@
       ]
     }
   ],
-  "articles": [
-    {
+  "articles": [{
       "id": 1,
       "slug": "rice-cooking-guide",
       "title": "راهنمای جامع پخت برنج ایرانی",

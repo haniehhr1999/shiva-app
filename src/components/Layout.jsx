@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import useRouter from "next/router";
 import React from "react";
 
-const Layout = ({ children }) => {
+const Layout = ({ children , initialUser }) => {
 
   let pathname = usePathname()
   console.log('pathname ===>', pathname)
@@ -14,8 +14,9 @@ const Layout = ({ children }) => {
   return <div>
     {
       pathname !== '/login' && pathname !== '/register' &&
-      <Navbar />
+      <Navbar initialUser = {initialUser} />
     }
+    
     {children}
 
     {
