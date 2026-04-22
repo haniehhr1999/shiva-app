@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import OTPInput from "react-otp-input";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -82,6 +84,26 @@ export default function LoginPage() {
               />
             </div>
           </div>
+          <div dir="ltr" className="flex justify-center">
+            <OTPInput
+              value={otp}
+              onChange={setOtp}
+              numInputs={4} // تعداد جعبه‌های ورودی = 4 رقم
+              inputType="tel" // فقط عدد و جلوگیری از دکمه‌های اسپینر
+              renderInput={(props) => <input {...props} />}
+              containerStyle="your-container-style"
+              inputStyle={{
+                direction: "ltr",
+                width: "50px",
+                height: "60px",
+                margin: "0 8px",
+                fontSize: "24px",
+                textAlign: "center",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+              }}
+            />
+          </div>
 
           {error && (
             <div className="text-red-500 text-sm text-center">{error}</div>
@@ -95,6 +117,15 @@ export default function LoginPage() {
             >
               {loading ? "در حال ورود..." : "ورود"}
             </button>
+          </div>
+
+          <div className="text-sm text-center">
+            <Link
+              href="/register"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              ورود با کد یکبار مصرف
+            </Link>
           </div>
 
           <div className="text-sm text-center">
