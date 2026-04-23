@@ -8,6 +8,7 @@ const RegisterPage = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [mobile, setMobile] = useState("");
   const [provinces, setProvinces] = useState([]);
   const [cities, setCities] = useState([]);
   const [selectedProvince, setSelectedProvince] = useState('');
@@ -20,10 +21,10 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("/api/register", {
+    const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username , email , pass }),
+      body: JSON.stringify({ username ,mobile, email , pass , selectedProvince , selectedCity }),
     });
 
     console.log('res ==>' , res)
@@ -94,6 +95,17 @@ const RegisterPage = () => {
           placeholder="نام کاربری"
           className="w-full rounded py-2 px-4 bg-[#ffffff96]"
           onChange={(e) => setUsername(e.target.value)}
+        />
+      </div>
+
+      <div className="inputBox my-4">
+        <input
+          type="text"
+          required
+          value={mobile}
+          placeholder="موبایل"
+          className="w-full rounded py-2 px-4 bg-[#ffffff96]"
+          onChange={(e) => setMobile(e.target.value)}
         />
       </div>
 
