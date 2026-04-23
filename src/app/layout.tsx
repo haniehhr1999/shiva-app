@@ -48,7 +48,7 @@ export default async  function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300`}>
+      <body cz-shortcut-listen="true" className={`${inter.className} min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300`}>
         <Providers>
           <Layout initialUser={user}>{children}</Layout>
         </Providers>
