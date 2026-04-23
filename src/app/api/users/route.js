@@ -1,16 +1,34 @@
-import { NextResponse } from "next/server";
-import fs from 'fs';
-import path from 'path';
+// app/api/users/route.js
+import { NextResponse } from 'next/server';
+import dbConnect from '@/lib/mongodb';
+import User from '@/models/User';
+
+export async function POST(request) {
+  try {
+    // 1. اتصال به دیتابیس
+    await dbConnect();
+
+    // 2. دریافت اطلاعات از درخواست
+    const body = await request.json();
+    
+    // 3. ایجاد کاربر جدید در دیتابیس
+    const newUser = await User.create(body);
+
+    return NextResponse.json(
+      { success: true, data: newUser },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+}
 
 export async function GET() {
-  try {
-    const dbPath = path.join(process.cwd(), 'db.json');
-    const dbData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-    
-    // Return users with their actual passwords
-    return NextResponse.json(dbData.users);
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-} 
+  await dbConnect();
+  const users = await User.find({}); // دریافت همه کاربران
+  return NextResponse.json({ users });
+}

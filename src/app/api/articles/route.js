@@ -1,129 +1,73 @@
-import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
+// app/api/articles/route.js
+import { NextResponse } from 'next/server';
+import dbConnect from '@/lib/mongodb';
+import Article from '@/models/Article';
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
-const DB_PATH = path.join(process.cwd(), "db.json");
-
-// Helper function to read the database
-const readDB = () => {
+export async function GET(request) {
   try {
-    const data = fs.readFileSync(DB_PATH, "utf8");
-    return JSON.parse(data);
-  } catch (error) {
-    console.error("Error reading database:", error);
-    return { articles: [] };
-  }
-};
+    await dbConnect();
+    
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get('category');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const page = parseInt(searchParams.get('page') || '1');
+    const skip = (page - 1) * limit;
 
-// Helper function to write to the database
-const writeDB = (data) => {
-  try {
-    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
-    return true;
-  } catch (error) {
-    console.error("Error writing to database:", error);
-    return false;
-  }
-};
+    let filter = { isPublished: true };
+    if (category) filter.category = category;
 
-// GET all articles
-export async function GET() {
-  try {
-    const db = readDB();
-    return NextResponse.json(db.articles || []);
+    const [articles, total] = await Promise.all([
+      Article.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Article.countDocuments(filter)
+    ]);
+
+    return NextResponse.json({
+      success: true,
+      data: articles,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
   } catch (error) {
-    console.error("Error fetching articles:", error);
+    console.error('Error in GET /api/articles:', error);
     return NextResponse.json(
-      { error: "در دریافت مقالات مشکلی پیش آمده است" },
+      { success: false, error: error.message },
       { status: 500 }
     );
   }
 }
 
-// POST new article
 export async function POST(request) {
   try {
-    // Get the JWT token from cookies
-    const cookieStore = cookies();
-    const token = cookieStore.get("token")?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        { error: "لطفا وارد حساب کاربری خود شوید" },
-        { status: 401 }
-      );
-    }
-
-    // Verify the token
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const db = readDB();
-
-    // Check if user exists and is admin
-    const user = db.users.find(u => u.id === decoded.userId);
-    if (!user || user.role !== "admin") {
-      return NextResponse.json(
-        { error: "شما دسترسی لازم برای این عملیات را ندارید" },
-        { status: 403 }
-      );
-    }
-
-    // Get the request body
+    await dbConnect();
     const body = await request.json();
-    const { title, content, slug } = body;
 
-    // Validate required fields
-    if (!title || !content || !slug) {
-      return NextResponse.json(
-        { error: "لطفا تمام فیلدهای ضروری را پر کنید" },
-        { status: 400 }
-      );
-    }
+    const lastArticle = await Article.findOne().sort({ id: -1 });
+    const newId = lastArticle ? lastArticle.id + 1 : 1;
 
-    // Check for duplicate slug
-    if (db.articles?.some(article => article.slug === slug)) {
-      return NextResponse.json(
-        { error: "این عنوان قبلا استفاده شده است" },
-        { status: 400 }
-      );
-    }
+    const article = await Article.create({
+      ...body,
+      id: newId,
+      views: 0,
+      isPublished: true
+    });
 
-    // Create new article
-    const newArticle = {
-      id: Date.now().toString(),
-      title,
-      content,
-      slug,
-      authorId: user.id,
-      authorName: user.name,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    // Update database
-    if (!db.articles) {
-      db.articles = [];
-    }
-    db.articles.push(newArticle);
-
-    if (!writeDB(db)) {
-      throw new Error("Failed to save article");
-    }
-
-    return NextResponse.json(newArticle);
-  } catch (error) {
-    console.error("Error creating article:", error);
-    if (error.name === "JsonWebTokenError") {
-      return NextResponse.json(
-        { error: "توکن نامعتبر است" },
-        { status: 401 }
-      );
-    }
     return NextResponse.json(
-      { error: "در ایجاد مقاله مشکلی پیش آمده است" },
-      { status: 500 }
+      { success: true, data: article },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error('Error in POST /api/articles:', error);
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 400 }
     );
   }
-} 
+}
