@@ -60,13 +60,13 @@ const Navbar = ({ initialUser }) => {
     }
   };
 
-  useEffect(() => {
-    updateCart();
-    window.addEventListener("cartUpdated", updateCart);
-    return () => {
-      window.removeEventListener("cartUpdated", updateCart);
-    };
-  }, []);
+  // useEffect(() => {
+  //   updateCart();
+  //   window.addEventListener("cartUpdated", updateCart);
+  //   return () => {
+  //     window.removeEventListener("cartUpdated", updateCart);
+  //   };
+  // }, []);
 
   useEffect(() => {
     console.log('user ====>' , user)

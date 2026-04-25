@@ -6,7 +6,7 @@ import Link from "next/link";
 import OTPInput from "react-otp-input";
 import { MdArrowBack } from "react-icons/md";
 
-import {validateIranMobileNumber} from "../../../lib/checkPhoneNumber"
+// import {validateIranMobileNumber} from "../../../lib/checkPhoneNumber"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -17,6 +17,8 @@ export default function LoginPage() {
   const [showOtp, setShowOtp] = useState(false);
   const [showSquers, setShowSquers] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState("mobile");
+
   // setShowSquers
   const router = useRouter();
 
@@ -31,7 +33,7 @@ export default function LoginPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ mobile, password }),
       });
 
       const data = await res.json();
@@ -51,21 +53,29 @@ export default function LoginPage() {
   };
 
   // تابع اصلی که هنگام کلیک روی دکمه "ارسال کد" اجرا می‌شود
-  const handleSubmit2 = async (e) => {
+  const sendOTP = async (e) => {
     e.preventDefault();
 
-    try {
+    const response = await fetch("/api/sms/send-sms", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mobile }),
+    });
+
+    if (response.ok) {
+      setStep("otp");
+      alert("کد تایید ارسال شد");
       setShowSquers(true);
-
-      validateIranMobileNumber(mobile)
-
-      
-    } catch (err) {
-      console.error("Error in form submission:", err);
-      setError("خطایی رخ داده است. لطفا مجددا تلاش کنید.");
-    } finally {
-      setLoading(false);
     }
+  };
+
+  const verifyOTP = async () => {
+    // ارسال کد برای تایید
+    const response = await fetch("/api/sms/verify-sms", {
+      method: "POST",
+      body: JSON.stringify({ mobile, otp }),
+    });
+    // ... مدیریت پاسخ
   };
 
   return (
@@ -139,15 +149,29 @@ export default function LoginPage() {
                   onChange={(e) => setMobile(e.target.value)}
                 />
               </div>
-              <button
-                onClick={handleSubmit2}
-                //
-                role="button"
-                type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-700 hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                ارسال کد
-              </button>
+
+              {step === "mobile" ? (
+                <button
+                  onClick={sendOTP}
+                  //
+                  role="button"
+                  type="submit"
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-700 hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  ارسال کد
+                </button>
+              ) : (
+                <button
+                  onClick={verifyOTP}
+                  //
+                  role="button"
+                  type="submit"
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-700 hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  تایید
+                </button>
+              )}
+
               {showSquers && (
                 <div dir="ltr" className="flex justify-center">
                   <OTPInput

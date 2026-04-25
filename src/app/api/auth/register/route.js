@@ -15,6 +15,7 @@ export async function POST(request) {
     
     // بررسی کاربر تکراری
     const existingUser = await User.findOne({ $or: [{ email }, { mobile }, { username }] });
+    
     if (existingUser) {
       console.log("4. کاربر تکراری");
       return NextResponse.json({ error: "این کاربر قبلاً ثبت نام کرده" }, { status: 400 });

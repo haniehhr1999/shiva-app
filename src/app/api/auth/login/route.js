@@ -1,24 +1,24 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+
 import jwt from "jsonwebtoken";
+import dbConnect from "@/lib/mongodb";
+import User from "@/models/User";
 
 export async function POST(request) {
   try {
-    const { email, password } = await request.json();
+    await dbConnect();
 
-    // Read the database
-    const dbPath = path.join(process.cwd(), "db.json");
-    const dbData = JSON.parse(fs.readFileSync(dbPath, "utf8"));
+    const { mobile, password } = await request.json();
 
-    // Find user with matching email and password
-    const user = dbData.users.find(
-      (u) => u.email === email && u.password === password,
-    );
+    // find user in db
+    const existingUser = await User.findOne({
+  mobile: mobile,
+  password: password
+});
 
-    if (!user) {
+    if (!existingUser) {
       return NextResponse.json(
-        { error: "ایمیل یا رمز عبور اشتباه است" },
+        { error: "این شماره عضو سایت نیست" },
         { status: 401 },
       );
     }
@@ -26,14 +26,16 @@ export async function POST(request) {
     // Create JWT token with username included
     const token = jwt.sign(
       {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        role: user.role,
+        id: existingUser._id,
+        mobile: existingUser.mobile,
+        username: existingUser.username,
+        role: existingUser.role,
       },
       process.env.JWT_SECRET || "your-secret-key",
       { expiresIn: "1d" },
     );
+
+    console.log({token})
 
     // create response
     const response = NextResponse.json(
@@ -41,10 +43,10 @@ export async function POST(request) {
         message: "ورود موفقیت‌آمیز",
         token,
         user: {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
+          id: existingUser._id,
+          username: existingUser.username,
+          mobile: existingUser.mobile,
+          role: existingUser.role,
         },
       },
       { status: 200 },
