@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { Rating } from "primereact/rating";
-import { Button } from "primereact/button";
-import { InputTextarea } from "primereact/inputtextarea";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { Toast } from "primereact/toast";
 import { useRef } from "react";
@@ -122,31 +123,32 @@ export default function Comments({ productId, comments: initialComments }) {
       
       {/* Comment Form */}
       {user ? (
-        <form onSubmit={handleSubmit} className="mb-8">
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">امتیاز شما</label>
-            <Rating value={rating} onChange={(e) => setRating(e.value)} />
+        <form onSubmit={handleSubmit} className="mb-8 space-y-4">
+          <div>
+            <Label>امتیاز شما</Label>
+            <Rating value={rating} onChange={(e) => setRating(e.value)} className="mt-2" />
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">نظر شما</label>
-            <InputTextarea
+          <div>
+            <Label htmlFor="comment">نظر شما</Label>
+            <Textarea
+              id="comment"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               rows={4}
-              className="w-full p-2 border rounded"
+              className="mt-2"
               placeholder="نظر خود را بنویسید..."
             />
           </div>
           <Button
             type="submit"
-            label="ثبت نظر"
-            icon="pi pi-send"
-            loading={submitting}
-            className="bg-green-600 text-white rounded px-3 py-1"
-          />
+            disabled={submitting}
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            {submitting ? "در حال ثبت..." : "ثبت نظر"}
+          </Button>
         </form>
       ) : (
-        <div className="mb-8 p-4 bg-gray-100 rounded">
+        <div className="mb-8 p-4 bg-muted rounded-lg">
           برای ثبت نظر، لطفا ابتدا وارد حساب کاربری خود شوید.
         </div>
       )}

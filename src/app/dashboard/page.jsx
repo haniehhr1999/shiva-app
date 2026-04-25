@@ -2,18 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { Tag } from "primereact/tag";
-import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
-import { Dialog } from "primereact/dialog";
-import { InputTextarea } from "primereact/inputtextarea";
-import { Dropdown } from "primereact/dropdown";
-import { FaTrash } from "react-icons/fa";
-import { FaUser } from "react-icons/fa";
-import { MdModeEdit } from "react-icons/md";
-import { FaEye } from "react-icons/fa";
+import { 
+  Table, 
+  TableBody, 
+  TableCaption, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow,
+  TableFooter
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import SimpleLineChart from "../../components/SimpleLineChart";
 import {
   LineChart,
@@ -29,8 +35,7 @@ import { CiUser } from "react-icons/ci";
 import { CiTrash } from "react-icons/ci";
 import { CiEdit } from "react-icons/ci";
 import { CiRead } from "react-icons/ci";
-import { Rating } from "primereact/rating";
-import { Card } from "primereact/card";
+import { Star } from "lucide-react";
 
 import { Pie, Bar } from "react-chartjs-2";
 import {
@@ -301,14 +306,18 @@ export default function DashboardPage() {
           return;
         }
         const data = await res.json();
-        // if (data.role !== "admin") {
-        //   router.replace("/");
-        //   return;
-        // }
         setUserRole(data.role);
+        
+        // چک کردن نقش admin
+        if (data.role !== "admin") {
+          router.replace("/");
+          return;
+        }
+        
         fetchUsers();
         setLoading(false);
       } catch (error) {
+        console.error("Error checking user:", error);
         router.replace("/login");
       }
     }
@@ -349,6 +358,7 @@ export default function DashboardPage() {
         const data = await res.json();
         console.log("data------", data);
         setUsers(data);
+        setFilteredUsers(data);
       }
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -382,39 +392,17 @@ export default function DashboardPage() {
     );
   };
 
-  const actionsBodyTemplate = (rowData) => {
-    console.log(rowData);
+  const roleBodyTemplate = (role) => {
     return (
-      <div className="flex gap-2 justify-content-center">
-        <CiRead
-          className="cursor-pointer text-blue-600 text-xl"
-          onClick={() => {
-            setSelectedUser(rowData);
-            setViewDialogVisible(true);
-            router.push(`/purchases/${rowData.id}`);
-          }}
-        />
-        <CiTrash
-          className="cursor-pointer text-red-600 text-xl"
-          onClick={() => {
-            setSelectedUser(rowData);
-            setDeleteDialogVisible(true);
-          }}
-        />
-        <CiUser
-          className="cursor-pointer text-blue-600 text-xl"
-          onClick={() => handleRoleChange(rowData)}
-        />
-        <CiEdit
-          className="cursor-pointer text-green-600 text-xl"
-          onClick={() => {
-            setSelectedUser(rowData);
-            setEditDialogVisible(true);
-          }}
-        />
-      </div>
+      <Badge 
+        variant={role === "admin" ? "default" : "secondary"}
+        className={role === "admin" ? "bg-blue-500 hover:bg-blue-600" : "bg-gray-400 hover:bg-gray-500"}
+      >
+        {role}
+      </Badge>
     );
   };
+
 
   const handleRoleChange = (user) => {
     setSelectedUser(user);
@@ -494,101 +482,8 @@ export default function DashboardPage() {
     }
   };
 
-  const editDialogFooter = (
-    <div>
-      <Button
-        label="انصراف"
-        icon="pi pi-times"
-        onClick={() => setEditDialogVisible(false)}
-        className="p-button-text"
-      />
-      <Button
-        className="bg-green-700"
-        label="ذخیره"
-        icon="pi pi-check"
-        onClick={handleEdit}
-        autoFocus
-      />
-    </div>
-  );
-
-  const deleteDialogFooter = (
-    <div>
-      <Button
-        label="خیر"
-        icon="pi pi-times"
-        onClick={() => setDeleteDialogVisible(false)}
-        className="p-button-text"
-      />
-      <Button
-        label="بله"
-        icon="pi pi-check"
-        onClick={handleDelete}
-        severity="danger"
-        autoFocus
-      />
-    </div>
-  );
-
-  const viewDialogFooter = (
-    <div>
-      <Button
-        label="انصراف"
-        icon="pi pi-times"
-        onClick={() => setViewDialogVisible(false)}
-        className="p-button-text"
-      />
-      <Button
-        label="ذخیره"
-        icon="pi pi-check"
-        onClick={handleViewEdit}
-        autoFocus
-      />
-    </div>
-  );
-
-  const roleChangeDialogFooter = (
-    <div>
-      <Button
-        label="انصراف"
-        icon="pi pi-times"
-        onClick={() => setRoleChangeDialogVisible(false)}
-        className="p-button-text bg-red-700 text-white rounded px-3 py-1"
-      />
-      <Button
-        label="تایید"
-        icon="pi pi-check"
-        onClick={confirmRoleChange}
-        severity="warning"
-        autoFocus
-        className="bg-green-700 mx-3  text-white rounded px-3 py-1"
-      />
-    </div>
-  );
 
   const [visible, setVisible] = useState(false);
-  const [position, setPosition] = useState("center");
-  const footerContent = (
-    <div>
-      <Button
-        label="No"
-        icon="pi pi-times"
-        onClick={() => setVisible(false)}
-        className="p-button-text"
-      />
-      <Button
-        label="Yes"
-        icon="pi pi-check"
-        onClick={() => setVisible(false)}
-        autoFocus
-      />
-    </div>
-  );
-
-  const show = (position) => {
-    setPosition(position);
-    setVisible(true);
-  };
 
   // 1️⃣ تمام خریدها رو به یک آرایه‌ی واحد جمع می‌کنیم
   const allPurchases = users.flatMap((user) => user.purchases);
@@ -759,15 +654,18 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-bold text-[#38b000]">
               آمار فروش محصولات
             </h2>
-            <Dropdown
-              value={selectedTimePeriod}
-              options={timePeriodOptions}
-              onChange={(e) => setSelectedTimePeriod(e.value)}
-              optionLabel="name"
-              optionValue="value"
-              placeholder="انتخاب بازه زمانی"
-              className="w-48"
-            />
+            <Select value={selectedTimePeriod} onValueChange={setSelectedTimePeriod}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="انتخاب بازه زمانی" />
+              </SelectTrigger>
+              <SelectContent>
+                {timePeriodOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="h-[500px]">
             <Bar data={currentSalesData} options={barOptions} />
@@ -906,8 +804,8 @@ export default function DashboardPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* کارت درآمد کل */}
-            <Card className="dark:bg-red-600 shadow-lg rounded-lg">
-              <div className="p-4 dark:bg-red-600">
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-gray-500 text-sm">درآمد کل</h3>
@@ -915,21 +813,21 @@ export default function DashboardPage() {
                       ۲۵,۰۰۰,۰۰۰ تومان
                     </p>
                   </div>
-                  <div className="bg-green-100 p-3 rounded-full">
-                    <i className="pi pi-dollar text-green-600 text-xl"></i>
+                  <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full">
+                    <span className="text-green-600 dark:text-green-400 text-xl">💰</span>
                   </div>
                 </div>
                 <div className="mt-4">
-                  <span className="text-green-600 text-sm">
-                    <i className="pi pi-arrow-up"></i> ۱۲٪ نسبت به ماه گذشته
+                  <span className="text-green-600 dark:text-green-400 text-sm flex items-center gap-1">
+                    <span>↑</span> ۱۲٪ نسبت به ماه گذشته
                   </span>
                 </div>
-              </div>
+              </CardContent>
             </Card>
 
             {/* کارت تعداد سفارشات */}
-            <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
-              <div className="p-4">
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-gray-500 text-sm">تعداد سفارشات</h3>
@@ -937,21 +835,21 @@ export default function DashboardPage() {
                       ۱۵۶ سفارش
                     </p>
                   </div>
-                  <div className="bg-blue-100 p-3 rounded-full">
-                    <i className="pi pi-shopping-cart text-blue-600 text-xl"></i>
+                  <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
+                    <span className="text-blue-600 dark:text-blue-400 text-xl">🛒</span>
                   </div>
                 </div>
                 <div className="mt-4">
-                  <span className="text-blue-600 text-sm">
-                    <i className="pi pi-arrow-up"></i> ۸٪ نسبت به ماه گذشته
+                  <span className="text-blue-600 dark:text-blue-400 text-sm flex items-center gap-1">
+                    <span>↑</span> ۸٪ نسبت به ماه گذشته
                   </span>
                 </div>
-              </div>
+              </CardContent>
             </Card>
 
             {/* کارت میانگین سبد خرید */}
-            <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
-              <div className="p-4">
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-gray-500 text-sm">میانگین سبد خرید</h3>
@@ -959,21 +857,21 @@ export default function DashboardPage() {
                       ۱۶۰,۰۰۰ تومان
                     </p>
                   </div>
-                  <div className="bg-purple-100 p-3 rounded-full">
-                    <i className="pi pi-chart-line text-purple-600 text-xl"></i>
+                  <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full">
+                    <span className="text-purple-600 dark:text-purple-400 text-xl">📊</span>
                   </div>
                 </div>
                 <div className="mt-4">
-                  <span className="text-purple-600 text-sm">
-                    <i className="pi pi-arrow-up"></i> ۵٪ نسبت به ماه گذشته
+                  <span className="text-purple-600 dark:text-purple-400 text-sm flex items-center gap-1">
+                    <span>↑</span> ۵٪ نسبت به ماه گذشته
                   </span>
                 </div>
-              </div>
+              </CardContent>
             </Card>
 
             {/* کارت تعداد مشتریان جدید */}
-            <Card className="dark:bg-[#161A1D] shadow-lg rounded-lg">
-              <div className="p-4">
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-gray-500 text-sm">مشتریان جدید</h3>
@@ -981,16 +879,16 @@ export default function DashboardPage() {
                       ۲۴ مشتری
                     </p>
                   </div>
-                  <div className="bg-orange-100 p-3 rounded-full">
-                    <i className="pi pi-users text-orange-600 text-xl"></i>
+                  <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-full">
+                    <span className="text-orange-600 dark:text-orange-400 text-xl">👥</span>
                   </div>
                 </div>
                 <div className="mt-4">
-                  <span className="text-orange-600 text-sm">
-                    <i className="pi pi-arrow-up"></i> ۱۵٪ نسبت به ماه گذشته
+                  <span className="text-orange-600 dark:text-orange-400 text-sm flex items-center gap-1">
+                    <span>↑</span> ۱۵٪ نسبت به ماه گذشته
                   </span>
                 </div>
-              </div>
+              </CardContent>
             </Card>
           </div>
         </div>
@@ -1172,210 +1070,253 @@ export default function DashboardPage() {
         </div> */}
 
         {/* add user Dialog */}
-        <Dialog
-          header="افزودن کاربر"
-          visible={visible}
-          position={position}
-          style={{ width: "50vw" }}
-          onHide={() => {
-            if (!visible) return;
-            setVisible(false);
-          }}
-          footer={footerContent}
-          draggable={false}
-          resizable={false}
-        >
-          <div className="field bg-red-200">
-            <div>
-              <label htmlFor="username">نام کاربری</label>
-              <InputText
-                id="username"
-                className="w-full"
-                value={newUsername}
-                onChange={(e) => setNewUsername(e.target.value)}
-                required
-                autoFocus
-              />
+        <Dialog open={visible} onOpenChange={setVisible}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>افزودن کاربر</DialogTitle>
+              <DialogDescription>
+                اطلاعات کاربر جدید را وارد کنید
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="username">نام کاربری</Label>
+                <Input
+                  id="username"
+                  value={newUsername}
+                  onChange={(e) => setNewUsername(e.target.value)}
+                  required
+                  autoFocus
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">ایمیل</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={newUseremail}
+                  onChange={(e) => setNewUseremail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">رمز عبور</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={newUserpass}
+                  onChange={(e) => setNewUserpass(e.target.value)}
+                  required
+                />
+              </div>
             </div>
-
-            <div>
-              <label htmlFor="email">ایمیل</label>
-              <InputText
-                id="email"
-                className="w-full"
-                value={newUseremail}
-                onChange={(e) => setNewUseremail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password">رمز عبور</label>
-              <InputText
-                id="password"
-                className="w-full"
-                value={newUserpass}
-                onChange={(e) => setNewUserpass(e.target.value)}
-                required
-              />
-            </div>
-          </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setVisible(false)}>
+                انصراف
+              </Button>
+              <Button onClick={() => setVisible(false)}>
+                افزودن
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
 
         {/* Edit Dialog */}
-        <Dialog
-          visible={editDialogVisible}
-          style={{ width: "450px" }}
-          header="ویرایش کاربر"
-          modal
-          className="p-fluid"
-          footer={editDialogFooter}
-          onHide={() => setEditDialogVisible(false)}
-          dir="rtl"
-        >
-          {selectedUser && (
-            <div className="field bg-red-200">
-              <label htmlFor="username">نام کاربری</label>
-              <InputText
-                id="username"
-                value={selectedUser.username}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, username: e.target.value })
-                }
-                required
-                autoFocus
-              />
-              <label htmlFor="email">ایمیل</label>
-              <InputText
-                id="email"
-                value={selectedUser.email}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, email: e.target.value })
-                }
-                required
-              />
-              <label htmlFor="password">رمز عبور</label>
-              <InputText
-                id="password"
-                value={selectedUser.password}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, password: e.target.value })
-                }
-                required
-              />
-            </div>
-          )}
+        <Dialog open={editDialogVisible} onOpenChange={setEditDialogVisible}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>ویرایش کاربر</DialogTitle>
+              <DialogDescription>
+                اطلاعات کاربر را ویرایش کنید
+              </DialogDescription>
+            </DialogHeader>
+            {selectedUser && (
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-username">نام کاربری</Label>
+                  <Input
+                    id="edit-username"
+                    value={selectedUser.username}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, username: e.target.value })
+                    }
+                    required
+                    autoFocus
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-email">ایمیل</Label>
+                  <Input
+                    id="edit-email"
+                    type="email"
+                    value={selectedUser.email}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, email: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-password">رمز عبور</Label>
+                  <Input
+                    id="edit-password"
+                    type="password"
+                    value={selectedUser.password}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, password: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setEditDialogVisible(false)}>
+                انصراف
+              </Button>
+              <Button 
+                onClick={handleEdit}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              >
+                ذخیره
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
 
         {/* View/Edit Dialog */}
-        <Dialog
-          visible={viewDialogVisible}
-          style={{ width: "450px" }}
-          header={`ویرایش کاربر ${selectedUser?.username}`}
-          modal
-          className="p-fluid bg-slate-200 p-5 rounded-lg"
-          footer={viewDialogFooter}
-          onHide={() => setViewDialogVisible(false)}
-          dir="rtl"
-        >
-          {selectedUser && (
-            <div className="field my-6">
-              <label htmlFor="view-username">نام کاربری</label>
-              <InputText
-                className="bg-white rounded py-2 px-3 my-4"
-                id="view-username"
-                value={selectedUser.username}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, username: e.target.value })
-                }
-                required
-                autoFocus
-              />
-              <label htmlFor="view-email">ایمیل</label>
-              <InputText
-                className="bg-white rounded py-2 px-3 mb-4"
-                id="view-email"
-                value={selectedUser.email}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, email: e.target.value })
-                }
-                required
-              />
-              <label htmlFor="view-password">رمز عبور</label>
-              <InputText
-                className="bg-white rounded py-2 px-3 mb-4"
-                id="view-password"
-                value={selectedUser.password}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, password: e.target.value })
-                }
-                required
-              />
-            </div>
-          )}
+        <Dialog open={viewDialogVisible} onOpenChange={setViewDialogVisible}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>ویرایش کاربر {selectedUser?.username}</DialogTitle>
+              <DialogDescription>
+                اطلاعات کاربر را مشاهده و ویرایش کنید
+              </DialogDescription>
+            </DialogHeader>
+            {selectedUser && (
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="view-username">نام کاربری</Label>
+                  <Input
+                    id="view-username"
+                    value={selectedUser.username}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, username: e.target.value })
+                    }
+                    required
+                    autoFocus
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="view-email">ایمیل</Label>
+                  <Input
+                    id="view-email"
+                    type="email"
+                    value={selectedUser.email}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, email: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="view-password">رمز عبور</Label>
+                  <Input
+                    id="view-password"
+                    type="password"
+                    value={selectedUser.password}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, password: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setViewDialogVisible(false)}>
+                انصراف
+              </Button>
+              <Button 
+                onClick={handleViewEdit}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              >
+                ذخیره
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
 
         {/* Delete Dialog */}
-        <Dialog
-          visible={deleteDialogVisible}
-          style={{ width: "450px" }}
-          header="تایید حذف"
-          modal
-          footer={deleteDialogFooter}
-          onHide={() => setDeleteDialogVisible(false)}
-          dir="rtl"
-        >
-          <div className="confirmation-content">
-            <i
-              className="pi pi-exclamation-triangle mr-3"
-              style={{ fontSize: "2rem" }}
-            />
-            <span>آیا از حذف این کاربر اطمینان دارید؟</span>
-          </div>
+        <Dialog open={deleteDialogVisible} onOpenChange={setDeleteDialogVisible}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>تایید حذف</DialogTitle>
+              <DialogDescription>
+                آیا از حذف کاربر {selectedUser?.username} اطمینان دارید؟
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDeleteDialogVisible(false)}>
+                خیر
+              </Button>
+              <Button 
+                variant="destructive"
+                onClick={handleDelete}
+              >
+                بله، حذف کن
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
 
         {/* Role Change Dialog */}
-        <Dialog
-          visible={roleChangeDialogVisible}
-          style={{ width: "450px" }}
-          header="تغییر نقش کاربر"
-          modal
-          footer={roleChangeDialogFooter}
-          onHide={() => setRoleChangeDialogVisible(false)}
-          dir="rtl"
-          className="bg-red-200 p-5 rounded-lg"
-        >
-          <div className="confirmation-content bg-red-200">
-            <i
-              className="pi pi-exclamation-triangle mr-3"
-              style={{ fontSize: "2rem" }}
-            />
-            <span>
-              آیا از تغییر نقش کاربر {selectedUser?.username} از{" "}
-              {selectedUser?.role} به{" "}
-              {selectedUser?.role === "admin" ? "کاربر عادی" : "مدیر"} اطمینان
-              دارید؟
-            </span>
-          </div>
+        <Dialog open={roleChangeDialogVisible} onOpenChange={setRoleChangeDialogVisible}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>تغییر نقش کاربر</DialogTitle>
+              <DialogDescription>
+                آیا از تغییر نقش کاربر <strong>{selectedUser?.username}</strong> از{" "}
+                <strong>{selectedUser?.role}</strong> به{" "}
+                <strong>{selectedUser?.role === "admin" ? "کاربر عادی" : "مدیر"}</strong> اطمینان
+                دارید؟
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setRoleChangeDialogVisible(false)}>
+                انصراف
+              </Button>
+              <Button 
+                onClick={confirmRoleChange}
+                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+              >
+                تایید
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
 
         {/* Delete Comment Dialog */}
-        <Dialog
-          visible={deleteCommentDialogVisible}
-          style={{ width: "450px" }}
-          header="تایید حذف"
-          modal
-          footer={deleteCommentDialogFooter}
-          onHide={() => setDeleteCommentDialogVisible(false)}
-          dir="rtl"
-        >
-          <div className="confirmation-content">
-            <i
-              className="pi pi-exclamation-triangle mr-3"
-              style={{ fontSize: "2rem" }}
-            />
-            <span>آیا از حذف این نظر اطمینان دارید؟</span>
-          </div>
+        <Dialog open={deleteCommentDialogVisible} onOpenChange={setDeleteCommentDialogVisible}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>تایید حذف</DialogTitle>
+              <DialogDescription>
+                آیا از حذف این نظر اطمینان دارید؟
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDeleteCommentDialogVisible(false)}>
+                خیر
+              </Button>
+              <Button 
+                variant="destructive"
+                onClick={handleDeleteComment}
+              >
+                بله، حذف کن
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
       </div>
     </div>

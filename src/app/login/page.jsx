@@ -43,8 +43,8 @@ export default function LoginPage() {
       }
 
       // Successful login
-      router.push("/"); // Redirect to home page
-      router.refresh(); // Refresh the page to update the navbar
+      router.push("/");
+      router.refresh();
     } catch (error) {
       setError(error.message);
     } finally {
@@ -79,10 +79,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-log flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-2xl font-extrabold text-gray-900">
+    <div 
+      className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative"
+      style={{
+        backgroundImage: 'url(/images/bg-login.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      {/* Overlay روشن‌تر برای نمایش بهتر عکس */}
+      <div className="absolute inset-0 bg-black/20 dark:bg-black/30"></div>
+      
+      <Card className="w-full max-w-md border-0 shadow-2xl relative z-10 bg-background/90 backdrop-blur-md">
+        <CardHeader className="space-y-1 pb-4">
+          <div className="flex items-center justify-center mb-2">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <LogIn className="w-6 h-6 text-primary" />
+            </div>
+          </div>
+          <CardTitle className="text-2xl font-bold text-center">
             ورود به حساب کاربری
           </h2>
         </div>
@@ -224,16 +240,20 @@ export default function LoginPage() {
             </div>
           )}
 
-          <div className="text-sm text-center">
-            <Link
-              href="/register"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
-            >
-              حساب کاربری ندارید؟ ثبت نام کنید
-            </Link>
-          </div>
-        </form>
-      </div>
+            <div className="text-center text-sm">
+              <span className="text-muted-foreground">
+                حساب کاربری ندارید؟{" "}
+              </span>
+              <Link
+                href="/register"
+                className="font-medium text-primary hover:underline"
+              >
+                ثبت نام کنید
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

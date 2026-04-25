@@ -29,9 +29,19 @@ export async function GET() {
       );
     }
 
-    const decoded = jwt.verify(token.value, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token.value, process.env.JWT_SECRET || 'your-secret-key');
+    console.log('Decoded token:', decoded);
     const db = readDB();
-    const user = db.users.find(u => u.id === decoded.userId);
+    // در login route، token با 'id' ساخته می‌شود نه 'userId'
+    const userId = decoded.id || decoded.userId;
+    console.log('Looking for user with id:', userId, 'Type:', typeof userId);
+    // تبدیل به number اگر string باشد
+    const user = db.users.find(u => {
+      const uId = typeof u.id === 'number' ? u.id : parseInt(u.id);
+      const searchId = typeof userId === 'number' ? userId : parseInt(userId);
+      return uId === searchId;
+    });
+    console.log('Found user:', user ? { id: user.id, role: user.role } : 'not found');
 
     if (!user) {
       return NextResponse.json(
@@ -49,8 +59,16 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Error in GET /api/auth/me:', error);
+    console.error('Error details:', {
+      message: error.message,
+      name: error.name,
+      stack: error.stack
+    });
     return NextResponse.json(
-      { error: 'خطا در دریافت اطلاعات کاربر' },
+      { 
+        error: 'خطا در دریافت اطلاعات کاربر',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      },
       { status: 500 }
     );
   }
