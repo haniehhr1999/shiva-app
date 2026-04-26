@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import {
-  Card,
+  // Card,
   CardContent,
   CardDescription,
   CardHeader,
@@ -74,7 +74,15 @@ import { Column } from "primereact/column";
 import { Tag } from "primereact/tag";
 import { Button } from "primereact/button";
 
-import { FaReply, FaTrash, FaEdit } from "react-icons/fa";
+import {
+  FaReply,
+  FaTrash,
+  FaEdit,
+  FaTachometerAlt,
+  FaChartBar,
+  FaList,
+} from "react-icons/fa";
+import { Card } from "primereact/card";
 import { Dropdown } from "primereact/dropdown";
 import { TabPanel, TabView } from "primereact/tabview";
 import { ProgressBar } from "primereact/progressbar";
@@ -651,7 +659,7 @@ export default function DashboardPage() {
             setDeleteCommentDialogVisible(true);
           }}
         /> */}
-        <FaEdit  style={{ cursor: "pointer" }} color="blue" />
+        <FaEdit style={{ cursor: "pointer" }} color="blue" />
         <FaTrash
           onClick={() => {
             setSelectedComment(rowData);
@@ -787,6 +795,12 @@ export default function DashboardPage() {
 
   const ratingBodyTemplate2 = (rowData) => {
     return <Rating value={rowData.rating} readOnly cancel={false} />;
+  };
+
+  const getInventoryStatus = (inventory) => {
+    if (inventory > 10) return "success";
+    if (inventory > 0) return "warning";
+    return "danger";
   };
 
   if (loading) return <p>در حال بارگذاری...</p>;
@@ -1269,6 +1283,80 @@ export default function DashboardPage() {
                 </span>
               }
             >
+              <FaTachometerAlt size={30} color="#4A90E2" />
+              <FaChartBar size={30} color="#E67E22" />
+              <FaList size={30} color="#2C3E50" />
+              <div className="grid grid-cols-4 gap-3">
+                
+              {products.map((product, index) => (
+                <Card
+                  key={index}
+                  title={product.title}
+                  header={
+                    <img
+                      alt={product.title}
+                      src={product.image}
+                      className="w-full h-12rem object-cover"
+                      onError={(e) =>
+                        (e.target.src =
+                          "https://placehold.co/400x200?text=No+Image")
+                      }
+                    />
+                  }
+                  // footer={
+                  //   <div className="flex justify-between align-items-center">
+                  //     <Button
+                  //       icon="pi pi-shopping-cart"
+                  //       label="Buy Now"
+                  //       className="p-button-sm"
+                  //       onClick={() => alert(`Added ${product.title} to cart!`)}
+                  //     />
+                  //     <div className="flex gap-2">
+                  //       <i className="pi pi-comment"></i>
+                  //       <span>{product.comments?.length || 0} comments</span>
+                  //     </div>
+                  //   </div>
+                  // }
+                  className="h-full"
+                >
+                  <div className="flex flex-column gap-2">
+                    {/* Price */}
+                    <div className="text-2xl font-bold text-primary">
+                      ${product.price.toFixed(2)}
+                    </div>
+
+                    {/* Inventory */}
+                    <div className="flex align-items-center gap-2">
+                      <i className="pi pi-box"></i>
+                      <span>Inventory: </span>
+                      <Tag
+                        value={`${product.inventory} units`}
+                        severity={getInventoryStatus(product.inventory)}
+                      />
+                    </div>
+
+                    {/* Comments preview */}
+                    {/* {product.comments && product.comments.length > 0 && (
+                      <div className="mt-2">
+                        <div className="flex align-items-center gap-2 text-sm text-gray-600">
+                          <i className="pi pi-comments"></i>
+                          <span>Recent comments:</span>
+                        </div>
+                        <ul className="text-sm m-0 pl-3">
+                          {product.comments.slice(0, 2).map((comment, idx) => (
+                            <li key={idx}>"{comment}"</li>
+                          ))}
+                          {product.comments.length > 2 && (
+                            <li>+{product.comments.length - 2} more...</li>
+                          )}
+                        </ul>
+                      </div>
+                    )} */}
+                  </div>
+                </Card>
+              ))}
+              </div>
+
               <DataTable
                 style={{
                   "--p-datatable-cell-padding": "0",
