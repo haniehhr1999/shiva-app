@@ -74,7 +74,7 @@ import { Column } from "primereact/column";
 import { Tag } from "primereact/tag";
 import { Button } from "primereact/button";
 
-import { FaReply } from "react-icons/fa";
+import { FaReply, FaTrash, FaEdit } from "react-icons/fa";
 import { Dropdown } from "primereact/dropdown";
 import { TabPanel, TabView } from "primereact/tabview";
 import { ProgressBar } from "primereact/progressbar";
@@ -96,6 +96,7 @@ ChartJS.register(
 export default function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
   const router = useRouter();
   const [userRole, setUserRole] = useState(null);
   const [editDialogVisible, setEditDialogVisible] = useState(false);
@@ -354,45 +355,69 @@ export default function DashboardPage() {
   //   checkUser();
   // }, [router]);
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await fetch("/api/products");
-        const products = await response.json();
+  // get comments list ------------------------
+  const fetchComments = async () => {
+    try {
+      const response = await fetch("/api/products");
+      const products = await response.json();
+      console.log(products);
 
-        // جمع‌آوری تمام نظرات از محصولات
-        const allComments = products.reduce((acc, product) => {
-          const productComments = product.comments.map((comment) => ({
-            ...comment,
-            productTitle: product.title,
-            productId: product.id,
-          }));
-          return [...acc, ...productComments];
-        }, []);
+      // جمع‌آوری تمام نظرات از محصولات
+      const allComments = products.data.reduce((acc, product) => {
+        const productComments = product.comments.map((comment) => ({
+          ...comment,
+          productTitle: product.title,
+          productId: product.id,
+        }));
+        return [...acc, ...productComments];
+      }, []);
 
-        setComments(allComments);
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-      }
-    };
+      console.log(allComments);
 
-    fetchComments();
-  }, []);
-
-  // دریافت لیست کاربران
+      setComments(allComments);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+  // get users list ------------------------
   async function fetchUsers() {
     try {
       const res = await fetch("/api/users");
-      if (res.ok) {
-        const data = await res.json();
-        console.log("data------", data);
-        setUsers(data);
-        setFilteredUsers(data);
-      }
+
+      const data = await res.json();
+      console.log(data);
+      setUsers(data.users);
+
+      // setFilteredUsers(data.users);
+
+      // if (res.ok) {
+      //   const data = await res.json();
+      //   console.log("data------", data);
+      //   setUsers(data.users);
+      // }
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   }
+
+  // get products list ------------------------
+  async function fetchProducts() {
+    try {
+      const response = await fetch("/api/products");
+      const products = await response.json();
+      console.log({ products });
+      setProducts(products.data);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  }
+
+  // get all data
+  useEffect(() => {
+    fetchComments();
+    fetchUsers();
+    fetchProducts();
+  }, []);
 
   const roleBodyTemplate = (rowData) => {
     console.log(rowData);
@@ -516,53 +541,6 @@ export default function DashboardPage() {
 
   const [visible, setVisible] = useState(false);
 
-  // 1️⃣ تمام خریدها رو به یک آرایه‌ی واحد جمع می‌کنیم
-  const allPurchases = users.flatMap((user) => user.purchases);
-
-  // 2️⃣ گروه‌بندی بر اساس purchaseDate
-  const groupedByDate = {};
-
-  allPurchases.forEach((purchase) => {
-    // اطمینان از وجود تاریخ
-    if (!purchase.purchaseDateJalali) return;
-
-    const date = purchase.purchaseDateJalali;
-    const productKey = `product${purchase.productId}`;
-
-    // اگر برای تاریخ فعلی آبجکت وجود نداشت، بساز
-    if (!groupedByDate[date]) {
-      groupedByDate[date] = { date };
-    }
-
-    // مقدار قبلی یا ۰
-    groupedByDate[date][productKey] =
-      (groupedByDate[date][productKey] || 0) + purchase.quantity;
-  });
-
-  // 3️⃣ تبدیل به آرایه و مرتب‌سازی بر اساس تاریخ
-  const result = Object.values(groupedByDate)
-    .filter((item) => item.date) // حذف مواردی که تاریخ ندارند
-    .sort((a, b) => {
-      try {
-        // تبدیل تاریخ شمسی به آرایه برای مقایسه
-        const [aYear, aMonth, aDay] = a.date.split("/").map(Number);
-        const [bYear, bMonth, bDay] = b.date.split("/").map(Number);
-
-        // مقایسه سال
-        if (aYear !== bYear) return aYear - bYear;
-        // مقایسه ماه
-        if (aMonth !== bMonth) return aMonth - bMonth;
-        // مقایسه روز
-        return aDay - bDay;
-      } catch (error) {
-        console.error("Error sorting dates:", error);
-        return 0;
-      }
-    });
-
-  // نمایش نتیجه
-  console.log("Sorted data:", result);
-
   const filters = {
     global: { value: globalFilterValue, matchMode: "contains" },
     username: { value: null, matchMode: "contains" },
@@ -598,6 +576,18 @@ export default function DashboardPage() {
     <div className="flex  flex-wrap gap-2 items-center justify-between">
       <Button
         label="افزودن کاربر"
+        icon="pi pi-arrow-down"
+        onClick={() => show("top")}
+        className="p-button-warning"
+        style={{ minWidth: "10rem" }}
+      />
+    </div>
+  );
+
+  const headerProduct = (
+    <div className="flex  flex-wrap gap-2 items-center justify-between">
+      <Button
+        label="افزودن محصول"
         icon="pi pi-arrow-down"
         onClick={() => show("top")}
         className="p-button-warning"
@@ -661,6 +651,7 @@ export default function DashboardPage() {
             setDeleteCommentDialogVisible(true);
           }}
         /> */}
+        <FaEdit  style={{ cursor: "pointer" }} color="blue" />
         <FaTrash
           onClick={() => {
             setSelectedComment(rowData);
@@ -804,9 +795,8 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-white dark:bg-[#0B090A] py-16">
       <div className="mx-auto md:px-10">
         <h1 className="text-4xl font-bold text-[#38b000] text-center mb-12">
-          داشبورد
+          گزارشات سایت{" "}
         </h1>
-
 
         {/* <Dropdown
           value={selectedDuration}
@@ -817,467 +807,544 @@ export default function DashboardPage() {
           className="w-full md:w-14rem"
         /> */}
 
-        
-          <Card
-            className="p-shadow-8"
-            // style={{
-            //   borderRadius: "24px",
-            //   overflow: "hidden",
-            //   width: "100%",
-            //   maxWidth: "1200px",
-            //   backdropFilter: "blur(10px)",
-            //   background: "rgba(255,255,255,0.9)",
-            // }}
-          >
-            <div className="p-text-center p-mb-3">
-              <h1
-                className="p-mt-0"
-                style={{
-                  fontSize: "2rem",
-                  fontWeight: "600",
-                  background: "linear-gradient(135deg, #3B82F6, #2563EB)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                گزارشات سایت
-              </h1>
-            </div>
-
-            <TabView
-              activeIndex={activeIndex}
-              onTabChange={(e) => setActiveIndex(e.index)}
-              className="custom-tabs"
+        <Card
+          className="p-shadow-8"
+          // style={{
+          //   borderRadius: "24px",
+          //   overflow: "hidden",
+          //   width: "100%",
+          //   maxWidth: "1200px",
+          //   backdropFilter: "blur(10px)",
+          //   background: "rgba(255,255,255,0.9)",
+          // }}
+        >
+          {/* <div className="p-text-center p-mb-3">
+            <h1
+              className="p-mt-0"
+              style={{
+                fontSize: "2rem",
+                fontWeight: "600",
+                background: "linear-gradient(135deg, #3B82F6, #2563EB)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
             >
-              {/* Tab 1: Reports */}
-              <TabPanel
-                header={
-                  <span>
-                    <i className="pi pi-chart-line p-mr-2" />
-                    آمار و اعداد
-                  </span>
-                }
+              گزارشات سایت
+            </h1>
+          </div> */}
+
+          <TabView
+            activeIndex={activeIndex}
+            onTabChange={(e) => setActiveIndex(e.index)}
+            className="custom-tabs"
+          >
+            {/* Tab 1: Reports */}
+            <TabPanel
+              header={
+                <span>
+                  <i className="pi pi-chart-line p-mr-2" />
+                  آمار و اعداد
+                </span>
+              }
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* کارت درآمد کل */}
+                <Card className="border-0 shadow-xl bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-gray-500 text-sm">درآمد کل</h3>
+                        <p className="text-2xl font-bold text-green-600">
+                          ۲۵,۰۰۰,۰۰۰ تومان
+                        </p>
+                      </div>
+                      <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full">
+                        <span className="text-green-600 dark:text-green-400 text-xl">
+                          💰
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <span className="text-green-600 dark:text-green-400 text-sm flex items-center gap-1">
+                        <span>↑</span> ۱۲٪ نسبت به ماه گذشته
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* کارت تعداد سفارشات */}
+                <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-gray-500 text-sm">تعداد سفارشات</h3>
+                        <p className="text-2xl font-bold text-blue-600">
+                          ۱۵۶ سفارش
+                        </p>
+                      </div>
+                      <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
+                        <span className="text-blue-600 dark:text-blue-400 text-xl">
+                          🛒
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <span className="text-blue-600 dark:text-blue-400 text-sm flex items-center gap-1">
+                        <span>↑</span> ۸٪ نسبت به ماه گذشته
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* کارت میانگین سبد خرید */}
+                <Card className="border-0 shadow-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-gray-500 text-sm">
+                          میانگین سبد خرید
+                        </h3>
+                        <p className="text-2xl font-bold text-purple-600">
+                          ۱۶۰,۰۰۰ تومان
+                        </p>
+                      </div>
+                      <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full">
+                        <span className="text-purple-600 dark:text-purple-400 text-xl">
+                          📊
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <span className="text-purple-600 dark:text-purple-400 text-sm flex items-center gap-1">
+                        <span>↑</span> ۵٪ نسبت به ماه گذشته
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* کارت تعداد مشتریان جدید */}
+                <Card className="border-0 shadow-xl bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-gray-500 text-sm">مشتریان جدید</h3>
+                        <p className="text-2xl font-bold text-orange-600">
+                          ۲۴ مشتری
+                        </p>
+                      </div>
+                      <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-full">
+                        <span className="text-orange-600 dark:text-orange-400 text-xl">
+                          👥
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <span className="text-orange-600 dark:text-orange-400 text-sm flex items-center gap-1">
+                        <span>↑</span> ۱۵٪ نسبت به ماه گذشته
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabPanel>
+
+            {/* Tab 2: Users */}
+            <TabPanel
+              header={
+                <span>
+                  <i className="pi pi-users p-mr-2" />
+                  کاربران <Badge value="4" severity="info" className="p-ml-2" />
+                </span>
+              }
+            >
+              <DataTable
+                value={users}
+                paginator
+                rows={10}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                tableStyle={{ minWidth: "50rem" }}
+                className="p-datatable-sm"
+                header={headerUser}
+                emptyMessage="هیچ کاربری یافت نشد"
+                loading={loading}
+                dir="rtl"
+                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {/* کارت درآمد کل */}
-                  <Card className="border-0 shadow-xl bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-gray-500 text-sm">درآمد کل</h3>
-                          <p className="text-2xl font-bold text-green-600">
-                            ۲۵,۰۰۰,۰۰۰ تومان
-                          </p>
-                        </div>
-                        <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full">
-                          <span className="text-green-600 dark:text-green-400 text-xl">
-                            💰
-                          </span>
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        <span className="text-green-600 dark:text-green-400 text-sm flex items-center gap-1">
-                          <span>↑</span> ۱۲٪ نسبت به ماه گذشته
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
+                <Column
+                  field="id"
+                  header="شناسه"
+                  sortable
+                  style={{ width: "5%" }}
+                  className="text-center"
+                ></Column>
+                <Column
+                  field="username"
+                  header="نام کاربری"
+                  sortable
+                  style={{ width: "15%" }}
+                  className="text-center"
+                ></Column>
+                <Column
+                  field="email"
+                  header="ایمیل"
+                  sortable
+                  style={{ width: "20%" }}
+                  className="text-center"
+                ></Column>
+                <Column
+                  field="password"
+                  header="رمز عبور"
+                  body={passwordBodyTemplate}
+                  style={{ width: "20%" }}
+                ></Column>
+                <Column
+                  field="role"
+                  header="نقش"
+                  body={roleBodyTemplate}
+                  sortable
+                  style={{ width: "15%" }}
+                ></Column>
+                <Column
+                  field="purchases"
+                  header="تعداد خریدها"
+                  body={purchasesBodyTemplate}
+                  sortable
+                  style={{ width: "10%" }}
+                ></Column>
+                <Column
+                  // body={actionsBodyTemplate}
+                  header="عملیات"
+                  style={{ width: "15%" }}
+                ></Column>
+              </DataTable>
+            </TabPanel>
 
-                  {/* کارت تعداد سفارشات */}
-                  <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-gray-500 text-sm">
-                            تعداد سفارشات
-                          </h3>
-                          <p className="text-2xl font-bold text-blue-600">
-                            ۱۵۶ سفارش
-                          </p>
-                        </div>
-                        <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
-                          <span className="text-blue-600 dark:text-blue-400 text-xl">
-                            🛒
-                          </span>
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        <span className="text-blue-600 dark:text-blue-400 text-sm flex items-center gap-1">
-                          <span>↑</span> ۸٪ نسبت به ماه گذشته
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* کارت میانگین سبد خرید */}
-                  <Card className="border-0 shadow-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-gray-500 text-sm">
-                            میانگین سبد خرید
-                          </h3>
-                          <p className="text-2xl font-bold text-purple-600">
-                            ۱۶۰,۰۰۰ تومان
-                          </p>
-                        </div>
-                        <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-full">
-                          <span className="text-purple-600 dark:text-purple-400 text-xl">
-                            📊
-                          </span>
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        <span className="text-purple-600 dark:text-purple-400 text-sm flex items-center gap-1">
-                          <span>↑</span> ۵٪ نسبت به ماه گذشته
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* کارت تعداد مشتریان جدید */}
-                  <Card className="border-0 shadow-xl bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-gray-500 text-sm">
-                            مشتریان جدید
-                          </h3>
-                          <p className="text-2xl font-bold text-orange-600">
-                            ۲۴ مشتری
-                          </p>
-                        </div>
-                        <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-full">
-                          <span className="text-orange-600 dark:text-orange-400 text-xl">
-                            👥
-                          </span>
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        <span className="text-orange-600 dark:text-orange-400 text-sm flex items-center gap-1">
-                          <span>↑</span> ۱۵٪ نسبت به ماه گذشته
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </TabPanel>
-
-              {/* Tab 2: Users */}
-              <TabPanel
-                header={
-                  <span>
-                    <i className="pi pi-users p-mr-2" />
-                    کاربران{" "}
-                    <Badge value="4" severity="info" className="p-ml-2" />
-                  </span>
-                }
+            {/* Tab 3: Comments */}
+            <TabPanel
+              header={
+                <span>
+                  <i className="pi pi-comments p-mr-2" />
+                  نظرات{" "}
+                  <Badge value="4" severity="warning" className="p-ml-2" />
+                </span>
+              }
+            >
+              <DataTable
+                style={{
+                  "--p-datatable-cell-padding": "0",
+                  "--p-datatable-header-cell-padding": "0.5rem",
+                }}
+                value={comments}
+                paginator
+                rows={10}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                tableStyle={{ minWidth: "50rem" }}
+                loading={loading}
+                filters={filters}
+                globalFilterFields={["username", "productTitle", "text"]}
+                header={header}
+                emptyMessage="هیچ نظری یافت نشد."
+                className="p-datatable-sm table-no-padding custom-datatable"
               >
-                <DataTable
-                  value={users}
-                  paginator
-                  rows={10}
-                  rowsPerPageOptions={[5, 10, 25, 50]}
-                  tableStyle={{ minWidth: "50rem" }}
-                  className="p-datatable-sm"
-                  header={headerUser}
-                  emptyMessage="هیچ کاربری یافت نشد"
-                  loading={loading}
-                  dir="rtl"
-                  paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-                >
-                  <Column
-                    field="id"
-                    header="شناسه"
-                    sortable
-                    style={{ width: "5%" }}
-                    className="text-center"
-                  ></Column>
-                  <Column
-                    field="username"
-                    header="نام کاربری"
-                    sortable
-                    style={{ width: "15%" }}
-                    className="text-center"
-                  ></Column>
-                  <Column
-                    field="email"
-                    header="ایمیل"
-                    sortable
-                    style={{ width: "20%" }}
-                    className="text-center"
-                  ></Column>
-                  <Column
-                    field="password"
-                    header="رمز عبور"
-                    body={passwordBodyTemplate}
-                    style={{ width: "20%" }}
-                  ></Column>
-                  <Column
-                    field="role"
-                    header="نقش"
-                    body={roleBodyTemplate}
-                    sortable
-                    style={{ width: "15%" }}
-                  ></Column>
-                  <Column
-                    field="purchases"
-                    header="تعداد خریدها"
-                    body={purchasesBodyTemplate}
-                    sortable
-                    style={{ width: "10%" }}
-                  ></Column>
-                  <Column
-                    // body={actionsBodyTemplate}
-                    header="عملیات"
-                    style={{ width: "15%" }}
-                  ></Column>
-                </DataTable>
-              </TabPanel>
+                <Column
+                  header="#"
+                  body={(data, options) => options.rowIndex + 1}
+                  style={{ minWidth: "3rem", textAlign: "center" }}
+                />
+                <Column
+                  field="username"
+                  header="نام کاربر"
+                  sortable
+                  filter
+                  filterPlaceholder="جستجو بر اساس نام کاربر"
+                  style={{ minWidth: "12rem" }}
+                />
+                <Column
+                  field="productTitle"
+                  header="نام محصول"
+                  sortable
+                  filter
+                  filterPlaceholder="جستجو بر اساس نام محصول"
+                  style={{ minWidth: "14rem" }}
+                />
+                <Column
+                  field="text"
+                  header="متن نظر"
+                  sortable
+                  filter
+                  filterPlaceholder="جستجو در متن نظر"
+                  style={{ minWidth: "20rem" }}
+                  body={(rowData) => {
+                    const maxLength = 50;
+                    const text = rowData.text;
+                    const truncatedText =
+                      text.length > maxLength
+                        ? text.substring(0, maxLength) + "..."
+                        : text;
 
-              {/* Tab 3: Comments */}
-              <TabPanel
-                header={
-                  <span>
-                    <i className="pi pi-comments p-mr-2" />
-                    نظرات{" "}
-                    <Badge value="4" severity="warning" className="p-ml-2" />
-                  </span>
-                }
-              >
-                <DataTable
-                  style={{
-                    "--p-datatable-cell-padding": "0",
-                    "--p-datatable-header-cell-padding": "0.5rem",
+                    return (
+                      <div
+                        title={rowData.text}
+                        style={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {truncatedText}
+                      </div>
+                    );
                   }}
-                  value={comments}
-                  paginator
-                  rows={10}
-                  rowsPerPageOptions={[5, 10, 25, 50]}
-                  tableStyle={{ minWidth: "50rem" }}
-                  loading={loading}
-                  filters={filters}
-                  globalFilterFields={["username", "productTitle", "text"]}
-                  header={header}
-                  emptyMessage="هیچ نظری یافت نشد."
-                  className="p-datatable-sm table-no-padding custom-datatable"
-                >
-                  <Column
-                    header="#"
-                    body={(data, options) => options.rowIndex + 1}
-                    style={{ minWidth: "3rem", textAlign: "center" }}
-                  />
-                  <Column
-                    field="username"
-                    header="نام کاربر"
-                    sortable
-                    filter
-                    filterPlaceholder="جستجو بر اساس نام کاربر"
-                    style={{ minWidth: "12rem" }}
-                  />
-                  <Column
-                    field="productTitle"
-                    header="نام محصول"
-                    sortable
-                    filter
-                    filterPlaceholder="جستجو بر اساس نام محصول"
-                    style={{ minWidth: "14rem" }}
-                  />
-                  <Column
-                    field="text"
-                    header="متن نظر"
-                    sortable
-                    filter
-                    filterPlaceholder="جستجو در متن نظر"
-                    style={{ minWidth: "20rem" }}
-                    body={(rowData) => {
-                      const maxLength = 50;
-                      const text = rowData.text;
-                      const truncatedText =
-                        text.length > maxLength
-                          ? text.substring(0, maxLength) + "..."
-                          : text;
+                />
 
-                      return (
-                        <div
-                          title={rowData.text}
-                          style={{
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {truncatedText}
-                        </div>
-                      );
-                    }}
-                  />
+                <Column
+                  field="rating"
+                  header="امتیاز"
+                  sortable
+                  body={ratingBodyTemplate}
+                  style={{ minWidth: "10rem" }}
+                />
+                <Column
+                  field="createdAtJalali"
+                  header="تاریخ ثبت"
+                  sortable
+                  body={dateBodyTemplate}
+                  style={{ minWidth: "10rem" }}
+                />
+                <Column
+                  body={commentActionsBodyTemplate}
+                  header="عملیات"
+                  style={{ minWidth: "8rem" }}
+                  className="text-center"
+                />
+              </DataTable>
+            </TabPanel>
 
-                  <Column
-                    field="rating"
-                    header="امتیاز"
-                    sortable
-                    body={ratingBodyTemplate}
-                    style={{ minWidth: "10rem" }}
-                  />
-                  <Column
-                    field="createdAtJalali"
-                    header="تاریخ ثبت"
-                    sortable
-                    body={dateBodyTemplate}
-                    style={{ minWidth: "10rem" }}
-                  />
-                  <Column
-                    body={commentActionsBodyTemplate}
-                    header="عملیات"
-                    style={{ minWidth: "8rem" }}
-                    className="text-center"
-                  />
-                </DataTable>
-              </TabPanel>
-
-              {/* Tab 4: Settings */}
-              <TabPanel
-                header={
-                  <span>
-                    <i className="pi pi-cog p-mr-2" />
-                    نمودار ها
-                  </span>
-                }
-              >
-                {/* نمودار فروش محصولات */}
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-[#38b000]">
-                      آمار فروش محصولات
-                    </h2>
-                    <Select
-                      value={selectedTimePeriod}
-                      onValueChange={setSelectedTimePeriod}
-                    >
-                      <SelectTrigger className="w-48">
-                        <SelectValue placeholder="انتخاب بازه زمانی" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {timePeriodOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="h-[500px]">
-                    <Bar data={currentSalesData} options={barOptions} />
-                  </div>
-                </div>
-                {/* Add SimpleLineChart */}
-                <div className="mb-8 h-[400px] bg-white p-4 rounded-lg shadow">
-                  <h2 className="text-xl font-semibold mb-4 text-center">
-                    نمودار فروش
+            {/* Tab 4: Settings */}
+            <TabPanel
+              header={
+                <span>
+                  <i className="pi pi-cog p-mr-2" />
+                  نمودار ها
+                </span>
+              }
+            >
+              {/* نمودار فروش محصولات */}
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-[#38b000]">
+                    آمار فروش محصولات
                   </h2>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      margin={{
-                        top: 5,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                      }}
-                      data={result}
-                    >
-                      <CartesianGrid stroke="#ccc" />
-                      <XAxis
-                        dataKey="date"
-                        tick={{ fontSize: 12 }}
-                        angle={-45}
-                        textAnchor="end"
-                        height={60}
-                      />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Line
-                        type="monotone"
-                        dataKey="product1"
-                        stroke="#8884d8"
-                        name="برنج هاشمی"
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="product2"
-                        stroke="#82ca9d"
-                        name="برنج صدری"
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="product3"
-                        stroke="#fb8500"
-                        name="برنج دودی"
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="product4"
-                        stroke="#8ecae6"
-                        name="برنج دم سیاه"
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="product5"
-                        stroke="#ff8fab"
-                        name="زیتون ماری"
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="product6"
-                        stroke="#ffd60a"
-                        name="زیتون شکسته"
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="product7"
-                        stroke="#adc178"
-                        name="زیتون کنسروی"
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="product8"
-                        stroke="#f00"
-                        name="رشته خشکار"
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="product9"
-                        stroke="#4CAF50"
-                        name="چای کرک"
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
+                  <Select
+                    value={selectedTimePeriod}
+                    onValueChange={setSelectedTimePeriod}
+                  >
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="انتخاب بازه زمانی" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {timePeriodOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div className="grid md:grid-cols-2 gap-8">
-                  {/* نمودار جنسیت */}
-                  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                    <h2 className="text-2xl font-bold text-[#38b000] mb-6 text-center">
-                      توزیع جنسیت کاربران
-                    </h2>
-                    <div className="h-[400px] flex items-center justify-center">
-                      <Pie data={genderData} options={options} />
-                    </div>
+                <div className="h-[500px]">
+                  <Bar data={currentSalesData} options={barOptions} />
+                </div>
+              </div>
+              {/* Add SimpleLineChart */}
+              <div className="mb-8 h-[400px] bg-white p-4 rounded-lg shadow">
+                <h2 className="text-xl font-semibold mb-4 text-center">
+                  نمودار فروش
+                </h2>
+                {/* <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
+                    data={result}
+                  >
+                    <CartesianGrid stroke="#ccc" />
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 12 }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                    />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="product1"
+                      stroke="#8884d8"
+                      name="برنج هاشمی"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="product2"
+                      stroke="#82ca9d"
+                      name="برنج صدری"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="product3"
+                      stroke="#fb8500"
+                      name="برنج دودی"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="product4"
+                      stroke="#8ecae6"
+                      name="برنج دم سیاه"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="product5"
+                      stroke="#ff8fab"
+                      name="زیتون ماری"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="product6"
+                      stroke="#ffd60a"
+                      name="زیتون شکسته"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="product7"
+                      stroke="#adc178"
+                      name="زیتون کنسروی"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="product8"
+                      stroke="#f00"
+                      name="رشته خشکار"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="product9"
+                      stroke="#4CAF50"
+                      name="چای کرک"
+                    />
+                  </LineChart>
+                </ResponsiveContainer> */}
+              </div>
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* نمودار جنسیت */}
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                  <h2 className="text-2xl font-bold text-[#38b000] mb-6 text-center">
+                    توزیع جنسیت کاربران
+                  </h2>
+                  <div className="h-[400px] flex items-center justify-center">
+                    <Pie data={genderData} options={options} />
                   </div>
+                </div>
 
-                  {/* نمودار توزیع جغرافیایی */}
-                  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                    <h2 className="text-2xl font-bold text-[#38b000] mb-6 text-center">
-                      توزیع جغرافیایی کاربران
-                    </h2>
-                    <div className="h-[400px] flex items-center justify-center">
-                      <Pie data={locationData} options={options} />
-                    </div>
+                {/* نمودار توزیع جغرافیایی */}
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                  <h2 className="text-2xl font-bold text-[#38b000] mb-6 text-center">
+                    توزیع جغرافیایی کاربران
+                  </h2>
+                  <div className="h-[400px] flex items-center justify-center">
+                    <Pie data={locationData} options={options} />
                   </div>
                 </div>
-              </TabPanel>
-            </TabView>
-          </Card>
+              </div>
+            </TabPanel>
+            {/* Tab 5: Settings */}
+            <TabPanel
+              header={
+                <span>
+                  <i className="pi pi-cog p-mr-2" />
+                  محصولات
+                </span>
+              }
+            >
+              <DataTable
+                style={{
+                  "--p-datatable-cell-padding": "0",
+                  "--p-datatable-header-cell-padding": "0.5rem",
+                }}
+                value={products}
+                paginator
+                rows={10}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                tableStyle={{ minWidth: "50rem" }}
+                loading={loading}
+                filters={filters}
+                globalFilterFields={["username", "productTitle", "text"]}
+                header={headerProduct}
+                emptyMessage="هیچ نظری یافت نشد."
+                className="p-datatable-sm table-no-padding custom-datatable"
+              >
+                <Column
+                  header="#"
+                  body={(data, options) => options.rowIndex + 1}
+                  style={{ minWidth: "3rem", textAlign: "center" }}
+                />
+
+                <Column
+                  field="title"
+                  header="نام محصول"
+                  sortable
+                  filter
+                  filterPlaceholder="جستجو بر اساس نام محصول"
+                  style={{ minWidth: "14rem" }}
+                />
+
+                <Column
+                  field="inventory"
+                  header="موجودی"
+                  sortable
+                  // body={dateBodyTemplate}
+                  style={{ minWidth: "10rem" }}
+                />
+
+                <Column
+                  field="category"
+                  header="دسته بندی"
+                  sortable
+                  // body={dateBodyTemplate}
+                  style={{ minWidth: "10rem" }}
+                />
+                <Column
+                  body={commentActionsBodyTemplate}
+                  header="عملیات"
+                  style={{ minWidth: "8rem" }}
+                  className="text-center"
+                />
+              </DataTable>
+            </TabPanel>
+
+            {/* Tab 5: Settings */}
+            <TabPanel
+              header={
+                <span>
+                  <i className="pi pi-cog p-mr-2" />
+                  مقالات
+                </span>
+              }
+            ></TabPanel>
+            {/* Tab 6: Settings */}
+            <TabPanel
+              header={
+                <span>
+                  <i className="pi pi-cog p-mr-2" />
+                  پیام ها
+                </span>
+              }
+            ></TabPanel>
+          </TabView>
+        </Card>
 
         {/* add user Dialog */}
         <Dialog open={visible} onOpenChange={setVisible}>
