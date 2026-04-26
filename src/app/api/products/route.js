@@ -3,6 +3,37 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Product from '@/models/Product';
 
+// POST: ایجاد محصول جدید
+export async function POST(request) {
+  try {
+    await dbConnect();
+    const body = await request.json();
+
+    // پیدا کردن آخرین id و افزایش آن
+    const lastProduct = await Product.findOne().sort({ id: -1 });
+    const newId = lastProduct ? lastProduct.id + 1 : 1;
+
+    const product = await Product.create({
+      ...body,
+      id: newId,
+      comments: body.comments || []
+    });
+
+    return NextResponse.json(
+      { success: true, data: product },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error('Error in POST /api/products:', error);
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 400 }
+    );
+  }
+}
+
+
+
 // GET: دریافت همه محصولات با قابلیت فیلتر و مرتب‌سازی
 export async function GET(request) {
   try {
@@ -66,31 +97,3 @@ export async function GET(request) {
   }
 }
 
-// POST: ایجاد محصول جدید
-export async function POST(request) {
-  try {
-    await dbConnect();
-    const body = await request.json();
-
-    // پیدا کردن آخرین id و افزایش آن
-    const lastProduct = await Product.findOne().sort({ id: -1 });
-    const newId = lastProduct ? lastProduct.id + 1 : 1;
-
-    const product = await Product.create({
-      ...body,
-      id: newId,
-      comments: body.comments || []
-    });
-
-    return NextResponse.json(
-      { success: true, data: product },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error('Error in POST /api/products:', error);
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 400 }
-    );
-  }
-}

@@ -6,14 +6,27 @@ import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FaTruck, FaHeadset, FaShieldAlt, FaLeaf, FaStar, FaShoppingCart, FaArrowLeft } from "react-icons/fa";
+import {
+  FaTruck,
+  FaHeadset,
+  FaShieldAlt,
+  FaLeaf,
+  FaStar,
+  FaShoppingCart,
+  FaArrowLeft,
+} from "react-icons/fa";
 import { Sparkles, TrendingUp, Award } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -59,7 +72,8 @@ export default function Home() {
       header: "سفارشم کی به دستم میرسه؟",
       children: (
         <p className="text-muted-foreground leading-relaxed">
-          بستگی داره به اینکه شما کجای ایران ساکن هستید. برای شهرهای بزرگ معمولاً ۲۴ تا ۴۸ ساعت و برای شهرهای کوچک ۳ تا ۵ روز کاری زمان می‌بره.
+          بستگی داره به اینکه شما کجای ایران ساکن هستید. برای شهرهای بزرگ
+          معمولاً ۲۴ تا ۴۸ ساعت و برای شهرهای کوچک ۳ تا ۵ روز کاری زمان می‌بره.
         </p>
       ),
     },
@@ -67,7 +81,9 @@ export default function Home() {
       header: "چرا قیمت ثابت وجود ندارد برای اجناس؟",
       children: (
         <p className="text-muted-foreground leading-relaxed">
-          قیمت‌ها دائماً در حال نوسان هستند و خود کشاورزها این قیمت را تعیین می‌کنند. ما مستقیماً از مزرعه به شما می‌فروشیم، پس قیمت‌ها بر اساس شرایط بازار و فصل تغییر می‌کنند.
+          قیمت‌ها دائماً در حال نوسان هستند و خود کشاورزها این قیمت را تعیین
+          می‌کنند. ما مستقیماً از مزرعه به شما می‌فروشیم، پس قیمت‌ها بر اساس
+          شرایط بازار و فصل تغییر می‌کنند.
         </p>
       ),
     },
@@ -75,7 +91,9 @@ export default function Home() {
       header: "نحوه خرید و پرداخت چگونه است؟",
       children: (
         <p className="text-muted-foreground leading-relaxed">
-          شما می‌تونید با مراجعه به صفحه فروشگاه محصول خود را انتخاب کنید و سپس با انتخاب محصول مورد نظر خود را خریداری کنید. پرداخت به صورت آنلاین و یا پرداخت در محل امکان‌پذیر است.
+          شما می‌تونید با مراجعه به صفحه فروشگاه محصول خود را انتخاب کنید و سپس
+          با انتخاب محصول مورد نظر خود را خریداری کنید. پرداخت به صورت آنلاین و
+          یا پرداخت در محل امکان‌پذیر است.
         </p>
       ),
     },
@@ -120,11 +138,11 @@ export default function Home() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('/api/categories');
+      const response = await fetch("/api/categories");
       const data = await response.json();
       setCategories(data);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      console.error("Error fetching categories:", error);
     } finally {
       setLoading(false);
     }
@@ -132,11 +150,11 @@ export default function Home() {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch('/api/reviews');
+      const response = await fetch("/api/reviews");
       const data = await response.json();
       setReviews(data.slice(0, 6)); // فقط 6 تا نمایش بده
     } catch (error) {
-      console.error('Error fetching reviews:', error);
+      console.error("Error fetching reviews:", error);
     } finally {
       setReviewsLoading(false);
     }
@@ -144,12 +162,12 @@ export default function Home() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('/api/products');
+      const response = await fetch("/api/products");
       const data = await response.json();
       // نمایش 4 محصول اول با تخفیف یا پرفروش
       setProducts(data.slice(0, 4));
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error("Error fetching products:", error);
     }
   };
 
@@ -191,7 +209,10 @@ export default function Home() {
                 <p className="text-xl md:text-2xl mb-8 text-white/90">
                   تا ۳۰٪ تخفیف برای خریدهای بالای ۵۰۰ هزار تومان
                 </p>
-                <Button size="lg" className="bg-white text-green-600 hover:bg-white/90 text-lg px-8 py-6">
+                <Button
+                  size="lg"
+                  className="bg-white text-green-600 hover:bg-white/90 text-lg px-8 py-6"
+                >
                   <FaShoppingCart className="ml-2" />
                   خرید کنید
                 </Button>
@@ -212,7 +233,10 @@ export default function Home() {
                 <p className="text-xl md:text-2xl mb-8 text-white/90">
                   برای تمام سفارش‌های بالای ۱ میلیون تومان
                 </p>
-                <Button size="lg" className="bg-white text-purple-600 hover:bg-white/90 text-lg px-8 py-6">
+                <Button
+                  size="lg"
+                  className="bg-white text-purple-600 hover:bg-white/90 text-lg px-8 py-6"
+                >
                   مشاهده محصولات
                 </Button>
               </div>
@@ -232,7 +256,10 @@ export default function Home() {
                 <p className="text-xl md:text-2xl mb-8 text-white/90">
                   هر روز محصولات تازه از مزارع و باغات
                 </p>
-                <Button size="lg" className="bg-white text-orange-600 hover:bg-white/90 text-lg px-8 py-6">
+                <Button
+                  size="lg"
+                  className="bg-white text-orange-600 hover:bg-white/90 text-lg px-8 py-6"
+                >
                   خرید کنید
                 </Button>
               </div>
@@ -246,7 +273,9 @@ export default function Home() {
         <section className="mb-16">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-2">دسته‌بندی محصولات</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-2">
+                دسته‌بندی محصولات
+              </h2>
               <p className="text-muted-foreground">محصولات تازه و با کیفیت</p>
             </div>
             <Link href="/store">
@@ -256,6 +285,7 @@ export default function Home() {
               </Button>
             </Link>
           </div>
+
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[...Array(4)].map((_, i) => (
@@ -270,51 +300,65 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {categories.map((category) => (
-                <div key={category.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                  <div className="h-48 bg-gray-200 relative">
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      className="w-full h-full object-cover"
-                      // onError={(e) => {
-                      //   e.currentTarget.src = '/images/placeholder.jpg';
-                      // }}
-                    />
+                <div>
+                  <div
+                    key={category.id}
+                    className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+                  >
+                    <div className="h-48 bg-gray-200 relative">
+                      <img
+                        src={category.image}
+                        alt={category.name}
+                        className="w-full h-full object-cover"
+                        // onError={(e) => {
+                        //   e.currentTarget.src = '/images/placeholder.jpg';
+                        // }}
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h4 className="text-lg font-semibold text-center">
+                        {category.name}
+                      </h4>
+                    </div>
                   </div>
-                  <div className="p-4">
-                    <h4 className="text-lg font-semibold text-center">{category.name}</h4>
+                  <p className="text-muted-foreground">
+                    پرفروش‌ترین و محبوب‌ترین محصولات
+                  </p>
+
+                  <Link href="/store">
+                    <Button variant="outline" className="hidden md:flex">
+                      مشاهده همه
+                      <FaArrowLeft className="mr-2" />
+                    </Button>
+                  </Link>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {products.map((product) => (
+                      <ProductItem
+                        key={product.id}
+                        id={product.id}
+                        title={product.title}
+                        body={product.body}
+                        price={product.price}
+                        img={product.img}
+                        discount={product.discount}
+                      />
+                    ))}
                   </div>
                 </div>
-                <p className="text-muted-foreground">پرفروش‌ترین و محبوب‌ترین محصولات</p>
-              </div>
-              <Link href="/store">
-                <Button variant="outline" className="hidden md:flex">
-                  مشاهده همه
-                  <FaArrowLeft className="mr-2" />
-                </Button>
-              </Link>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {products.map((product) => (
-                <ProductItem
-                  key={product.id}
-                  id={product.id}
-                  title={product.title}
-                  body={product.body}
-                  price={product.price}
-                  img={product.img}
-                  discount={product.discount}
-                />
               ))}
             </div>
-          </section>
-        )}
+          )}
+
+        </section>
 
         {/* نظرات مشتریان */}
         <section className="mb-16">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-2">نظرات مشتریان</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-2">
+                نظرات مشتریان
+              </h2>
               <p className="text-muted-foreground">تجربه خرید مشتریان ما</p>
             </div>
           </div>
@@ -331,7 +375,10 @@ export default function Home() {
           ) : reviews.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {reviews.map((review) => (
-                <Card key={review.id} className="p-6 hover:shadow-lg transition-shadow duration-300">
+                <Card
+                  key={review.id}
+                  className="p-6 hover:shadow-lg transition-shadow duration-300"
+                >
                   <div className="flex items-start gap-4 mb-4">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-white font-bold text-lg">
                       {review.username[0]}
@@ -342,18 +389,28 @@ export default function Home() {
                         {[...Array(5)].map((_, i) => (
                           <FaStar
                             key={i}
-                            className={i < review.rating ? "fill-current" : "text-gray-300"}
+                            className={
+                              i < review.rating
+                                ? "fill-current"
+                                : "text-gray-300"
+                            }
                             size={14}
                           />
                         ))}
                       </div>
                     </div>
                   </div>
-                  <p className="text-muted-foreground mb-4 leading-relaxed">{review.text}</p>
+                  <p className="text-muted-foreground mb-4 leading-relaxed">
+                    {review.text}
+                  </p>
                   <Separator className="my-4" />
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">{review.productTitle}</span>
-                    <span className="text-muted-foreground">{review.createdAtJalali}</span>
+                    <span className="text-muted-foreground">
+                      {review.productTitle}
+                    </span>
+                    <span className="text-muted-foreground">
+                      {review.createdAtJalali}
+                    </span>
                   </div>
                 </Card>
               ))}
@@ -367,11 +424,17 @@ export default function Home() {
 
         {/* سوالات متداول */}
         <section className="mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">سوالات متداول</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+            سوالات متداول
+          </h2>
           <Card className="max-w-3xl mx-auto">
             <Accordion type="single" collapsible className="w-full">
               {tabs.map((tab, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="px-6">
+                <AccordionItem
+                  key={index}
+                  value={`item-${index}`}
+                  className="px-6"
+                >
                   <AccordionTrigger className="text-right hover:no-underline">
                     {tab.header}
                   </AccordionTrigger>
@@ -390,11 +453,17 @@ export default function Home() {
             <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5"></div>
             <CardContent className="p-8 md:p-12 text-center relative z-10">
               <Sparkles className="w-12 h-12 mx-auto mb-4 text-primary" />
-              <h3 className="text-2xl md:text-3xl font-bold mb-4">عضویت در خبرنامه</h3>
+              <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                عضویت در خبرنامه
+              </h3>
               <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                برای اطلاع از آخرین محصولات، تخفیف‌های ویژه و پیشنهادات خاص در خبرنامه ما عضو شوید
+                برای اطلاع از آخرین محصولات، تخفیف‌های ویژه و پیشنهادات خاص در
+                خبرنامه ما عضو شوید
               </p>
-              <form onSubmit={handleNewsletter} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+              <form
+                onSubmit={handleNewsletter}
+                className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
+              >
                 <Input
                   type="email"
                   placeholder="ایمیل خود را وارد کنید"
@@ -403,7 +472,10 @@ export default function Home() {
                   className="flex-1"
                   required
                 />
-                <Button type="submit" className="bg-primary hover:bg-primary/90">
+                <Button
+                  type="submit"
+                  className="bg-primary hover:bg-primary/90"
+                >
                   عضویت
                 </Button>
               </form>
@@ -413,14 +485,18 @@ export default function Home() {
 
         {/* چرا ما را انتخاب کنید */}
         <section className="mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">چرا ما را انتخاب کنید؟</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+            چرا ما را انتخاب کنید؟
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {benefits.map((benefit, index) => (
               <Card
                 key={index}
                 className="p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-2 hover:border-primary/50"
               >
-                <div className={`${benefit.bgColor} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${benefit.color}`}>
+                <div
+                  className={`${benefit.bgColor} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${benefit.color}`}
+                >
                   {benefit.icon}
                 </div>
                 <h4 className="text-lg font-semibold mb-2">{benefit.title}</h4>
