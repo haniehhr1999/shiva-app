@@ -1,30 +1,31 @@
-// app/api/articles/route.js
-import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/mongodb';
+import { dbConnect } from '@/lib/mongodb';
 import Article from '@/models/Article';
+import { NextResponse } from 'next/server';
 
+// GET - دریافت همه مقالات با صفحه‌بندی
 export async function GET(request) {
   try {
     await dbConnect();
     
+    // دریافت پارامترهای query string
     const { searchParams } = new URL(request.url);
-    const category = searchParams.get('category');
-    const limit = parseInt(searchParams.get('limit') || '20');
     const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const sortBy = searchParams.get('sortBy') || 'publishDate';
+    const sortOrder = searchParams.get('sortOrder') === 'asc' ? 1 : -1;
+    
+    // محاسبه تعداد آیتم‌هایی که باید skip بشه
     const skip = (page - 1) * limit;
-
-    let filter = { isPublished: true };
-    if (category) filter.category = category;
-
-    const [articles, total] = await Promise.all([
-      Article.find(filter)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Article.countDocuments(filter)
-    ]);
-
+    
+    // دریافت مقالات با صفحه‌بندی
+    const articles = await Article.find({})
+      .sort({ [sortBy]: sortOrder })
+      .skip(skip)
+      .limit(limit);
+    
+    // دریافت تعداد کل مقالات
+    const total = await Article.countDocuments({});
+    
     return NextResponse.json({
       success: true,
       data: articles,
@@ -32,11 +33,13 @@ export async function GET(request) {
         page,
         limit,
         total,
-        totalPages: Math.ceil(total / limit)
+        totalPages: Math.ceil(total / limit),
+        hasNextPage: page < Math.ceil(total / limit),
+        hasPrevPage: page > 1
       }
     });
+    
   } catch (error) {
-    console.error('Error in GET /api/articles:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -44,30 +47,17 @@ export async function GET(request) {
   }
 }
 
+// POST - ایجاد مقاله جدید (بدون تغییر)
 export async function POST(request) {
   try {
     await dbConnect();
     const body = await request.json();
-
-    const lastArticle = await Article.findOne().sort({ id: -1 });
-    const newId = lastArticle ? lastArticle.id + 1 : 1;
-
-    const article = await Article.create({
-      ...body,
-      id: newId,
-      views: 0,
-      isPublished: true
-    });
-
-    return NextResponse.json(
-      { success: true, data: article },
-      { status: 201 }
-    );
+    const article = await Article.create(body);
+    return NextResponse.json({ success: true, data: article }, { status: 201 });
   } catch (error) {
-    console.error('Error in POST /api/articles:', error);
     return NextResponse.json(
       { success: false, error: error.message },
-      { status: 400 }
+      { status: 500 }
     );
   }
 }

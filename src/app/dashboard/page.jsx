@@ -2,16 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableFooter,
-} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 // import { Button } from "@/components/ui/button";
@@ -380,7 +370,7 @@ export default function DashboardPage() {
         return [...acc, ...productComments];
       }, []);
 
-      console.log(allComments);
+      console.log({ allComments });
 
       setComments(allComments);
     } catch (error) {
@@ -682,6 +672,7 @@ export default function DashboardPage() {
   };
 
   const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex2, setActiveIndex2] = useState(0);
 
   // Sample data for each tab
   const usersData = [
@@ -1043,95 +1034,131 @@ export default function DashboardPage() {
                 </span>
               }
             >
-              <DataTable
-                style={{
-                  "--p-datatable-cell-padding": "0",
-                  "--p-datatable-header-cell-padding": "0.5rem",
-                }}
-                value={comments}
-                paginator
-                rows={10}
-                rowsPerPageOptions={[5, 10, 25, 50]}
-                tableStyle={{ minWidth: "50rem" }}
-                loading={loading}
-                filters={filters}
-                globalFilterFields={["username", "productTitle", "text"]}
-                header={header}
-                emptyMessage="هیچ نظری یافت نشد."
-                className="p-datatable-sm table-no-padding custom-datatable"
+              <TabView
+                activeIndex={activeIndex2}
+                onTabChange={(e) => setActiveIndex2(e.index)}
+                className="custom-tabs"
               >
-                <Column
-                  header="#"
-                  body={(data, options) => options.rowIndex + 1}
-                  style={{ minWidth: "3rem", textAlign: "center" }}
-                />
-                <Column
-                  field="username"
-                  header="نام کاربر"
-                  sortable
-                  filter
-                  filterPlaceholder="جستجو بر اساس نام کاربر"
-                  style={{ minWidth: "12rem" }}
-                />
-                <Column
-                  field="productTitle"
-                  header="نام محصول"
-                  sortable
-                  filter
-                  filterPlaceholder="جستجو بر اساس نام محصول"
-                  style={{ minWidth: "14rem" }}
-                />
-                <Column
-                  field="text"
-                  header="متن نظر"
-                  sortable
-                  filter
-                  filterPlaceholder="جستجو در متن نظر"
-                  style={{ minWidth: "20rem" }}
-                  body={(rowData) => {
-                    const maxLength = 50;
-                    const text = rowData.text;
-                    const truncatedText =
-                      text.length > maxLength
-                        ? text.substring(0, maxLength) + "..."
-                        : text;
-
-                    return (
-                      <div
-                        title={rowData.text}
-                        style={{
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
+                <TabPanel header={<FaChartBar size={30} color="#E67E22" />}>
+                  <div className="grid grid-cols-3 gap-6">
+                    {comments.map((cm , index) => (
+                      <Card
+                      key={index}
+                        title={null}
+                        subTitle={null}
+                        header={
+                          <h3 className="text-base font-bold text-gray-800 m-0">
+                            {cm.username}
+                            {cm.productTitle}
+                          </h3>
+                        }
+                        className="shadow-lg hover:shadow-xl transition-shadow rounded-2xl border border-gray-200 overflow-hidden"
                       >
-                        {truncatedText}
-                      </div>
-                    );
-                  }}
-                />
+                        {/* Comment Content */}
+                        <div className="bg-gray-50 rounded-xl p-3 mb-2">
+                          <div className="flex items-start gap-2">
+                            {/* <ChatIcon className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" /> */}
+                            <p className="text-gray-700 leading-relaxed m-0 text-sm">
+                              {cm.text}
+                            </p>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </TabPanel>
+                <TabPanel header={<FaChartBar size={30} color="#E67E22" />}>
+                  <DataTable
+                    style={{
+                      "--p-datatable-cell-padding": "0",
+                      "--p-datatable-header-cell-padding": "0.5rem",
+                    }}
+                    value={comments}
+                    paginator
+                    rows={10}
+                    rowsPerPageOptions={[5, 10, 25, 50]}
+                    tableStyle={{ minWidth: "50rem" }}
+                    loading={loading}
+                    filters={filters}
+                    globalFilterFields={["username", "productTitle", "text"]}
+                    header={header}
+                    emptyMessage="هیچ نظری یافت نشد."
+                    className="p-datatable-sm table-no-padding custom-datatable"
+                  >
+                    <Column
+                      header="#"
+                      body={(data, options) => options.rowIndex + 1}
+                      style={{ minWidth: "3rem", textAlign: "center" }}
+                    />
+                    <Column
+                      field="username"
+                      header="نام کاربر"
+                      sortable
+                      filter
+                      filterPlaceholder="جستجو بر اساس نام کاربر"
+                      style={{ minWidth: "12rem" }}
+                    />
+                    <Column
+                      field="productTitle"
+                      header="نام محصول"
+                      sortable
+                      filter
+                      filterPlaceholder="جستجو بر اساس نام محصول"
+                      style={{ minWidth: "14rem" }}
+                    />
+                    <Column
+                      field="text"
+                      header="متن نظر"
+                      sortable
+                      filter
+                      filterPlaceholder="جستجو در متن نظر"
+                      style={{ minWidth: "20rem" }}
+                      body={(rowData) => {
+                        const maxLength = 50;
+                        const text = rowData.text;
+                        const truncatedText =
+                          text.length > maxLength
+                            ? text.substring(0, maxLength) + "..."
+                            : text;
 
-                <Column
-                  field="rating"
-                  header="امتیاز"
-                  sortable
-                  body={ratingBodyTemplate}
-                  style={{ minWidth: "10rem" }}
-                />
-                <Column
-                  field="createdAtJalali"
-                  header="تاریخ ثبت"
-                  sortable
-                  body={dateBodyTemplate}
-                  style={{ minWidth: "10rem" }}
-                />
-                <Column
-                  body={commentActionsBodyTemplate}
-                  header="عملیات"
-                  style={{ minWidth: "8rem" }}
-                  className="text-center"
-                />
-              </DataTable>
+                        return (
+                          <div
+                            title={rowData.text}
+                            style={{
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {truncatedText}
+                          </div>
+                        );
+                      }}
+                    />
+
+                    <Column
+                      field="rating"
+                      header="امتیاز"
+                      sortable
+                      body={ratingBodyTemplate}
+                      style={{ minWidth: "10rem" }}
+                    />
+                    <Column
+                      field="createdAtJalali"
+                      header="تاریخ ثبت"
+                      sortable
+                      body={dateBodyTemplate}
+                      style={{ minWidth: "10rem" }}
+                    />
+                    <Column
+                      body={commentActionsBodyTemplate}
+                      header="عملیات"
+                      style={{ minWidth: "8rem" }}
+                      className="text-center"
+                    />
+                  </DataTable>
+                </TabPanel>
+              </TabView>
             </TabPanel>
 
             {/* Tab 4: Settings */}
@@ -1274,6 +1301,7 @@ export default function DashboardPage() {
                 </div>
               </div>
             </TabPanel>
+
             {/* Tab 5: Settings */}
             <TabPanel
               header={
@@ -1283,60 +1311,54 @@ export default function DashboardPage() {
                 </span>
               }
             >
-              <FaTachometerAlt size={30} color="#4A90E2" />
-              <FaChartBar size={30} color="#E67E22" />
-              <FaList size={30} color="#2C3E50" />
-              <div className="grid grid-cols-4 gap-3">
-                
-              {products.map((product, index) => (
-                <Card
-                  key={index}
-                  title={product.title}
-                  header={
-                    <img
-                      alt={product.title}
-                      src={product.image}
-                      className="w-full h-12rem object-cover"
-                      onError={(e) =>
-                        (e.target.src =
-                          "https://placehold.co/400x200?text=No+Image")
-                      }
-                    />
-                  }
-                  // footer={
-                  //   <div className="flex justify-between align-items-center">
-                  //     <Button
-                  //       icon="pi pi-shopping-cart"
-                  //       label="Buy Now"
-                  //       className="p-button-sm"
-                  //       onClick={() => alert(`Added ${product.title} to cart!`)}
-                  //     />
-                  //     <div className="flex gap-2">
-                  //       <i className="pi pi-comment"></i>
-                  //       <span>{product.comments?.length || 0} comments</span>
-                  //     </div>
-                  //   </div>
-                  // }
-                  className="h-full"
-                >
-                  <div className="flex flex-column gap-2">
-                    {/* Price */}
-                    <div className="text-2xl font-bold text-primary">
-                      ${product.price.toFixed(2)}
-                    </div>
+              {/* <div className="flex justify-between"> */}
+              <Button
+                label="افزودن محصول"
+                onClick={() => show("top")}
+                className="p-button-warning"
+                style={{ minWidth: "5rem" }}
+              />
+              <TabView
+                activeIndex={activeIndex2}
+                onTabChange={(e) => setActiveIndex2(e.index)}
+                className="custom-tabs"
+              >
+                <TabPanel header={<FaChartBar size={30} color="#E67E22" />}>
+                  <div className="grid grid-cols-6 gap-6">
+                    {products.map((product, index) => (
+                      <Card
+                        key={index}
+                        title={product.title}
+                        header={
+                          <img
+                            alt={product.title}
+                            src={product.img}
+                            className="w-full h-12rem object-cover"
+                            onError={(e) =>
+                              (e.target.src =
+                                "https://placehold.co/400x200?text=No+Image")
+                            }
+                          />
+                        }
+                        className="h-full"
+                      >
+                        {/* Price */}
+                        <div className=" text-primary">
+                          قیمت :{product.price.toFixed(2)}
+                          تومان
+                        </div>
 
-                    {/* Inventory */}
-                    <div className="flex align-items-center gap-2">
-                      <i className="pi pi-box"></i>
-                      <span>Inventory: </span>
-                      <Tag
-                        value={`${product.inventory} units`}
-                        severity={getInventoryStatus(product.inventory)}
-                      />
-                    </div>
+                        {/* Inventory */}
+                        <div className="flex items-center gap-2">
+                          <span>موجودی: </span>
+                          <Tag
+                            value={`${product.inventory} units`}
+                            severity={getInventoryStatus(product.inventory)}
+                          />
+                        </div>
 
-                    {/* Comments preview */}
-                    {/* {product.comments && product.comments.length > 0 && (
+                        {/* Comments preview */}
+                        {/* {product.comments && product.comments.length > 0 && (
                       <div className="mt-2">
                         <div className="flex align-items-center gap-2 text-sm text-gray-600">
                           <i className="pi pi-comments"></i>
@@ -1352,65 +1374,69 @@ export default function DashboardPage() {
                         </ul>
                       </div>
                     )} */}
+                      </Card>
+                    ))}
                   </div>
-                </Card>
-              ))}
-              </div>
+                </TabPanel>
 
-              <DataTable
-                style={{
-                  "--p-datatable-cell-padding": "0",
-                  "--p-datatable-header-cell-padding": "0.5rem",
-                }}
-                value={products}
-                paginator
-                rows={10}
-                rowsPerPageOptions={[5, 10, 25, 50]}
-                tableStyle={{ minWidth: "50rem" }}
-                loading={loading}
-                filters={filters}
-                globalFilterFields={["username", "productTitle", "text"]}
-                header={headerProduct}
-                emptyMessage="هیچ نظری یافت نشد."
-                className="p-datatable-sm table-no-padding custom-datatable"
-              >
-                <Column
-                  header="#"
-                  body={(data, options) => options.rowIndex + 1}
-                  style={{ minWidth: "3rem", textAlign: "center" }}
-                />
+                <TabPanel header={<FaList size={30} color="#2C3E50" />}>
+                  <DataTable
+                    style={{
+                      "--p-datatable-cell-padding": "0",
+                      "--p-datatable-header-cell-padding": "0.5rem",
+                    }}
+                    value={products}
+                    paginator
+                    rows={10}
+                    rowsPerPageOptions={[5, 10, 25, 50]}
+                    tableStyle={{ minWidth: "50rem" }}
+                    loading={loading}
+                    filters={filters}
+                    globalFilterFields={["username", "productTitle", "text"]}
+                    header={headerProduct}
+                    emptyMessage="هیچ نظری یافت نشد."
+                    className="p-datatable-sm table-no-padding custom-datatable"
+                  >
+                    <Column
+                      header="#"
+                      body={(data, options) => options.rowIndex + 1}
+                      style={{ minWidth: "3rem", textAlign: "center" }}
+                    />
 
-                <Column
-                  field="title"
-                  header="نام محصول"
-                  sortable
-                  filter
-                  filterPlaceholder="جستجو بر اساس نام محصول"
-                  style={{ minWidth: "14rem" }}
-                />
+                    <Column
+                      field="title"
+                      header="نام محصول"
+                      sortable
+                      filter
+                      filterPlaceholder="جستجو بر اساس نام محصول"
+                      style={{ minWidth: "14rem" }}
+                    />
 
-                <Column
-                  field="inventory"
-                  header="موجودی"
-                  sortable
-                  // body={dateBodyTemplate}
-                  style={{ minWidth: "10rem" }}
-                />
+                    <Column
+                      field="inventory"
+                      header="موجودی"
+                      sortable
+                      // body={dateBodyTemplate}
+                      style={{ minWidth: "10rem" }}
+                    />
 
-                <Column
-                  field="category"
-                  header="دسته بندی"
-                  sortable
-                  // body={dateBodyTemplate}
-                  style={{ minWidth: "10rem" }}
-                />
-                <Column
-                  body={commentActionsBodyTemplate}
-                  header="عملیات"
-                  style={{ minWidth: "8rem" }}
-                  className="text-center"
-                />
-              </DataTable>
+                    <Column
+                      field="category"
+                      header="دسته بندی"
+                      sortable
+                      // body={dateBodyTemplate}
+                      style={{ minWidth: "10rem" }}
+                    />
+                    <Column
+                      body={commentActionsBodyTemplate}
+                      header="عملیات"
+                      style={{ minWidth: "8rem" }}
+                      className="text-center"
+                    />
+                  </DataTable>
+                </TabPanel>
+              </TabView>
+              {/* </div> */}
             </TabPanel>
 
             {/* Tab 5: Settings */}
